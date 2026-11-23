@@ -1,12 +1,12 @@
 import SwiftUI
 import SirajCore
 
-public struct MihrabLocationHeader: View {
+struct MihrabLocationHeader: View {
     @Environment(\.sirajTheme) private var theme
     let place: Place
     let onTapLocation: () -> Void
 
-    public var body: some View {
+    var body: some View {
         HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(theme.t("app_name"))
@@ -40,14 +40,14 @@ public struct MihrabLocationHeader: View {
     }
 }
 
-public struct MihrabPrayerTable: View {
+struct MihrabPrayerTable: View {
     @Environment(\.sirajTheme) private var theme
     let day: PrayerDay
     let settings: SettingsSnapshot
     let now: Date
     let onTapTable: () -> Void
 
-    public var body: some View {
+    var body: some View {
         let dateText = HijriFormatter.formatGregorian(day.date, lang: theme.language, numeralSystem: settings.numeralSystem)
 
         Button(action: onTapTable) {
@@ -141,11 +141,11 @@ public struct MihrabPrayerTable: View {
     }
 }
 
-public struct IslamicEventsBanner: View {
+struct IslamicEventsBanner: View {
     @Environment(\.sirajTheme) private var theme
     let occasion: DatedOccasion
 
-    public var body: some View {
+    var body: some View {
         HStack(spacing: 12) {
             Image("ic_siraj_crescent_star")
                 .renderingMode(.template)
@@ -177,14 +177,14 @@ public struct IslamicEventsBanner: View {
     }
 }
 
-public struct MihrabQuickActions: View {
+struct MihrabQuickActions: View {
     @Environment(\.sirajTheme) private var theme
     let onCalculation: () -> Void
     let onReminders: () -> Void
     let onWidgets: () -> Void
     let onLocation: () -> Void
 
-    public var body: some View {
+    var body: some View {
         HStack(spacing: 10) {
             tile(icon: "clock.badge.checkmark", title: theme.t("prayer_calculation_method"), action: onCalculation)
             tile(icon: "bell.badge", title: theme.t("settings_reminders"), action: onReminders)
@@ -216,11 +216,11 @@ public struct MihrabQuickActions: View {
     }
 }
 
-public struct DailyAyahCard: View {
+struct DailyAyahCard: View {
     @Environment(\.sirajTheme) private var theme
     let verse: OfflineDailyVerse
 
-    public var body: some View {
+    var body: some View {
         let meaning: String = {
             switch SirajLocalizer.baseLanguage(theme.language) {
             case "tr": return verse.meaningTr
@@ -231,7 +231,7 @@ public struct DailyAyahCard: View {
         }()
         let surahTitle = theme.isRTL ? verse.surahNameAr : verse.surahNameEn
         let ref = "\(surahTitle) · \(theme.digits("\(verse.surahNumber):\(verse.ayahNumber)"))"
-        let shareText = meaning.isEmpty ? "\(verse.textAr)\n— \(ref)" : "\(verse.textAr)\n\n\(meaning)\n— \(ref)"
+        let shareText = meaning.isEmpty ? "\(verse.textAr)\n- \(ref)" : "\(verse.textAr)\n\n\(meaning)\n- \(ref)"
 
         VStack(alignment: .leading, spacing: 14) {
             HStack {
@@ -269,12 +269,12 @@ public struct DailyAyahCard: View {
     }
 }
 
-public struct DailyInspirationCard: View {
+struct DailyInspirationCard: View {
     @Environment(\.sirajTheme) private var theme
     let hadith: OfflineDailyHadith
     @State private var showExplanation = false
 
-    public var body: some View {
+    var body: some View {
         let translation: String = {
             switch SirajLocalizer.baseLanguage(theme.language) {
             case "tr": return hadith.translationTr.isEmpty ? hadith.translationEn : hadith.translationTr
@@ -344,12 +344,12 @@ public struct DailyInspirationCard: View {
     }
 }
 
-public struct HijriDateSheetView: View {
+struct HijriDateSheetView: View {
     @Environment(\.sirajTheme) private var theme
     @Environment(\.dismiss) private var dismiss
     let appState: AppState
 
-    public var body: some View {
+    var body: some View {
         let now = appState.currentTime
         let moon = MoonPhase.at(now)
         let hijriText = HijriFormatter.format(appState.hijriDate, lang: theme.language, numeralSystem: theme.settings.numeralSystem)

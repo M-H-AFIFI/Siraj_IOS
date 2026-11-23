@@ -1,5 +1,3 @@
-// Generated from LiveTheme.kt.
-
 import Foundation
 
 public struct LiveSceneColors: Sendable, Equatable {

@@ -1,5 +1,3 @@
-// Generated from JDK Umm al-Qura calendar tables.
-
 import Foundation
 
 public enum UmmAlQuraTable {

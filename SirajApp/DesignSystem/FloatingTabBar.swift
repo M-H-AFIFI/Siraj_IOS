@@ -1,16 +1,16 @@
 import SwiftUI
 import SirajCore
 
-public enum SirajTab: Int, CaseIterable, Identifiable, Sendable {
+enum SirajTab: Int, CaseIterable, Identifiable, Sendable {
     case prayer = 0
     case quran = 1
     case qibla = 2
     case azkar = 3
     case settings = 4
 
-    public var id: Int { rawValue }
+    var id: Int { rawValue }
 
-    public var titleKey: String {
+    var titleKey: String {
         switch self {
         case .prayer: return "nav_prayer"
         case .quran: return "nav_quran"
@@ -20,7 +20,7 @@ public enum SirajTab: Int, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    public var customAssetName: String? {
+    var customAssetName: String? {
         switch self {
         case .prayer: return "ic_nav_prayer"
         case .quran: return "ic_nav_quran"
@@ -31,18 +31,13 @@ public enum SirajTab: Int, CaseIterable, Identifiable, Sendable {
     }
 }
 
-public struct FloatingTabBar: View {
+struct FloatingTabBar: View {
     @Environment(\.sirajTheme) private var theme
     @Binding var selectedTab: SirajTab
-    let isCompact: Bool
+    var isCompact: Bool = false
     @Namespace private var pillNamespace
 
-    public init(selectedTab: Binding<SirajTab>, isCompact: Bool = false) {
-        self._selectedTab = selectedTab
-        self.isCompact = isCompact
-    }
-
-    public var body: some View {
+    var body: some View {
         let compact = isCompact || theme.settings.isNavAlwaysCompact || theme.settings.navBarStyle == .compact
         let capsule = Capsule()
 

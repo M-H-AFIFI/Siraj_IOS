@@ -81,7 +81,7 @@ public enum QuoteRotation: String, CaseIterable, Codable, Sendable, Identifiable
     public var id: String { rawValue }
 }
 
-/// Complete colour role set derived from any of Siraj's 15 palettes (matching Android's withDerivedNeutrals).
+/// Complete colour role set derived from any of Siraj's 15 palettes.
 public struct SirajColorSchemeSpec: Sendable, Equatable {
     public let primary: ArgbColor
     public let onPrimary: ArgbColor

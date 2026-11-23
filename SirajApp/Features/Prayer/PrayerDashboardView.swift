@@ -1,7 +1,7 @@
 import SwiftUI
 import SirajCore
 
-public enum PrayerRoute: Hashable {
+enum PrayerRoute: Hashable {
     case detail
     case location
     case calculation
@@ -9,7 +9,7 @@ public enum PrayerRoute: Hashable {
     case widgets
 }
 
-public struct PrayerDashboardView: View {
+struct PrayerDashboardView: View {
     @Environment(\.sirajTheme) private var theme
     let appState: AppState
     let locationService: LocationService
@@ -19,19 +19,7 @@ public struct PrayerDashboardView: View {
     @State private var path = NavigationPath()
     @State private var showHijriSheet = false
 
-    public init(
-        appState: AppState,
-        locationService: LocationService,
-        onOpenReminders: @escaping () -> Void,
-        onOpenWidgets: @escaping () -> Void
-    ) {
-        self.appState = appState
-        self.locationService = locationService
-        self.onOpenReminders = onOpenReminders
-        self.onOpenWidgets = onOpenWidgets
-    }
-
-    public var body: some View {
+    var body: some View {
         let dayIndex = appState.activePlace.today(at: appState.currentTime).dayNumber
         let verse = DailyQuotesCatalog.verseForDayIndex(dayIndex)
         let hadith = DailyQuotesCatalog.hadithForDayIndex(dayIndex)

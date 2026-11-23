@@ -1,34 +1,20 @@
 import SwiftUI
 import SirajCore
 
-public struct OnboardingView: View {
+struct OnboardingView: View {
     @Environment(\.sirajTheme) private var theme
     let appState: AppState
     let locationService: LocationService
-    let onPreviewVoice: ((String) -> Void)?
-    let onStopPreview: (() -> Void)?
-    let onRequestNotifications: (() async -> Void)?
+    var onPreviewVoice: ((String) -> Void)? = nil
+    var onStopPreview: (() -> Void)? = nil
+    var onRequestNotifications: (() async -> Void)? = nil
 
     @State private var stepIndex: Int = 0
     @State private var cityQuery: String = ""
 
     private let totalSteps = 6
 
-    public init(
-        appState: AppState,
-        locationService: LocationService,
-        onPreviewVoice: ((String) -> Void)? = nil,
-        onStopPreview: (() -> Void)? = nil,
-        onRequestNotifications: (() async -> Void)? = nil
-    ) {
-        self.appState = appState
-        self.locationService = locationService
-        self.onPreviewVoice = onPreviewVoice
-        self.onStopPreview = onStopPreview
-        self.onRequestNotifications = onRequestNotifications
-    }
-
-    public var body: some View {
+    var body: some View {
         VStack(spacing: 0) {
             progressHeader
                 .padding(.horizontal, 20)

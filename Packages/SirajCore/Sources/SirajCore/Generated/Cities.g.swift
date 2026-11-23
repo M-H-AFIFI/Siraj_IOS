@@ -1,5 +1,3 @@
-// Generated from StaticCityRepository.kt and tzdata zone.tab.
-
 import Foundation
 
 public struct City: Sendable, Hashable, Identifiable {

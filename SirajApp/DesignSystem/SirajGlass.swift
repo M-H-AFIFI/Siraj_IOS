@@ -1,19 +1,19 @@
 import SwiftUI
 import SirajCore
 
-public struct SirajGlassSpec {
-    public let cardTint: Color
-    public let elevatedTint: Color
-    public let pillTint: Color
-    public let topRim: Color
-    public let bottomRim: Color
-    public let innerSheen: Color
-    public let ambientPrimary: Color
-    public let ambientSecondary: Color
-    public let dropShadow: Color
-    public let usesMaterial: Bool
+struct SirajGlassSpec {
+    let cardTint: Color
+    let elevatedTint: Color
+    let pillTint: Color
+    let topRim: Color
+    let bottomRim: Color
+    let innerSheen: Color
+    let ambientPrimary: Color
+    let ambientSecondary: Color
+    let dropShadow: Color
+    let usesMaterial: Bool
 
-    public static func resolve(theme: SirajResolvedTheme) -> SirajGlassSpec {
+    static func resolve(theme: SirajResolvedTheme) -> SirajGlassSpec {
         let finish = theme.glassFinish
         let isDark = theme.isDark
         let isBlack = theme.isBlack
@@ -70,12 +70,12 @@ public struct SirajGlassSpec {
     }
 }
 
-public struct SirajCardSurfaceModifier: ViewModifier {
+struct SirajCardSurfaceModifier: ViewModifier {
     @Environment(\.sirajTheme) private var theme
     let cornerRadius: CGFloat
     let isElevated: Bool
 
-    public func body(content: Content) -> some View {
+    func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
         if theme.isGlass {
             let spec = SirajGlassSpec.resolve(theme: theme)
@@ -132,21 +132,17 @@ public struct SirajCardSurfaceModifier: ViewModifier {
     }
 }
 
-public extension View {
+extension View {
     func sirajCardSurface(cornerRadius: CGFloat = 24, isElevated: Bool = false) -> some View {
         modifier(SirajCardSurfaceModifier(cornerRadius: cornerRadius, isElevated: isElevated))
     }
 }
 
-public struct SirajRootBackdrop: View {
+struct SirajRootBackdrop: View {
     @Environment(\.sirajTheme) private var theme
-    let activePrayer: PrayerType?
+    var activePrayer: PrayerType? = nil
 
-    public init(activePrayer: PrayerType? = nil) {
-        self.activePrayer = activePrayer
-    }
-
-    public var body: some View {
+    var body: some View {
         ZStack {
             theme.background.ignoresSafeArea()
 

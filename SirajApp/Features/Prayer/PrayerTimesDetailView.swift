@@ -1,12 +1,12 @@
 import SwiftUI
 import SirajCore
 
-public struct PrayerTimesDetailView: View {
+struct PrayerTimesDetailView: View {
     @Environment(\.sirajTheme) private var theme
     let appState: AppState
     @State private var dayOffset: Int = 0
 
-    public var body: some View {
+    var body: some View {
         let baseDate = appState.activePlace.today(at: appState.currentTime)
         let selectedDate = baseDate.addingDays(dayOffset)
         let raw = PrayerCalculator.raw(place: appState.activePlace, date: selectedDate, settings: appState.settings.calculationSettings)
@@ -19,7 +19,6 @@ public struct PrayerTimesDetailView: View {
 
         ScrollView {
             VStack(spacing: 16) {
-                // Date navigator
                 HStack {
                     Button { dayOffset -= 1 } label: {
                         Image(systemName: theme.isRTL ? "chevron.right" : "chevron.left")

@@ -1,21 +1,15 @@
 import SwiftUI
 import SirajCore
 
-public struct LiveThemeBackdrop: View {
+struct LiveThemeBackdrop: View {
     @Environment(\.sirajTheme) private var theme
     @Environment(\.scenePhase) private var scenePhase
 
     let themeId: String
     let intensity: LiveBackgroundIntensity
-    let activePrayer: PrayerType?
+    var activePrayer: PrayerType? = nil
 
-    public init(themeId: String, intensity: LiveBackgroundIntensity, activePrayer: PrayerType? = nil) {
-        self.themeId = themeId
-        self.intensity = intensity
-        self.activePrayer = activePrayer
-    }
-
-    public var body: some View {
+    var body: some View {
         let def = LiveThemeCatalog.definition(for: themeId)
         let palette = theme.isBlack ? def.amoled : (theme.isDark ? def.dark : def.light)
         let paused = !theme.motionEnabled || scenePhase != .active

@@ -1,7 +1,7 @@
 import SwiftUI
 import SirajCore
 
-public struct AnimatedSkyCard: View {
+struct AnimatedSkyCard: View {
     @Environment(\.sirajTheme) private var theme
     @Environment(\.scenePhase) private var scenePhase
 
@@ -9,13 +9,7 @@ public struct AnimatedSkyCard: View {
     let onTapHijri: () -> Void
     let onTapCard: () -> Void
 
-    public init(appState: AppState, onTapHijri: @escaping () -> Void, onTapCard: @escaping () -> Void) {
-        self.appState = appState
-        self.onTapHijri = onTapHijri
-        self.onTapCard = onTapCard
-    }
-
-    public var body: some View {
+    var body: some View {
         let isPinned = appState.pinnedSkyTime != nil
         let paused = isPinned || !theme.motionEnabled || scenePhase != .active
 
@@ -61,7 +55,6 @@ public struct AnimatedSkyCard: View {
                 }
 
                 VStack(spacing: 12) {
-                    // Top bar: phase badge + Hijri date pill
                     HStack(spacing: 8) {
                         HStack(spacing: 5) {
                             Image(systemName: arc.isDaytime ? "sun.max.fill" : "moon.stars.fill")
@@ -95,7 +88,6 @@ public struct AnimatedSkyCard: View {
 
                     Spacer(minLength: 36)
 
-                    // Center hero readout
                     VStack(spacing: 4) {
                         Text(statusLabel(state: state, prayer: displayed))
                             .font(.system(size: 12 * theme.textScale, weight: .semibold))
@@ -131,7 +123,6 @@ public struct AnimatedSkyCard: View {
 
                     Spacer(minLength: 6)
 
-                    // Footer strip with Gregorian date
                     HStack {
                         Text(gregorianText)
                             .font(.system(size: 11.5 * theme.textScale, weight: .medium))
@@ -211,12 +202,10 @@ public struct AnimatedSkyCard: View {
         let h = size.height
         let colors = sky.colors
 
-        // 1. Six-stop sky gradient
         let skyGrad = Gradient(colors: colors.sky.map { Color(argb: $0) })
         ctx.fill(Path(CGRect(origin: .zero, size: size)),
                  with: .linearGradient(skyGrad, startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
 
-        // 2. Horizon twilight blooms (sunrise/sunset/shafaq/trueDawn)
         let horizonBloom = max(sky.twilight.sunriseGlow, max(sky.twilight.sunsetGlow, max(sky.twilight.shafaq, sky.twilight.trueDawn * 0.7)))
         if horizonBloom > 0.02 {
             let bloomCenter = CGPoint(x: w * 0.5, y: h * 0.86)
@@ -229,7 +218,6 @@ public struct AnimatedSkyCard: View {
             )
         }
 
-        // 3. Stars + occasional shooting star at night
         if colors.starAlpha > 0.02 {
             for i in 0..<46 {
                 let sx = frac(sin(Double(i) * 19.19) * 43758.5453) * w
@@ -241,7 +229,6 @@ public struct AnimatedSkyCard: View {
                     with: .color(Color.white.opacity(colors.starAlpha * twinkle * 0.9))
                 )
             }
-            // Occasional shooting star cycle
             let cycle = t.truncatingRemainder(dividingBy: 9.0)
             if cycle < 0.85 {
                 let p = cycle / 0.85
@@ -255,7 +242,6 @@ public struct AnimatedSkyCard: View {
             }
         }
 
-        // 4. Soft clouds
         if colors.cloudAlpha > 0.04 {
             let drift = (t * 4.0).truncatingRemainder(dividingBy: w + 120)
             for idx in 0..<3 {
@@ -276,7 +262,6 @@ public struct AnimatedSkyCard: View {
             }
         }
 
-        // 5. Celestial solar/lunar arc
         let arcLeft = CGPoint(x: w * 0.08, y: h * 0.72)
         let arcRight = CGPoint(x: w * 0.92, y: h * 0.72)
         let arcCtrl = CGPoint(x: w * 0.50, y: h * 0.14)
@@ -298,7 +283,6 @@ public struct AnimatedSkyCard: View {
             style: StrokeStyle(lineWidth: 2.0, lineCap: .round, dash: [4, 5])
         )
 
-        // Milestone markers along arc
         for m in arc.milestones {
             let pt = quadPoint(m.progress)
             let r: CGFloat = m.isNext ? 4.8 : 2.8
@@ -312,7 +296,6 @@ public struct AnimatedSkyCard: View {
                      with: .color(m.isNext ? Color(argb: colors.orbCore) : Color.white.opacity(m.isPast ? 0.35 : 0.72)))
         }
 
-        // 6. Sun or Moon orb riding along the arc
         let orb = quadPoint(arc.progress)
         let glowR: CGFloat = 28 + CGFloat(3.5 * sin(t * 1.8))
         ctx.fill(
@@ -344,14 +327,13 @@ public struct AnimatedSkyCard: View {
                      with: .color(Color(argb: colors.orbCore)))
         }
 
-        // 7. Mosque skyline silhouette & night lamps along bottom
         drawMosqueSkyline(ctx: &ctx, size: size, footerColor: Color(argb: colors.footerBg), isNight: colors.starAlpha > 0.25)
     }
 
     private func drawMoonDisc(ctx: inout GraphicsContext, center: CGPoint, radius: CGFloat, phase: MoonPhaseInfo, litColor: Color) {
         let rect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
         ctx.fill(Path(ellipseIn: rect), with: .color(litColor.opacity(0.18)))
-        // Crescent/gibbous lit region approximation via clipped shadow offset
+        // Approximate crescent/gibbous terminator by punching out an offset disc inside a clipped layer.
         let offsetFactor = (1.0 - phase.illumination) * 1.45 * Double(radius)
         let dx = phase.waxing ? -offsetFactor : offsetFactor
         ctx.drawLayer { layer in
@@ -372,16 +354,13 @@ public struct AnimatedSkyCard: View {
         p.move(to: CGPoint(x: 0, y: h))
         p.addLine(to: CGPoint(x: 0, y: baseY + 6))
         p.addLine(to: CGPoint(x: w * 0.14, y: baseY + 6))
-        // Left minaret
         p.addLine(to: CGPoint(x: w * 0.14, y: baseY - 22))
         p.addLine(to: CGPoint(x: w * 0.155, y: baseY - 32))
         p.addLine(to: CGPoint(x: w * 0.17, y: baseY - 22))
         p.addLine(to: CGPoint(x: w * 0.17, y: baseY + 4))
-        // Central dome
         p.addLine(to: CGPoint(x: w * 0.38, y: baseY + 4))
         p.addQuadCurve(to: CGPoint(x: w * 0.50, y: baseY - 26), control: CGPoint(x: w * 0.41, y: baseY - 20))
         p.addQuadCurve(to: CGPoint(x: w * 0.62, y: baseY + 4), control: CGPoint(x: w * 0.59, y: baseY - 20))
-        // Right minaret
         p.addLine(to: CGPoint(x: w * 0.83, y: baseY + 4))
         p.addLine(to: CGPoint(x: w * 0.83, y: baseY - 22))
         p.addLine(to: CGPoint(x: w * 0.845, y: baseY - 32))

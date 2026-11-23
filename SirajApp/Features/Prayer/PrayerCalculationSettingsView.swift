@@ -1,7 +1,7 @@
 import SwiftUI
 import SirajCore
 
-public struct PrayerCalculationSettingsView: View {
+struct PrayerCalculationSettingsView: View {
     @Environment(\.sirajTheme) private var theme
     let appState: AppState
 
@@ -9,7 +9,7 @@ public struct PrayerCalculationSettingsView: View {
     private let highLatRules = ["MiddleOfTheNight", "SeventhOfTheNight", "TwilightAngle"]
     private let hijriMethods = ["auto", "umm_al_qura", "egypt", "turkey", "mabims"]
 
-    public var body: some View {
+    var body: some View {
         ScrollView {
             VStack(spacing: 18) {
                 SirajSettingsSection(title: theme.t("prayer_calculation_method")) {

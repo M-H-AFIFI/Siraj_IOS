@@ -1,5 +1,3 @@
-// Generated from AzanAudioUrlProvider.kt.
-
 import Foundation
 
 public struct AdhanGroup: Sendable, Equatable, Identifiable {

@@ -1,5 +1,3 @@
-// Generated from HadithData and curated daily verses.
-
 import Foundation
 
 public struct OfflineDailyVerse: Sendable, Equatable {

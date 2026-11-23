@@ -2,8 +2,8 @@ import Foundation
 import XCTest
 @testable import SirajCore
 
-final class PrayerTimesParityTests: XCTestCase {
-    func testMatchesAndroidAdhanJarToTheMinuteAcross27000Rows() throws {
+final class PrayerTimesTests: XCTestCase {
+    func testPrayerTimesFixturesToTheMinute() throws {
         let rows = try ReferenceLoader.rows(named: "prayer_times.csv.gz")
         XCTAssertGreaterThan(rows.count, 20_000, "Expected > 20,000 reference rows, got \(rows.count)")
 

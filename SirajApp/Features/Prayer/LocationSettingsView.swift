@@ -1,13 +1,13 @@
 import SwiftUI
 import SirajCore
 
-public struct LocationSettingsView: View {
+struct LocationSettingsView: View {
     @Environment(\.sirajTheme) private var theme
     let appState: AppState
     let locationService: LocationService
     @State private var query: String = ""
 
-    public var body: some View {
+    var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 HStack(spacing: 12) {

@@ -5,23 +5,23 @@ import SirajCore
 
 @MainActor
 @Observable
-public final class AppState {
-    public let store: UserDataStore
-    public let localizer: SirajLocalizer
-    public var settings: SettingsSnapshot
-    public var onboardingComplete: Bool
-    public var selectedTab: SirajTab = .prayer
-    public var pinnedSkyTime: Date?
-    public var activeAdhanAlert: PrayerType?
-    public var requestedRoute: String?
-    public var prayerDay: PrayerDay
-    public var hijriDate: HijriDate
-    public var upcomingOccasions: [DatedOccasion]
-    public var isUITesting: Bool = false
+final class AppState {
+    let store: UserDataStore
+    let localizer: SirajLocalizer
+    var settings: SettingsSnapshot
+    var onboardingComplete: Bool
+    var selectedTab: SirajTab = .prayer
+    var pinnedSkyTime: Date?
+    var activeAdhanAlert: PrayerType?
+    var requestedRoute: String?
+    var prayerDay: PrayerDay
+    var hijriDate: HijriDate
+    var upcomingOccasions: [DatedOccasion]
+    var isUITesting: Bool = false
 
-    public var onSettingsChangedForAlerts: ((SettingsSnapshot, Place) -> Void)?
+    var onSettingsChangedForAlerts: ((SettingsSnapshot, Place) -> Void)?
 
-    public init(store: UserDataStore? = nil, localizer: SirajLocalizer? = nil) {
+    init(store: UserDataStore? = nil, localizer: SirajLocalizer? = nil) {
         let appGroup = Bundle.main.object(forInfoDictionaryKey: "SirajAppGroupID") as? String
         let resolvedStore = store ?? UserDataStore(appGroupId: appGroup)
         let resolvedLoc = localizer ?? SirajLocalizer(bundle: .main, subdirectory: "Data")
@@ -49,15 +49,15 @@ public final class AppState {
         applyLaunchArguments(ProcessInfo.processInfo.arguments)
     }
 
-    public var currentTime: Date {
+    var currentTime: Date {
         pinnedSkyTime ?? Date()
     }
 
-    public var activePlace: Place {
+    var activePlace: Place {
         settings.cachedLocation ?? .cairoDefault
     }
 
-    public var hijriCalendar: SirajHijriCalendar {
+    var hijriCalendar: SirajHijriCalendar {
         SirajHijriCalendar.forSettings(
             method: settings.hijriMethod,
             countryCode: activePlace.resolvedCountryCode,
@@ -65,7 +65,7 @@ public final class AppState {
         )
     }
 
-    public func updateSettings(_ mutate: (inout SettingsSnapshot) -> Void) {
+    func updateSettings(_ mutate: (inout SettingsSnapshot) -> Void) {
         var copy = settings
         mutate(&copy)
         settings = copy
@@ -77,7 +77,7 @@ public final class AppState {
         onSettingsChangedForAlerts?(copy, activePlace)
     }
 
-    public func completeOnboarding() {
+    func completeOnboarding() {
         onboardingComplete = true
         if !isUITesting {
             store.saveOnboardingComplete(true)
@@ -88,7 +88,7 @@ public final class AppState {
         onSettingsChangedForAlerts?(settings, activePlace)
     }
 
-    public func refreshPrayers() {
+    func refreshPrayers() {
         let now = currentTime
         let place = activePlace
         prayerDay = PrayerCalculator.today(place: place, settings: settings.calculationSettings, now: now)
@@ -98,7 +98,7 @@ public final class AppState {
         upcomingOccasions = IslamicOccasions.upcoming(from: civil, calendar: cal)
     }
 
-    public func applyLaunchArguments(_ args: [String]) {
+    func applyLaunchArguments(_ args: [String]) {
         guard args.contains("--uitesting") else { return }
         isUITesting = true
         var snap = SettingsSnapshot()

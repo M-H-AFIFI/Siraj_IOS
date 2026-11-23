@@ -1,5 +1,3 @@
-// Generated from tzdata 2025b zone.tab.
-
 import Foundation
 
 public enum ZoneCountries {

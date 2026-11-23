@@ -1,5 +1,3 @@
-// Generated from SirajAppIcon.kt.
-
 import Foundation
 
 public struct SirajAppIconDefinition: Sendable, Equatable, Identifiable {

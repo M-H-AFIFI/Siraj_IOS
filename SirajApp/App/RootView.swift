@@ -1,17 +1,12 @@
 import SwiftUI
 import SirajCore
 
-public struct RootView: View {
+struct RootView: View {
     @Environment(\.sirajTheme) private var theme
     @Bindable var appState: AppState
     let locationService: LocationService
 
-    public init(appState: AppState, locationService: LocationService) {
-        self.appState = appState
-        self.locationService = locationService
-    }
-
-    public var body: some View {
+    var body: some View {
         ZStack(alignment: .bottom) {
             SirajRootBackdrop(activePrayer: appState.prayerDay.next?.type)
 

@@ -2,8 +2,8 @@ import Foundation
 import XCTest
 @testable import SirajCore
 
-final class HijriParityTests: XCTestCase {
-    func testUmmAlQuraMatchesJdkAll2172Rows() throws {
+final class HijriCalendarTests: XCTestCase {
+    func testUmmAlQuraTableRoundTrip() throws {
         let rows = try ReferenceLoader.rows(named: "umm_al_qura.csv")
         XCTAssertEqual(rows.count, (1499 - 1319 + 1) * 12)
         var mismatches: [String] = []
@@ -24,7 +24,7 @@ final class HijriParityTests: XCTestCase {
         XCTAssertTrue(mismatches.isEmpty, "Mismatches:\n\(mismatches.joined(separator: "\n"))")
     }
 
-    func testCountryMonthStartsMatchAndroid() throws {
+    func testCountryMonthStarts() throws {
         let rows = try ReferenceLoader.rows(named: "hijri_months.csv")
         XCTAssertGreaterThan(rows.count, 500)
         var calendars: [String: SirajHijriCalendar] = [:]
@@ -48,7 +48,7 @@ final class HijriParityTests: XCTestCase {
         XCTAssertTrue(mismatches.isEmpty, "Mismatches:\n\(mismatches.joined(separator: "\n"))")
     }
 
-    func testHijriDaysMatchAndroid() throws {
+    func testHijriDays() throws {
         let rows = try ReferenceLoader.rows(named: "hijri_days.csv.gz")
         XCTAssertGreaterThan(rows.count, 1000)
         var calendars: [String: SirajHijriCalendar] = [:]
@@ -71,7 +71,7 @@ final class HijriParityTests: XCTestCase {
         XCTAssertTrue(mismatches.isEmpty, "Mismatches:\n\(mismatches.joined(separator: "\n"))")
     }
 
-    func testMoonPhaseMatchesAndroid() throws {
+    func testMoonPhaseValues() throws {
         let rows = try ReferenceLoader.rows(named: "moon_phase.csv")
         XCTAssertGreaterThan(rows.count, 100)
         for r in rows {

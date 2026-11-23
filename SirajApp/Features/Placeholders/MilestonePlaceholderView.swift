@@ -1,19 +1,13 @@
 import SwiftUI
 import SirajCore
 
-public struct MilestonePlaceholderView: View {
+struct MilestonePlaceholderView: View {
     @Environment(\.sirajTheme) private var theme
     let iconAsset: String
     let titleKey: String
     let descriptionKey: String
 
-    public init(iconAsset: String, titleKey: String, descriptionKey: String) {
-        self.iconAsset = iconAsset
-        self.titleKey = titleKey
-        self.descriptionKey = descriptionKey
-    }
-
-    public var body: some View {
+    var body: some View {
         VStack(spacing: 20) {
             Spacer()
             ZStack {

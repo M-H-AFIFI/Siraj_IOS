@@ -1,15 +1,12 @@
 import SwiftUI
 import SirajCore
 
-/// Mihrab arch silhouette matching `ic_siraj_emblem` (viewport 96.91 x 100.0, aspect 0.96905).
-public struct SirajEmblemShape: Shape {
-    public static let viewportWidth: CGFloat = 96.91
-    public static let viewportHeight: CGFloat = 100.0
-    public static let aspectRatio: CGFloat = 0.96905
+struct SirajEmblemShape: Shape {
+    static let viewportWidth: CGFloat = 96.91
+    static let viewportHeight: CGFloat = 100.0
+    static let aspectRatio: CGFloat = 0.96905
 
-    public init() {}
-
-    public func path(in rect: CGRect) -> Path {
+    func path(in rect: CGRect) -> Path {
         let sx = rect.width / Self.viewportWidth
         let sy = rect.height / Self.viewportHeight
         let ox = rect.minX
@@ -42,16 +39,11 @@ public struct SirajEmblemShape: Shape {
     }
 }
 
-public struct SirajEmblemMark: View {
-    let height: CGFloat
+struct SirajEmblemMark: View {
+    var height: CGFloat = 64
     let tint: Color
 
-    public init(height: CGFloat = 64, tint: Color) {
-        self.height = height
-        self.tint = tint
-    }
-
-    public var body: some View {
+    var body: some View {
         Image("ic_siraj_emblem")
             .renderingMode(.template)
             .resizable()
@@ -61,16 +53,12 @@ public struct SirajEmblemMark: View {
     }
 }
 
-public struct SirajLoadingView: View {
+struct SirajLoadingView: View {
     @Environment(\.sirajTheme) private var theme
-    let message: String?
+    var message: String? = nil
     @State private var phase: CGFloat = 0
 
-    public init(message: String? = nil) {
-        self.message = message
-    }
-
-    public var body: some View {
+    var body: some View {
         VStack(spacing: 18) {
             ZStack {
                 SirajEmblemShape()

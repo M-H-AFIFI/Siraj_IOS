@@ -5,20 +5,20 @@ import SirajCore
 
 @MainActor
 @Observable
-public final class LocationService: NSObject, CLLocationManagerDelegate {
-    public var isLocating: Bool = false
-    public var errorMessage: String?
+final class LocationService: NSObject, CLLocationManagerDelegate {
+    var isLocating: Bool = false
+    var errorMessage: String?
 
     private let manager = CLLocationManager()
     private var continuation: CheckedContinuation<Place?, Never>?
 
-    public override init() {
+    override init() {
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
     }
 
-    public func requestCurrentPlace() async -> Place? {
+    func requestCurrentPlace() async -> Place? {
         errorMessage = nil
         isLocating = true
         defer { isLocating = false }
@@ -45,7 +45,7 @@ public final class LocationService: NSObject, CLLocationManagerDelegate {
         pending?.resume(returning: place)
     }
 
-    public nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let status = manager.authorizationStatus
         Task { @MainActor in
             guard self.continuation != nil else { return }
@@ -61,7 +61,7 @@ public final class LocationService: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    public nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let loc = locations.first else {
             Task { @MainActor in self.finish(with: nil) }
             return
@@ -91,7 +91,7 @@ public final class LocationService: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    public nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         Task { @MainActor in
             self.errorMessage = error.localizedDescription
             self.finish(with: nil)

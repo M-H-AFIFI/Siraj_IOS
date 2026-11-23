@@ -1,5 +1,3 @@
-// Generated from Theme.kt and Color.kt.
-
 import Foundation
 
 public struct PaletteBaseRoles: Sendable, Equatable {

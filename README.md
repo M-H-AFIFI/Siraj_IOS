@@ -1,30 +1,14 @@
 # Siraj for iOS
 
-Islamic companion for iPhone, built in Swift and SwiftUI.
+A native SwiftUI Islamic app for iPhone.
 
-## What is included
+Right now this includes prayer time calculations (multiple calculation methods, Shafi/Hanafi, high-latitude rules, offsets, and iqama), Hijri calendars and moon phases, an animated sky card on the prayer screen, onboarding, themes (15 palettes, light/dark/AMOLED, glass, and live animated backgrounds), and English, Arabic, Turkish, and Urdu with RTL support.
 
-- **Prayer times** calculated identically to the Android and Windows apps (Adhan 1.2.1 with all calculation methods, Shafi/Hanafi madhabs, high-latitude rules, minute offsets, and iqama intervals), verified against the 27,000-row reference dataset.
-- **Hijri calendar & moon phase** across country calendars (Umm al-Qura using the JDK table, Egypt, Diyanet, sighting, naked eye, MABIMS) with manual adjustment and upcoming Islamic occasions.
-- **Animated sky card**: continuous 24-hour sky gradient, twilights, solar arc, stars and shooting stars, clouds, water reflection, moon phase, skyline lamps, iqama and in-prayer states, and rolling countdown.
-- **Adhan & reminders**: local notification scheduling within iOS's 64-notification sliding window refreshed on launch and via background refresh, 30-second muezzin clips on the lock screen, downloadable HQ and Fajr recordings, full-screen Adhan alert view, pre-prayer reminders, suggested reminders, and custom reminders.
-- **Widgets & Live Activity**: Lock Screen accessories (24/7 offline auto-advancing countdown), opportunistic Dynamic Island / Lock Screen Live Activity, configurable Home Screen widgets, and an in-app Widget Gallery.
-- **Visual design**: 15 color palettes, Light/Dark/AMOLED Black, Glass UI (Clear, Satin, Frosted), 17 animated live backdrops, custom floating pill tab bar, 12 selectable app icons, and four languages (`en`, `ar`, `tr`, `ur`) with full RTL support.
-
-## Project layout
-
-```text
-project.yml                 XcodeGen specification (generates Siraj.xcodeproj)
-Packages/SirajCore/         Pure Swift core: prayer, Hijri, sky, alerts, settings, tests
-SirajApp/                   SwiftUI app target (full and sideload configurations)
-SirajWidgets/               WidgetKit Home/Lock Screen widgets and Live Activity
-SirajUITests/               Automated Simulator screenshot suite
-.github/workflows/ios.yml   CI: unit tests, Simulator screenshots, and unsigned .ipa builds
-```
+Adhan playback and notifications, widgets, Quran, Qibla, and Azkar are still in progress.
 
 ## Building
 
-Requires Xcode 16+ on macOS and [XcodeGen](https://github.com/yonaskolb/XcodeGen):
+You need Xcode 16+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen):
 
 ```bash
 xcodegen generate --spec project.yml
@@ -32,4 +16,4 @@ swift test --package-path Packages/SirajCore
 open Siraj.xcodeproj
 ```
 
-Every push runs the macOS GitHub Actions workflow, which executes `SirajCoreTests`, captures iPhone Simulator screenshots, and uploads unsigned `Siraj-Sideload.ipa` (main app, ready for Sideloadly or AltStore with a free Apple ID) and `Siraj-Full.ipa` (main app with widgets and App Group) artifacts.
+Pushes to `main` run the macOS GitHub Actions workflow to execute `SirajCore` tests and build both `Siraj` and `SirajSideload` (a main-app-only scheme that can be signed with a free Apple ID).
