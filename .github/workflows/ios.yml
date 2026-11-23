@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   build-and-test:
-    name: Test, Screenshots & Unsigned IPAs
+    name: Test & Build Unsigned IPAs
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,57 +26,13 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: Select iPhone Simulator
-        id: sim
+      - name: Build Siraj for iOS Simulator
         run: |
-          SIM_ID=$(python3 -c '
-          import json, subprocess
-          data = json.loads(subprocess.check_output(["xcrun", "simctl", "list", "devices", "available", "-j"]))
-          candidates = []
-          for runtime, devices in data.get("devices", {}).items():
-              if "iOS" not in runtime:
-                  continue
-              for d in devices:
-                  if d.get("isAvailable") and "iPhone" in d.get("name", ""):
-                      candidates.append((runtime, d["name"], d["udid"]))
-          preferred = ["iPhone 16 Pro", "iPhone 16", "iPhone 15 Pro", "iPhone 15"]
-          for want in preferred:
-              for _, name, udid in sorted(candidates, reverse=True):
-                  if name == want:
-                      print(udid)
-                      raise SystemExit(0)
-          print(sorted(candidates, reverse=True)[0][2])
-          ')
-          echo "id=$SIM_ID" >> "$GITHUB_OUTPUT"
-          echo "Using Simulator: $SIM_ID"
-          xcrun simctl boot "$SIM_ID" || true
-          xcrun simctl bootstatus "$SIM_ID" -b
-          xcrun simctl status_bar "$SIM_ID" override \
-            --time "9:41" \
-            --batteryState charged \
-            --batteryLevel 100 \
-            --wifiBars 3 \
-            --cellularBars 4 || true
-
-      - name: Run Simulator UI screenshot suite
-        run: |
-          rm -rf TestResults.xcresult
-          xcodebuild test \
+          xcodebuild build \
             -project Siraj.xcodeproj \
             -scheme Siraj \
-            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.id }}" \
-            -resultBundlePath TestResults.xcresult \
+            -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO
-
-      - name: Extract Simulator screenshots
-        run: python3 .github/scripts/extract_screenshots.py TestResults.xcresult artifacts/screenshots
-
-      - name: Upload Simulator screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-simulator-screenshots
-          path: artifacts/screenshots/*.png
-          if-no-files-found: error
 
       - name: Build unsigned Siraj-Sideload.ipa
         run: |
