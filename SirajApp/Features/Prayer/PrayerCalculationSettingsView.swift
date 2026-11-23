@@ -92,7 +92,7 @@ struct PrayerCalculationSettingsView: View {
                                 .foregroundStyle(theme.onSurface)
                             Spacer()
                             Stepper(
-                                theme.digits("\(val >= 0 ? "+" : "")\(val)m"),
+                                theme.tf("pre_prayer_minutes_short", theme.digits("\(val >= 0 ? "+" : "")\(val)")),
                                 value: Binding(
                                     get: { appState.settings.minuteOffsets[p.rawValue] ?? 0 },
                                     set: { newVal in appState.updateSettings { $0.minuteOffsets[p.rawValue] = newVal } }
@@ -133,7 +133,7 @@ struct PrayerCalculationSettingsView: View {
                             .foregroundStyle(theme.onSurface)
                         Spacer()
                         Stepper(
-                            theme.digits("\(appState.settings.hijriAdjustment >= 0 ? "+" : "")\(appState.settings.hijriAdjustment)d"),
+                            hijriAdjustmentLabel(appState.settings.hijriAdjustment),
                             value: Binding(
                                 get: { appState.settings.hijriAdjustment },
                                 set: { v in appState.updateSettings { $0.hijriAdjustment = v } }
@@ -169,6 +169,16 @@ struct PrayerCalculationSettingsView: View {
         case "turkey": return theme.t("hijri_source_turkey")
         case "mabims": return theme.t("hijri_source_mabims")
         default: return theme.t("hijri_mode_auto")
+        }
+    }
+
+    private func hijriAdjustmentLabel(_ adj: Int) -> String {
+        switch adj {
+        case -2: return theme.t("hijri_adjust_minus_two")
+        case -1: return theme.t("hijri_adjust_minus_one")
+        case 1: return theme.t("hijri_adjust_plus_one")
+        case 2: return theme.t("hijri_adjust_plus_two")
+        default: return theme.t("hijri_adjust_none")
         }
     }
 }

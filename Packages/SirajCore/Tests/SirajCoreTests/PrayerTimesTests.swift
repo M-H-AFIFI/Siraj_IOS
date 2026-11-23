@@ -129,4 +129,17 @@ final class PrayerTimesTests: XCTestCase {
         let dist = QiblaMath.distanceKm(from: Coordinates(latitude: 30.0444, longitude: 31.2357))
         XCTAssertTrue((1250...1320).contains(dist), "Unexpected Cairo distance to Makkah: \(dist) km")
     }
+
+    func testNextUpcomingAlwaysStrictlyInFutureDuringIqamaWindow() throws {
+        let mecca = Place.fromCity(try XCTUnwrap(Cities.search("Mecca").first))
+        let date = CivilDate(year: 2026, month: 3, day: 1)
+        let settings = CalculationSettings(method: "UmmAlQura")
+        let entries = PrayerCalculator.raw(place: mecca, date: date, settings: settings)
+        let asr = entries[3]
+        let fiveMinutesAfterAsr = asr.time.addingTimeInterval(5 * 60)
+
+        let upcoming = PrayerCalculator.nextUpcoming(place: mecca, settings: settings, now: fiveMinutesAfterAsr)
+        XCTAssertEqual(upcoming.type, .maghrib)
+        XCTAssertGreaterThan(upcoming.time, fiveMinutesAfterAsr)
+    }
 }

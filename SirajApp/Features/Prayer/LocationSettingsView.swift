@@ -18,7 +18,8 @@ struct LocationSettingsView: View {
                         Text(appState.activePlace.displayName(language: theme.language) ?? appState.activePlace.timeZoneId)
                             .font(theme.scaledFont(size: 17, weight: .bold))
                             .foregroundStyle(theme.onSurface)
-                        Text(String(format: "%.3f, %.3f · %@", appState.activePlace.latitude, appState.activePlace.longitude, appState.activePlace.timeZoneId))
+                        let sep = theme.isRTL ? "، " : " · "
+                        Text("\(theme.digits(String(format: "%.3f, %.3f", appState.activePlace.latitude, appState.activePlace.longitude)))\(sep)\(appState.activePlace.timeZoneId)")
                             .font(theme.scaledFont(size: 12))
                             .foregroundStyle(theme.onSurfaceVariant)
                     }
@@ -50,6 +51,28 @@ struct LocationSettingsView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(locationService.isLocating)
+
+                if let errKey = locationService.errorKey {
+                    HStack(spacing: 10) {
+                        Image(systemName: "location.slash.fill")
+                            .foregroundStyle(.orange)
+                        Text(theme.t(errKey))
+                            .font(theme.scaledFont(size: 13))
+                            .foregroundStyle(theme.onSurface)
+                        Spacer()
+                        if locationService.isPermissionDenied {
+                            Button(theme.t("open_settings")) {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                            .font(theme.scaledFont(size: 13, weight: .bold))
+                            .foregroundStyle(theme.primary)
+                        }
+                    }
+                    .padding(12)
+                    .sirajCardSurface(cornerRadius: 14)
+                }
 
                 TextField(theme.t("settings_search_city_hint"), text: $query)
                     .padding(13)

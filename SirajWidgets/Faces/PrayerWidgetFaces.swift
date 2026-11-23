@@ -95,7 +95,7 @@ private struct PrayerWidgetBody: View {
     }
 
     private var safeTimerRange: ClosedRange<Date> {
-        let end = max(entry.date.addingTimeInterval(60), entry.snapshot.nextPrayer.time)
+        let end = max(entry.date, entry.snapshot.nextPrayer.time)
         return entry.date...end
     }
 

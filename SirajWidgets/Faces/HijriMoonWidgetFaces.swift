@@ -183,18 +183,19 @@ private struct HijriMoonWidgetBody: View {
         let moon = snap.moon
         let pct = WidgetDataLoader.digits("\(Int((moon.illumination * 100).rounded()))%", snapshot: snap)
         let hijriLine = HijriFormatter.format(snap.hijri, lang: snap.language, numeralSystem: snap.settings.numeralSystem)
+        let sep = snap.isRTL ? "، " : " · "
 
         return VStack(spacing: 8) {
             WidgetMoonCanvas(phase: moon, litColor: style.accent)
                 .frame(width: 56, height: 56)
                 .widgetAccentable()
 
-            Text(moon.name.rawValue)
+            Text(WidgetDataLoader.t(moon.name.stringKey, lang: snap.language))
                 .font(.system(size: 13, weight: .bold))
                 .foregroundStyle(style.primaryText)
                 .lineLimit(1)
 
-            Text("\(pct) · \(hijriLine)")
+            Text("\(pct)\(sep)\(hijriLine)")
                 .font(.system(size: 10.5, weight: .medium))
                 .foregroundStyle(style.secondaryText)
                 .lineLimit(1)

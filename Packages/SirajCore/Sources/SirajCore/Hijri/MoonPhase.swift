@@ -9,6 +9,19 @@ public enum MoonPhaseName: String, Sendable, Equatable, CaseIterable {
     case waningGibbous
     case lastQuarter
     case waningCrescent
+
+    public var stringKey: String {
+        switch self {
+        case .new: return "moon_new"
+        case .waxingCrescent: return "moon_waxing_crescent"
+        case .firstQuarter: return "moon_first_quarter"
+        case .waxingGibbous: return "moon_waxing_gibbous"
+        case .full: return "moon_full"
+        case .waningGibbous: return "moon_waning_gibbous"
+        case .lastQuarter: return "moon_last_quarter"
+        case .waningCrescent: return "moon_waning_crescent"
+        }
+    }
 }
 
 public struct MoonPhaseInfo: Sendable, Equatable {

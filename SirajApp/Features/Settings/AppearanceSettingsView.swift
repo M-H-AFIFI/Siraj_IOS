@@ -6,6 +6,7 @@ struct AppearanceSettingsView: View {
     let appState: AppState
 
     @State private var showIconPicker = false
+    @State private var draftTextScale: Double = 1.0
 
     private let paletteCols = [GridItem(.adaptive(minimum: 72), spacing: 10)]
     private let sceneCols = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
@@ -308,24 +309,12 @@ struct AppearanceSettingsView: View {
                             set: { v in appState.updateSettings { $0.isNavAlwaysCompact = v } }
                         )
                     )
-
-                    Divider().padding(.leading, 16)
-
-                    SirajSettingsToggleRow(
-                        icon: "arrow.up.and.down.text.horizontal",
-                        title: theme.t("appearance_nav_shrink_title"),
-                        subtitle: theme.t("appearance_nav_shrink_desc"),
-                        isOn: Binding(
-                            get: { appState.settings.isNavShrinkEnabled },
-                            set: { v in appState.updateSettings { $0.isNavShrinkEnabled = v } }
-                        )
-                    )
                 }
 
                 SirajSettingsSection(title: theme.t("text_size_title")) {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(theme.t("text_size_sample"))
-                            .font(theme.scaledFont(size: 15, weight: .medium))
+                            .font(.system(size: 15 * CGFloat(draftTextScale), weight: .medium))
                             .foregroundStyle(theme.onSurface)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(14)
@@ -335,21 +324,18 @@ struct AppearanceSettingsView: View {
                             Text("A")
                                 .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(theme.onSurfaceVariant)
-                            Slider(
-                                value: Binding(
-                                    get: { appState.settings.textScale },
-                                    set: { val in appState.updateSettings { $0.textScale = val } }
-                                ),
-                                in: 0.85...1.35,
-                                step: 0.05
-                            )
+                            Slider(value: $draftTextScale, in: 0.85...1.35, step: 0.05) { editing in
+                                if !editing {
+                                    appState.updateSettings { $0.textScale = draftTextScale }
+                                }
+                            }
                             .tint(theme.primary)
                             Text("A")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundStyle(theme.onSurfaceVariant)
                         }
 
-                        Text(theme.digits("\(Int((appState.settings.textScale * 100).rounded()))%"))
+                        Text(theme.digits("\(Int((draftTextScale * 100).rounded()))%"))
                             .font(theme.scaledFont(size: 12, weight: .bold))
                             .foregroundStyle(theme.primary)
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -364,6 +350,9 @@ struct AppearanceSettingsView: View {
         .background(Color.clear)
         .navigationTitle(theme.t("settings_appearance_header"))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            draftTextScale = appState.settings.textScale
+        }
         .sheet(isPresented: $showIconPicker) {
             AppIconPickerSheet(appState: appState)
         }

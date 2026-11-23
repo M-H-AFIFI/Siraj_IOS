@@ -38,8 +38,10 @@ struct AnimatedSkyCard: View {
         let shape = RoundedRectangle(cornerRadius: 28, style: .continuous)
         let displayed = state?.prayer ?? day.next ?? day[.fajr]
         let countdownText = formattedCountdown(state: state)
-        let hijriText = HijriFormatter.format(appState.hijriDate, lang: theme.language, numeralSystem: theme.settings.numeralSystem)
-        let gregorianText = HijriFormatter.formatGregorian(appState.activePlace.today(at: now), lang: theme.language, numeralSystem: theme.settings.numeralSystem)
+        let civilToday = appState.activePlace.today(at: now)
+        let currentHijri = appState.hijriCalendar.toHijri(civilToday)
+        let hijriText = HijriFormatter.format(currentHijri, lang: theme.language, numeralSystem: theme.settings.numeralSystem)
+        let gregorianText = HijriFormatter.formatGregorian(civilToday, lang: theme.language, numeralSystem: theme.settings.numeralSystem)
         let prayerClock = TimeFormatter.formatTime(
             displayed.time,
             timeZone: appState.activePlace.timeZone,
@@ -48,110 +50,114 @@ struct AnimatedSkyCard: View {
             lang: theme.language
         )
 
-        return Button(action: onTapCard) {
-            ZStack {
-                Canvas { ctx, size in
-                    drawSkyLayers(ctx: &ctx, size: size, sky: sky, arc: arc, moon: moon, t: t)
-                }
+        return ZStack(alignment: .topTrailing) {
+            Button(action: onTapCard) {
+                ZStack {
+                    Canvas { ctx, size in
+                        drawSkyLayers(ctx: &ctx, size: size, sky: sky, arc: arc, moon: moon, t: t)
+                    }
 
-                VStack(spacing: 12) {
-                    HStack(spacing: 8) {
-                        HStack(spacing: 5) {
-                            Image(systemName: arc.isDaytime ? "sun.max.fill" : "moon.stars.fill")
-                                .font(.system(size: 11, weight: .semibold))
-                            Text(theme.t(arc.phaseKey))
-                                .font(.system(size: 11 * theme.textScale, weight: .semibold))
-                                .lineLimit(1)
+                    VStack(spacing: 12) {
+                        HStack(spacing: 8) {
+                            HStack(spacing: 5) {
+                                Image(systemName: arc.isDaytime ? "sun.max.fill" : "moon.stars.fill")
+                                    .font(.system(size: 11, weight: .semibold))
+                                Text(theme.t(arc.phaseKey))
+                                    .font(.system(size: 11 * theme.textScale, weight: .semibold))
+                                    .lineLimit(1)
+                            }
+                            .foregroundStyle(Color.white.opacity(0.92))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(Capsule().fill(Color.black.opacity(0.24)))
+
+                            Spacer(minLength: 6)
                         }
-                        .foregroundStyle(Color.white.opacity(0.92))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Capsule().fill(Color.black.opacity(0.24)))
+
+                        Spacer(minLength: 36)
+
+                        VStack(spacing: 4) {
+                            Text(statusLabel(state: state, prayer: displayed))
+                                .font(.system(size: 12 * theme.textScale, weight: .semibold))
+                                .foregroundStyle(Color.white.opacity(0.84))
+                                .textCase(.uppercase)
+
+                            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                                Text(prayerDisplayName(displayed, place: appState.activePlace))
+                                    .font(.system(size: 26 * theme.textScale, weight: .heavy))
+                                    .foregroundStyle(.white)
+                                Text(prayerClock)
+                                    .font(.system(size: 16 * theme.textScale, weight: .semibold))
+                                    .foregroundStyle(Color(argb: sky.colors.orbGlow))
+                            }
+
+                            RollingCountdownText(text: countdownText, fontSize: 38 * theme.textScale, color: .white)
+                                .shadow(color: Color.black.opacity(0.35), radius: 8, x: 0, y: 2)
+
+                            if case .waitingForIqama(_, _, _, let progress) = state {
+                                GeometryReader { g in
+                                    ZStack(alignment: .leading) {
+                                        Capsule().fill(Color.white.opacity(0.22))
+                                        Capsule()
+                                            .fill(Color(argb: sky.colors.orbGlow))
+                                            .frame(width: g.size.width * CGFloat(progress))
+                                    }
+                                }
+                                .frame(height: 5)
+                                .padding(.horizontal, 28)
+                                .padding(.top, 4)
+                            }
+                        }
 
                         Spacer(minLength: 6)
 
-                        Button(action: onTapHijri) {
-                            HStack(spacing: 5) {
-                                Image(systemName: "calendar")
-                                    .font(.system(size: 11, weight: .semibold))
-                                Text(hijriText)
-                                    .font(.system(size: 11 * theme.textScale, weight: .bold))
-                                    .lineLimit(1)
-                            }
-                            .foregroundStyle(Color(argb: sky.colors.orbCore))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(Capsule().fill(Color.black.opacity(0.28)))
+                        HStack {
+                            Text(gregorianText)
+                                .font(.system(size: 11.5 * theme.textScale, weight: .medium))
+                                .foregroundStyle(Color.white.opacity(0.78))
+                            Spacer()
+                            Image(systemName: theme.isRTL ? "chevron.left" : "chevron.right")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundStyle(Color.white.opacity(0.65))
                         }
-                        .buttonStyle(.plain)
+                        .padding(.top, 4)
                     }
-
-                    Spacer(minLength: 36)
-
-                    VStack(spacing: 4) {
-                        Text(statusLabel(state: state, prayer: displayed))
-                            .font(.system(size: 12 * theme.textScale, weight: .semibold))
-                            .foregroundStyle(Color.white.opacity(0.84))
-                            .textCase(.uppercase)
-
-                        HStack(alignment: .firstTextBaseline, spacing: 10) {
-                            Text(prayerDisplayName(displayed, place: appState.activePlace))
-                                .font(.system(size: 26 * theme.textScale, weight: .heavy))
-                                .foregroundStyle(.white)
-                            Text(prayerClock)
-                                .font(.system(size: 16 * theme.textScale, weight: .semibold))
-                                .foregroundStyle(Color(argb: sky.colors.orbGlow))
-                        }
-
-                        RollingCountdownText(text: countdownText, fontSize: 38 * theme.textScale, color: .white)
-                            .shadow(color: Color.black.opacity(0.35), radius: 8, x: 0, y: 2)
-
-                        if case .waitingForIqama(_, _, _, let progress) = state {
-                            GeometryReader { g in
-                                ZStack(alignment: .leading) {
-                                    Capsule().fill(Color.white.opacity(0.22))
-                                    Capsule()
-                                        .fill(Color(argb: sky.colors.orbGlow))
-                                        .frame(width: g.size.width * CGFloat(progress))
-                                }
-                            }
-                            .frame(height: 5)
-                            .padding(.horizontal, 28)
-                            .padding(.top, 4)
-                        }
-                    }
-
-                    Spacer(minLength: 6)
-
-                    HStack {
-                        Text(gregorianText)
-                            .font(.system(size: 11.5 * theme.textScale, weight: .medium))
-                            .foregroundStyle(Color.white.opacity(0.78))
-                        Spacer()
-                        Image(systemName: theme.isRTL ? "chevron.left" : "chevron.right")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(Color.white.opacity(0.65))
-                    }
-                    .padding(.top, 4)
+                    .padding(18)
                 }
-                .padding(18)
             }
-            .frame(minHeight: 272)
-            .clipShape(shape)
-            .overlay {
-                shape.strokeBorder(
-                    LinearGradient(
-                        colors: [Color(argb: sky.colors.cardBorderTop), Color(argb: sky.colors.cardBorderBottom)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ),
-                    lineWidth: 1.2
-                )
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("prayer_sky_card")
+
+            Button(action: onTapHijri) {
+                HStack(spacing: 5) {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 11, weight: .semibold))
+                    Text(hijriText)
+                        .font(.system(size: 11 * theme.textScale, weight: .bold))
+                        .lineLimit(1)
+                }
+                .foregroundStyle(Color(argb: sky.colors.orbCore))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(Capsule().fill(Color.black.opacity(0.28)))
             }
-            .shadow(color: Color.black.opacity(theme.isDark ? 0.42 : 0.18), radius: 18, x: 0, y: 9)
+            .buttonStyle(.plain)
+            .padding(.top, 18)
+            .padding(.trailing, 18)
         }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("prayer_sky_card")
+        .frame(minHeight: 272)
+        .clipShape(shape)
+        .overlay {
+            shape.strokeBorder(
+                LinearGradient(
+                    colors: [Color(argb: sky.colors.cardBorderTop), Color(argb: sky.colors.cardBorderBottom)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                ),
+                lineWidth: 1.2
+            )
+        }
+        .shadow(color: Color.black.opacity(theme.isDark ? 0.42 : 0.18), radius: 18, x: 0, y: 9)
     }
 
     private func prayerDisplayName(_ entry: PrayerTimeEntry, place: Place) -> String {

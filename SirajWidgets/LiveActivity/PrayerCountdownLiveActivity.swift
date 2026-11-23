@@ -12,6 +12,8 @@ struct PrayerCountdownLiveActivity: Widget {
             let gold = Color(argb: palette.gold)
             let range = safeRange(start: context.state.intervalStart, end: context.state.nextPrayerTime)
 
+            let sep = context.state.hijriShort.range(of: #"\p{Arabic}"#, options: .regularExpression) != nil ? "، " : " · "
+
             HStack(spacing: 14) {
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
@@ -25,7 +27,7 @@ struct PrayerCountdownLiveActivity: Widget {
                     }
                     Text(context.state.nextPrayerTitle)
                         .font(.system(size: 20, weight: .bold))
-                    Text("\(context.state.formattedClock) · \(context.state.hijriShort)")
+                    Text("\(context.state.formattedClock)\(sep)\(context.state.hijriShort)")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -111,10 +113,8 @@ struct PrayerCountdownLiveActivity: Widget {
     }
 
     private func safeRange(start: Date, end: Date) -> ClosedRange<Date> {
-        let now = Date()
-        let safeEnd = max(now.addingTimeInterval(60), end)
-        let safeStart = min(start, safeEnd.addingTimeInterval(-60))
-        return safeStart...safeEnd
+        let safeStart = min(start, end)
+        return safeStart...end
     }
 }
 #endif

@@ -15,6 +15,11 @@ final class AdhanAudioEngine: NSObject, AVAudioPlayerDelegate {
     var volume: Double = 0.85
 
     private var player: AVAudioPlayer?
+    private var previewToken: UUID?
+
+    private enum ExportError: Error {
+        case converterUnavailable
+    }
 
     private var audioStorageDir: URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -81,14 +86,15 @@ final class AdhanAudioEngine: NSObject, AVAudioPlayerDelegate {
             stop()
             return
         }
+        let token = UUID()
+        previewToken = token
         if let url = localAudioURL(for: voice) {
             startPlayback(url: url, voiceId: voice.id, isFullAdhan: false, volume: volume ?? self.volume)
         } else {
             Task {
                 await downloadVoice(voice)
-                if let url = localAudioURL(for: voice) {
-                    startPlayback(url: url, voiceId: voice.id, isFullAdhan: false, volume: volume ?? self.volume)
-                }
+                guard previewToken == token, let url = localAudioURL(for: voice) else { return }
+                startPlayback(url: url, voiceId: voice.id, isFullAdhan: false, volume: volume ?? self.volume)
             }
         }
     }
@@ -116,6 +122,7 @@ final class AdhanAudioEngine: NSObject, AVAudioPlayerDelegate {
     }
 
     func stop() {
+        previewToken = nil
         player?.stop()
         player = nil
         playingVoiceId = nil
@@ -216,75 +223,78 @@ final class AdhanAudioEngine: NSObject, AVAudioPlayerDelegate {
             channels: 1,
             interleaved: true
         ) else {
-            return
+            throw ExportError.converterUnavailable
         }
 
         let processingFormat = inputFile.processingFormat
         guard let converter = AVAudioConverter(from: processingFormat, to: targetFormat) else {
-            return
+            throw ExportError.converterUnavailable
         }
 
         let tmpURL = destURL.appendingPathExtension("tmp.caf")
         try? FileManager.default.removeItem(at: tmpURL)
 
-        let outFile = try AVAudioFile(
-            forWriting: tmpURL,
-            settings: targetFormat.settings,
-            commonFormat: .pcmFormatInt16,
-            interleaved: true
-        )
+        // Close AVAudioFile before moving so the CAF header is flushed cleanly.
+        do {
+            let outFile = try AVAudioFile(
+                forWriting: tmpURL,
+                settings: targetFormat.settings,
+                commonFormat: .pcmFormatInt16,
+                interleaved: true
+            )
 
-        let maxOutFrames = AVAudioFramePosition(maxSeconds * targetSampleRate)
-        let fadeFrames = AVAudioFramePosition(fadeSeconds * targetSampleRate)
-        var writtenFrames: AVAudioFramePosition = 0
-        let chunkFrames: AVAudioFrameCount = 4096
+            let maxOutFrames = AVAudioFramePosition(maxSeconds * targetSampleRate)
+            let fadeFrames = AVAudioFramePosition(fadeSeconds * targetSampleRate)
+            var writtenFrames: AVAudioFramePosition = 0
+            let chunkFrames: AVAudioFrameCount = 4096
 
-        while writtenFrames < maxOutFrames {
-            let remaining = AVAudioFrameCount(min(AVAudioFramePosition(chunkFrames), maxOutFrames - writtenFrames))
-            guard let outBuffer = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: remaining) else { break }
+            while writtenFrames < maxOutFrames {
+                let remaining = AVAudioFrameCount(min(AVAudioFramePosition(chunkFrames), maxOutFrames - writtenFrames))
+                guard let outBuffer = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: remaining) else { break }
 
-            var hitEOF = false
-            var convertError: NSError?
-            let status = converter.convert(to: outBuffer, error: &convertError) { inPacketCount, outStatus in
-                guard let inBuf = AVAudioPCMBuffer(pcmFormat: processingFormat, frameCapacity: inPacketCount) else {
-                    outStatus.pointee = .endOfStream
-                    return nil
-                }
-                do {
-                    try inputFile.read(into: inBuf)
-                    if inBuf.frameLength == 0 {
+                var hitEOF = false
+                var convertError: NSError?
+                let status = converter.convert(to: outBuffer, error: &convertError) { inPacketCount, outStatus in
+                    guard let inBuf = AVAudioPCMBuffer(pcmFormat: processingFormat, frameCapacity: inPacketCount) else {
+                        outStatus.pointee = .endOfStream
+                        return nil
+                    }
+                    do {
+                        try inputFile.read(into: inBuf)
+                        if inBuf.frameLength == 0 {
+                            hitEOF = true
+                            outStatus.pointee = .endOfStream
+                            return nil
+                        }
+                        outStatus.pointee = .haveData
+                        return inBuf
+                    } catch {
                         hitEOF = true
                         outStatus.pointee = .endOfStream
                         return nil
                     }
-                    outStatus.pointee = .haveData
-                    return inBuf
-                } catch {
-                    hitEOF = true
-                    outStatus.pointee = .endOfStream
-                    return nil
                 }
-            }
 
-            if status == .error || outBuffer.frameLength == 0 {
-                break
-            }
+                if status == .error || outBuffer.frameLength == 0 {
+                    break
+                }
 
-            if let samples = outBuffer.int16ChannelData?[0] {
-                let count = Int(outBuffer.frameLength)
-                let fadeStart = max(0, maxOutFrames - fadeFrames)
-                for i in 0..<count {
-                    let pos = writtenFrames + AVAudioFramePosition(i)
-                    if pos >= fadeStart && fadeFrames > 0 {
-                        let gain = max(0.0, Double(maxOutFrames - pos) / Double(fadeFrames))
-                        samples[i] = Int16(Double(samples[i]) * gain)
+                if let samples = outBuffer.int16ChannelData?[0] {
+                    let count = Int(outBuffer.frameLength)
+                    let fadeStart = max(0, maxOutFrames - fadeFrames)
+                    for i in 0..<count {
+                        let pos = writtenFrames + AVAudioFramePosition(i)
+                        if pos >= fadeStart && fadeFrames > 0 {
+                            let gain = max(0.0, Double(maxOutFrames - pos) / Double(fadeFrames))
+                            samples[i] = Int16(Double(samples[i]) * gain)
+                        }
                     }
                 }
-            }
 
-            try outFile.write(from: outBuffer)
-            writtenFrames += AVAudioFramePosition(outBuffer.frameLength)
-            if hitEOF || status == .endOfStream { break }
+                try outFile.write(from: outBuffer)
+                writtenFrames += AVAudioFramePosition(outBuffer.frameLength)
+                if hitEOF || status == .endOfStream { break }
+            }
         }
 
         try? FileManager.default.removeItem(at: destURL)

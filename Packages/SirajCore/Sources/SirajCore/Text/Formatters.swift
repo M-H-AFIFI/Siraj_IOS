@@ -166,18 +166,31 @@ public enum HijriFormatter {
         return "\(d) \(monthName(hijri.month, lang: lang)) \(yearString(hijri.year, lang: lang, numeralSystem: numeralSystem))"
     }
 
+    private static let gregorianLock = NSLock()
+    private static var gregorianFormatters: [String: DateFormatter] = [:]
+
     public static func formatGregorian(_ date: CivilDate, lang: String, numeralSystem: String) -> String {
         let base = SirajLocalizer.baseLanguage(lang)
-        let df = DateFormatter()
-        df.calendar = Calendar(identifier: .gregorian)
-        df.timeZone = TimeZone(secondsFromGMT: 0)
-        switch base {
-        case "ar": df.locale = Locale(identifier: "ar_EG"); df.dateFormat = "EEEE، d MMMM yyyy"
-        case "tr": df.locale = Locale(identifier: "tr_TR"); df.dateFormat = "EEEE, d MMMM yyyy"
-        case "ur": df.locale = Locale(identifier: "ur_PK"); df.dateFormat = "EEEE، d MMMM yyyy"
-        default: df.locale = Locale(identifier: "en_GB"); df.dateFormat = "EEEE, d MMMM yyyy"
-        }
-        let text = df.string(from: date.utcMidnight)
+        let text: String = {
+            gregorianLock.lock()
+            defer { gregorianLock.unlock() }
+            let df: DateFormatter
+            if let cached = gregorianFormatters[base] {
+                df = cached
+            } else {
+                df = DateFormatter()
+                df.calendar = Calendar(identifier: .gregorian)
+                df.timeZone = TimeZone(secondsFromGMT: 0)
+                switch base {
+                case "ar": df.locale = Locale(identifier: "ar_EG"); df.dateFormat = "EEEE، d MMMM yyyy"
+                case "tr": df.locale = Locale(identifier: "tr_TR"); df.dateFormat = "EEEE, d MMMM yyyy"
+                case "ur": df.locale = Locale(identifier: "ur_PK"); df.dateFormat = "EEEE، d MMMM yyyy"
+                default: df.locale = Locale(identifier: "en_GB"); df.dateFormat = "EEEE, d MMMM yyyy"
+                }
+                gregorianFormatters[base] = df
+            }
+            return df.string(from: date.utcMidnight)
+        }()
         let eastern = DigitFormatter.useEastern(numeralSystem: numeralSystem, lang: base)
         return DigitFormatter.localizeDigits(DigitFormatter.toWestern(text), eastern: eastern, lang: base)
     }

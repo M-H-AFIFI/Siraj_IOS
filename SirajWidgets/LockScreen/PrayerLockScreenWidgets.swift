@@ -41,18 +41,18 @@ private struct PrayerLockScreenView: View {
     var body: some View {
         let name = WidgetDataLoader.t(entry.nextPrayer.type.stringKey, lang: entry.language)
         let clock = WidgetDataLoader.formatClock(entry.nextPrayer.time, snapshot: entry)
-        let end = max(entry.date.addingTimeInterval(60), entry.nextPrayer.time)
+        let end = max(entry.date, entry.nextPrayer.time)
         let range = entry.date...end
 
         switch family {
         case .accessoryCircular:
             Gauge(value: entry.progressToNext) {
-                Text(String(name.prefix(3)))
-                    .font(.system(size: 10, weight: .bold))
+                Image(systemName: "sun.horizon.fill")
             } currentValueLabel: {
                 Text(clock)
                     .font(.system(size: 11, weight: .bold))
-                    .minimumScaleFactor(0.6)
+                    .minimumScaleFactor(0.55)
+                    .lineLimit(1)
             }
             .gaugeStyle(.accessoryCircular)
             .widgetAccentable()

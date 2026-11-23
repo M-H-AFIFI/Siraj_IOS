@@ -106,7 +106,7 @@ struct AdhanVoicePickerView: View {
         let failed = audioEngine.failedVoiceIds.contains(voice.id)
         let playing = audioEngine.playingVoiceId == voice.id && !audioEngine.isPlayingFullAdhan
         let sizeMB = max(0.1, Double(voice.estimatedSizeBytes) / 1_048_576.0)
-        let sizeLabel = theme.digits(String(format: "%.1f MB", sizeMB))
+        let sizeLabel = theme.tf("rdl_unit_mb", theme.digits(String(format: "%.1f", sizeMB)))
 
         return HStack(spacing: 12) {
             Button(action: onSelect) {

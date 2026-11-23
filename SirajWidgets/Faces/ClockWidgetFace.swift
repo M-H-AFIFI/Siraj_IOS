@@ -38,16 +38,18 @@ struct ClockWidgetProvider: AppIntentTimelineProvider {
         let settings = WidgetDataLoader.loadSettings()
         let style = configuration.style.model
 
-        // Analog dials advance cleanly on 5-minute ticks; digital faces use live system time.
+        // Digital faces advance per minute for an hour; analog dials tick every 5 minutes.
         var dates: [Date] = []
+        let cal = Calendar.current
+        let base = cal.date(bySetting: .second, value: 0, of: now) ?? now
         if style.isDial {
-            let cal = Calendar.current
-            let base = cal.date(bySetting: .second, value: 0, of: now) ?? now
             for i in 0..<24 {
                 dates.append(base.addingTimeInterval(TimeInterval(i * 5 * 60)))
             }
         } else {
-            dates = WidgetDataLoader.timelineDates(from: now, settings: settings, include15MinTicks: false)
+            for i in 0..<60 {
+                dates.append(base.addingTimeInterval(TimeInterval(i * 60)))
+            }
         }
 
         let entries = dates.map { d in
@@ -97,10 +99,10 @@ private struct ClockWidgetBody: View {
                 AnalogClockDialView(date: entry.date, timeZone: snap.place.timeZone, clockStyle: entry.clockStyle, style: style)
                     .frame(width: 78, height: 78)
             } else {
-                Text(entry.date, style: .time)
+                Text(WidgetDataLoader.formatClock(entry.date, snapshot: snap))
                     .font(digitalFont(for: entry.clockStyle))
                     .foregroundStyle(style.primaryText)
-                    .minimumScaleFactor(0.6)
+                    .minimumScaleFactor(0.55)
                     .lineLimit(1)
                     .widgetAccentable()
             }

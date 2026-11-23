@@ -39,7 +39,7 @@ enum WidgetDataLoader {
         let moon = MoonPhase.at(date)
         let occasion = IslamicOccasions.upcoming(from: civil, calendar: cal).first
 
-        let next = day.next ?? day[.fajr]
+        let next = PrayerCalculator.nextUpcoming(place: place, settings: snap.calculationSettings, now: date)
         let prev = previousEntry(in: day, before: date, place: place, calc: snap.calculationSettings)
         let progress: Double = {
             guard let prev else { return 0.5 }
@@ -74,10 +74,15 @@ enum WidgetDataLoader {
 
         for offset in 0...1 {
             let entries = PrayerCalculator.raw(place: place, date: today.addingDays(offset), settings: settings.calculationSettings)
-            for e in entries where e.time > now && e.time < now.addingTimeInterval(26 * 3600) {
-                dates.insert(Int64(e.time.timeIntervalSince1970) + 1)
+            for e in entries {
+                if e.time > now && e.time < now.addingTimeInterval(26 * 3600) {
+                    dates.insert(Int64(e.time.timeIntervalSince1970) + 1)
+                }
                 if let iq = e.iqama, iq > now && iq < now.addingTimeInterval(26 * 3600) {
                     dates.insert(Int64(iq.timeIntervalSince1970) + 1)
+                }
+                if e.windowEnd > now && e.windowEnd < now.addingTimeInterval(26 * 3600) {
+                    dates.insert(Int64(e.windowEnd.timeIntervalSince1970) + 1)
                 }
             }
         }

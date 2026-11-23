@@ -13,6 +13,7 @@ final class AppState {
     var selectedTab: SirajTab = .prayer
     var pinnedSkyTime: Date?
     var activeAdhanAlert: PrayerType?
+    var isAdhanAlertTest = false
     var requestedRoute: String?
     var prayerDay: PrayerDay
     var hijriDate: HijriDate
@@ -66,15 +67,43 @@ final class AppState {
     }
 
     func updateSettings(_ mutate: (inout SettingsSnapshot) -> Void) {
+        let old = settings
         var copy = settings
         mutate(&copy)
+        guard copy != old else { return }
         settings = copy
         if !isUITesting {
             store.saveSettings(copy)
         }
         refreshPrayers()
-        WidgetCenter.shared.reloadAllTimelines()
-        onSettingsChangedForAlerts?(copy, activePlace)
+
+        let widgetsChanged = old.cachedLocation != copy.cachedLocation
+            || old.calculationSettings != copy.calculationSettings
+            || old.hijriMethod != copy.hijriMethod
+            || old.hijriAdjustment != copy.hijriAdjustment
+            || old.themePalette != copy.themePalette
+            || old.themeMode != copy.themeMode
+            || old.isAmoled != copy.isAmoled
+            || old.language != copy.language
+            || old.hourFormat != copy.hourFormat
+            || old.numeralSystem != copy.numeralSystem
+        if widgetsChanged {
+            WidgetCenter.shared.reloadAllTimelines()
+        }
+
+        let alertsChanged = old.alertScheduleConfig != copy.alertScheduleConfig
+            || old.cachedLocation != copy.cachedLocation
+            || old.azanSound != copy.azanSound
+            || old.fajrAdhanEnabled != copy.fajrAdhanEnabled
+            || old.fajrAdhanVoice != copy.fajrAdhanVoice
+            || old.language != copy.language
+            || old.hourFormat != copy.hourFormat
+            || old.numeralSystem != copy.numeralSystem
+            || old.liveActivityEnabled != copy.liveActivityEnabled
+            || old.themePalette != copy.themePalette
+        if alertsChanged {
+            onSettingsChangedForAlerts?(copy, activePlace)
+        }
     }
 
     func completeOnboarding() {

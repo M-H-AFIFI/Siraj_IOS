@@ -92,12 +92,15 @@ struct AdhanAlertView: View {
                         Image(systemName: "speaker.fill")
                             .font(.system(size: 14))
                             .foregroundStyle(Color.white.opacity(0.72))
-                        Slider(value: $sliderVolume, in: 0.1...1.0)
-                            .tint(Color(argb: spec.skyTheme.orbCore))
-                            .onChange(of: sliderVolume) { _, val in
-                                audioEngine.setVolume(val)
-                                appState.updateSettings { $0.adhanVolume = val }
+                        Slider(value: $sliderVolume, in: 0.1...1.0) { editing in
+                            if !editing {
+                                appState.updateSettings { $0.adhanVolume = sliderVolume }
                             }
+                        }
+                        .tint(Color(argb: spec.skyTheme.orbCore))
+                        .onChange(of: sliderVolume) { _, val in
+                            audioEngine.setVolume(val)
+                        }
                         Image(systemName: "speaker.wave.3.fill")
                             .font(.system(size: 14))
                             .foregroundStyle(Color.white.opacity(0.72))
@@ -131,11 +134,13 @@ struct AdhanAlertView: View {
         }
         .onAppear {
             sliderVolume = appState.settings.adhanVolume
-            if !appState.isUITesting {
+            let shouldPlay = appState.isAdhanAlertTest || appState.settings.azanReminderType.lowercased() == "azan"
+            if !appState.isUITesting && shouldPlay {
                 audioEngine.playFullAdhan(for: prayer, settings: appState.settings)
             }
         }
         .onDisappear {
+            appState.isAdhanAlertTest = false
             audioEngine.stop()
         }
     }

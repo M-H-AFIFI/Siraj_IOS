@@ -14,9 +14,13 @@ final class LiveActivityCoordinator {
             return
         }
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
-        guard let next = appState.prayerDay.next else { return }
 
         let now = appState.currentTime
+        let next = PrayerCalculator.nextUpcoming(
+            place: appState.activePlace,
+            settings: appState.settings.calculationSettings,
+            now: now
+        )
         let prevTime = appState.prayerDay.entries.last(where: { $0.time <= now })?.time
             ?? now.addingTimeInterval(-3600)
         let title = appState.localizer.string(next.type.stringKey, lang: appState.settings.language)

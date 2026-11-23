@@ -176,6 +176,28 @@ struct OnboardingLocationStep: View {
                 .buttonStyle(.plain)
                 .disabled(locationService.isLocating)
 
+                if let errKey = locationService.errorKey {
+                    HStack(spacing: 10) {
+                        Image(systemName: "location.slash.fill")
+                            .foregroundStyle(.orange)
+                        Text(theme.t(errKey))
+                            .font(theme.scaledFont(size: 13))
+                            .foregroundStyle(theme.onSurface)
+                        Spacer()
+                        if locationService.isPermissionDenied {
+                            Button(theme.t("open_settings")) {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                            .font(theme.scaledFont(size: 13, weight: .bold))
+                            .foregroundStyle(theme.primary)
+                        }
+                    }
+                    .padding(12)
+                    .sirajCardSurface(cornerRadius: 14)
+                }
+
                 TextField(theme.t("settings_search_city_hint"), text: $cityQuery)
                     .padding(13)
                     .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(theme.surfaceVariant))

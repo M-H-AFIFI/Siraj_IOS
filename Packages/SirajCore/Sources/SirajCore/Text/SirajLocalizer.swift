@@ -123,7 +123,8 @@ public final class SirajLocalizer: @unchecked Sendable {
         guard idx >= 0 && idx < args.count else { return "" }
         let value = args[idx]
         if parts.count == 2, parts[1].hasPrefix("."), parts[1].hasSuffix("f"),
-           let decimals = Int(parts[1].dropFirst().dropLast()) {
+           let rawDecimals = Int(parts[1].dropFirst().dropLast()) {
+            let decimals = min(10, max(0, rawDecimals))
             let num: Double?
             if let d = value as? Double { num = d }
             else if let f = value as? Float { num = Double(f) }

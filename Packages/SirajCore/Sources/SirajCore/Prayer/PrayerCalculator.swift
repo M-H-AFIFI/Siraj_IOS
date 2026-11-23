@@ -219,4 +219,13 @@ public enum PrayerCalculator {
     public static func today(place: Place, settings: CalculationSettings, now: Date) -> PrayerDay {
         day(place: place, date: place.today(at: now), settings: settings, now: now)
     }
+
+    public static func nextUpcoming(place: Place, settings: CalculationSettings, now: Date) -> PrayerTimeEntry {
+        let todayDate = place.today(at: now)
+        let entries = raw(place: place, date: todayDate, settings: settings)
+        if let upcoming = entries.first(where: { $0.time > now }) {
+            return upcoming.withIsNext(true)
+        }
+        return raw(place: place, date: todayDate.addingDays(1), settings: settings)[0].withIsNext(true)
+    }
 }

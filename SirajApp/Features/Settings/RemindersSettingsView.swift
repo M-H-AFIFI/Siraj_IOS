@@ -31,6 +31,7 @@ struct RemindersSettingsView: View {
     @State private var showVoicePicker = false
     @State private var showFajrPicker = false
     @State private var notificationsDenied = false
+    @State private var draftVolume: Double = 0.85
 
     private let suggestedItems: [SuggestedItem] = [
         SuggestedItem(id: "duha", icon: "sun.max.fill", titleKey: "reminders_duha_title", descKey: "reminders_duha_desc"),
@@ -119,21 +120,19 @@ struct RemindersSettingsView: View {
                                     .font(theme.scaledFont(size: 14.5, weight: .semibold))
                                     .foregroundStyle(theme.onSurface)
                                 Spacer()
-                                Text(theme.digits("\(Int((appState.settings.adhanVolume * 100).rounded()))%"))
+                                Text(theme.digits("\(Int((draftVolume * 100).rounded()))%"))
                                     .font(theme.scaledFont(size: 13, weight: .bold))
                                     .foregroundStyle(theme.primary)
                             }
-                            Slider(
-                                value: Binding(
-                                    get: { appState.settings.adhanVolume },
-                                    set: { val in
-                                        audioEngine.setVolume(val)
-                                        appState.updateSettings { $0.adhanVolume = val }
-                                    }
-                                ),
-                                in: 0.1...1.0
-                            )
+                            Slider(value: $draftVolume, in: 0.1...1.0) { editing in
+                                if !editing {
+                                    appState.updateSettings { $0.adhanVolume = draftVolume }
+                                }
+                            }
                             .tint(theme.primary)
+                            .onChange(of: draftVolume) { _, val in
+                                audioEngine.setVolume(val)
+                            }
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -166,6 +165,7 @@ struct RemindersSettingsView: View {
                         Divider().padding(.leading, 16)
 
                         Button {
+                            appState.isAdhanAlertTest = true
                             appState.activeAdhanAlert = appState.prayerDay.next?.type ?? .fajr
                         } label: {
                             HStack(spacing: 8) {
@@ -409,6 +409,7 @@ struct RemindersSettingsView: View {
             newCustomReminderSheet
         }
         .task {
+            draftVolume = appState.settings.adhanVolume
             let status = await scheduler.authorizationStatus()
             notificationsDenied = (status == .denied)
         }
@@ -498,13 +499,9 @@ struct RemindersSettingsView: View {
 
     private func formatTimeLabel(_ hm: String) -> String {
         let (h, m) = parseHM(hm)
-        var c = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-        c.hour = h
-        c.minute = m
-        let d = Calendar.current.date(from: c) ?? Date()
         return TimeFormatter.formatTime(
-            d,
-            timeZone: .current,
+            hour: h,
+            minute: m,
             hourFormat: appState.settings.hourFormat,
             numeralSystem: appState.settings.numeralSystem,
             lang: theme.language

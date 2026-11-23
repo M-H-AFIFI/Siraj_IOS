@@ -160,9 +160,9 @@ struct WidgetGalleryView: View {
                 ZStack {
                     Circle().stroke(.white.opacity(0.25), lineWidth: 5)
                     Circle().trim(from: 0, to: 0.65).stroke(.white, style: StrokeStyle(lineWidth: 5, lineCap: .round)).rotationEffect(.degrees(-90))
-                    VStack(spacing: 1) {
-                        Text(String(theme.t(next.type.stringKey).prefix(3))).font(.system(size: 9, weight: .bold))
-                        Text(clock).font(.system(size: 9.5, weight: .heavy)).minimumScaleFactor(0.7).lineLimit(1)
+                    VStack(spacing: 2) {
+                        Image(systemName: "sun.horizon.fill").font(.system(size: 10))
+                        Text(clock).font(.system(size: 9.5, weight: .heavy)).minimumScaleFactor(0.6).lineLimit(1)
                     }
                     .foregroundStyle(.white)
                 }
@@ -282,11 +282,12 @@ struct WidgetGalleryView: View {
             }
 
         case .spot:
+            let sep = theme.isRTL ? "، " : " · "
             VStack(spacing: 4) {
                 Text(arabicPrayerName(next.type))
                     .font(theme.amiriFont(size: 32))
                     .foregroundStyle(accent)
-                Text("\(formatTime(next.time)) · \(countdown)")
+                Text("\(formatTime(next.time))\(sep)\(countdown)")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(fg)
             }
@@ -350,7 +351,8 @@ struct WidgetGalleryView: View {
                 Text(HijriFormatter.format(appState.hijriDate, lang: theme.language, numeralSystem: appState.settings.numeralSystem))
                     .font(.system(size: 11.5, weight: .semibold))
                     .foregroundStyle(sub)
-                Text("\(theme.t(next.type.stringKey)) · \(formatTime(next.time))")
+                let sep = theme.isRTL ? "، " : " · "
+                Text("\(theme.t(next.type.stringKey))\(sep)\(formatTime(next.time))")
                     .font(.system(size: 12.5, weight: .bold))
                     .foregroundStyle(accent)
             }
@@ -396,12 +398,14 @@ struct WidgetGalleryView: View {
         case .date:
             let names = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
             let dayAr = names[((civil.weekdaySundayZero % 7) + 7) % 7]
+            let sep = theme.isRTL ? "، " : " · "
             VStack(spacing: 4) {
                 Text(dayAr).font(theme.amiriFont(size: 30)).foregroundStyle(accent)
-                Text("\(hijriLine) · \(gregLine)").font(.system(size: 11.5)).foregroundStyle(sub).lineLimit(1)
+                Text("\(hijriLine)\(sep)\(gregLine)").font(.system(size: 11.5)).foregroundStyle(sub).lineLimit(1)
             }
 
         case .moon:
+            let sep = theme.isRTL ? "، " : " · "
             HStack(spacing: 14) {
                 Image("ic_siraj_full_moon")
                     .renderingMode(.template)
@@ -410,8 +414,8 @@ struct WidgetGalleryView: View {
                     .frame(width: 44, height: 44)
                     .foregroundStyle(accent)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(moon.name.rawValue).font(.system(size: 15, weight: .bold)).foregroundStyle(fg)
-                    Text("\(theme.digits("\(Int((moon.illumination * 100).rounded()))%")) · \(hijriLine)")
+                    Text(theme.t(moon.name.stringKey)).font(.system(size: 15, weight: .bold)).foregroundStyle(fg)
+                    Text("\(theme.digits("\(Int((moon.illumination * 100).rounded()))%"))\(sep)\(hijriLine)")
                         .font(.system(size: 12))
                         .foregroundStyle(sub)
                 }

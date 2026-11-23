@@ -6,8 +6,9 @@ import SirajCore
 @MainActor
 @Observable
 final class LocationService: NSObject, CLLocationManagerDelegate {
-    var isLocating: Bool = false
-    var errorMessage: String?
+    var isLocating = false
+    var errorKey: String?
+    var isPermissionDenied = false
 
     private let manager = CLLocationManager()
     private var continuation: CheckedContinuation<Place?, Never>?
@@ -19,7 +20,9 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
     }
 
     func requestCurrentPlace() async -> Place? {
-        errorMessage = nil
+        errorKey = nil
+        isPermissionDenied = false
+        finish(with: nil)
         isLocating = true
         defer { isLocating = false }
 
@@ -31,7 +34,8 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
             case .authorizedWhenInUse, .authorizedAlways:
                 manager.requestLocation()
             case .denied, .restricted:
-                self.errorMessage = "location_permission_denied"
+                self.isPermissionDenied = true
+                self.errorKey = "location_permission_needed_title"
                 self.finish(with: nil)
             @unknown default:
                 self.finish(with: nil)
@@ -53,7 +57,8 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
             case .authorizedWhenInUse, .authorizedAlways:
                 self.manager.requestLocation()
             case .denied, .restricted:
-                self.errorMessage = "location_permission_denied"
+                self.isPermissionDenied = true
+                self.errorKey = "location_permission_needed_title"
                 self.finish(with: nil)
             default:
                 break
@@ -93,7 +98,7 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
 
     nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         Task { @MainActor in
-            self.errorMessage = error.localizedDescription
+            self.errorKey = "error_title"
             self.finish(with: nil)
         }
     }

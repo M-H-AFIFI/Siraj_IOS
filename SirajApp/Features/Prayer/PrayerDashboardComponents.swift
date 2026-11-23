@@ -164,7 +164,7 @@ struct IslamicEventsBanner: View {
                     .foregroundStyle(theme.onSurfaceVariant)
             }
             Spacer()
-            Text(occasion.isToday ? theme.t("today") : theme.digits("\(occasion.daysUntil)d"))
+            Text(occasion.isToday ? theme.t("today") : theme.tf("fasting_in_days", theme.digits("\(occasion.daysUntil)")))
                 .font(theme.scaledFont(size: 12.5, weight: .bold))
                 .foregroundStyle(theme.onPrimaryContainer)
                 .padding(.horizontal, 10)
@@ -229,7 +229,8 @@ struct DailyAyahCard: View {
             }
         }()
         let surahTitle = theme.isRTL ? verse.surahNameAr : verse.surahNameEn
-        let ref = "\(surahTitle) · \(theme.digits("\(verse.surahNumber):\(verse.ayahNumber)"))"
+        let sep = theme.isRTL ? "، " : " · "
+        let ref = "\(surahTitle)\(sep)\(theme.digits("\(verse.surahNumber):\(verse.ayahNumber)"))"
         let shareText = meaning.isEmpty ? "\(verse.textAr)\n- \(ref)" : "\(verse.textAr)\n\n\(meaning)\n- \(ref)"
 
         VStack(alignment: .leading, spacing: 14) {
@@ -301,12 +302,14 @@ struct DailyInspirationCard: View {
                     .background(Capsule().fill(theme.primary.opacity(0.12)))
             }
 
-            Text(hadith.textAr)
-                .font(theme.amiriFont(size: 19))
-                .foregroundStyle(theme.onSurface)
-                .multilineTextAlignment(.trailing)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .environment(\.layoutDirection, .rightToLeft)
+            if !hadith.textAr.isEmpty {
+                Text(hadith.textAr)
+                    .font(theme.amiriFont(size: 19))
+                    .foregroundStyle(theme.onSurface)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .environment(\.layoutDirection, .rightToLeft)
+            }
 
             if theme.settings.isShowTranslation && !translation.isEmpty {
                 Text(translation)
@@ -315,7 +318,8 @@ struct DailyInspirationCard: View {
             }
 
             HStack {
-                Text([narrator, ref].filter { !$0.isEmpty }.joined(separator: " · "))
+                let sep = theme.isRTL ? "، " : " · "
+                Text([narrator, ref].filter { !$0.isEmpty }.joined(separator: sep))
                     .font(theme.scaledFont(size: 12, weight: .semibold))
                     .foregroundStyle(theme.gold)
                 Spacer()
@@ -371,7 +375,8 @@ struct HijriDateSheetView: View {
                         Text(gregText)
                             .font(theme.scaledFont(size: 14))
                             .foregroundStyle(theme.onSurfaceVariant)
-                        Text("\(moon.name.rawValue) · \(illumPct)")
+                        let sep = theme.isRTL ? "، " : " · "
+                        Text("\(theme.t(moon.name.stringKey))\(sep)\(illumPct)")
                             .font(theme.scaledFont(size: 12.5, weight: .semibold))
                             .foregroundStyle(theme.primary)
                     }
@@ -406,7 +411,7 @@ struct HijriDateSheetView: View {
                                     .font(theme.scaledFont(size: 14.5, weight: .semibold))
                                     .foregroundStyle(theme.onSurface)
                                 Spacer()
-                                Text(item.isToday ? theme.t("today") : theme.digits("\(item.daysUntil)d"))
+                                Text(item.isToday ? theme.t("today") : theme.tf("fasting_in_days", theme.digits("\(item.daysUntil)")))
                                     .font(theme.scaledFont(size: 13, weight: .bold))
                                     .foregroundStyle(theme.primary)
                             }
