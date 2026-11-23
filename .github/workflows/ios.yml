@@ -7,21 +7,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  core-tests:
-    name: SirajCore Unit & Parity Tests
+  build-and-test:
+    name: Test SirajCore & Build iOS App
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Run SirajCore tests
         run: swift test --package-path Packages/SirajCore
-
-  ios-build:
-    name: Build Siraj iOS App
-    needs: core-tests
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
 
       - name: Install XcodeGen
         run: brew install xcodegen

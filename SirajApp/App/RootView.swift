@@ -21,10 +21,17 @@ public struct RootView: View {
                 Group {
                     switch appState.selectedTab {
                     case .prayer:
-                        MilestonePlaceholderView(
-                            iconAsset: "ic_nav_prayer",
-                            titleKey: "nav_prayer",
-                            descriptionKey: "onboarding_welcome_subtitle"
+                        PrayerDashboardView(
+                            appState: appState,
+                            locationService: locationService,
+                            onOpenReminders: {
+                                appState.requestedRoute = "reminders"
+                                appState.selectedTab = .settings
+                            },
+                            onOpenWidgets: {
+                                appState.requestedRoute = "widgets"
+                                appState.selectedTab = .settings
+                            }
                         )
                     case .quran:
                         MilestonePlaceholderView(
