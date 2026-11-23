@@ -78,12 +78,30 @@ targets:
     dependencies:
       - package: SirajCore
 
+  SirajUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: SirajUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.siiraj.app.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: Siraj
+        TARGETED_DEVICE_FAMILY: "1,2"
+    dependencies:
+      - target: Siraj
+
 schemes:
   Siraj:
     build:
       targets:
         Siraj: all
         SirajWidgets: all
+        SirajUITests: [test]
+    test:
+      targets:
+        - SirajUITests
   SirajSideload:
     build:
       targets:

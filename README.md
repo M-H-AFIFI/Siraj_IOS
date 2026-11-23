@@ -16,4 +16,4 @@ swift test --package-path Packages/SirajCore
 open Siraj.xcodeproj
 ```
 
-Pushes to `main` run the macOS GitHub Actions workflow to run `SirajCore` tests and build both `Siraj` (with `SirajWidgets`) and `SirajSideload` (a main-app-only scheme that can be signed with a free Apple ID).
+Pushes to `main` run the macOS GitHub Actions workflow, which runs `SirajCore` tests, captures iPhone Simulator screenshots, and uploads unsigned `Siraj-Sideload.ipa` (main app only, for signing with a free Apple ID) and `Siraj-Full.ipa` (with `SirajWidgets` and App Group).

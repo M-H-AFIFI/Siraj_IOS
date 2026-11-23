@@ -118,7 +118,7 @@ struct SettingsHubView: View {
                 }
             }
         }
-        .onAppear {
+        .task {
             consumeRequestedRoute()
         }
         .onChange(of: appState.requestedRoute) { _, _ in
