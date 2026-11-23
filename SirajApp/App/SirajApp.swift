@@ -8,6 +8,7 @@ struct SirajApp: App {
     @State private var locationService = LocationService()
     @State private var audioEngine = AdhanAudioEngine()
     @State private var scheduler = AdhanNotificationScheduler()
+    @State private var liveActivity = LiveActivityCoordinator()
 
     var body: some Scene {
         WindowGroup {
@@ -25,6 +26,7 @@ struct SirajApp: App {
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active, !appState.isUITesting else { return }
                 appState.refreshPrayers()
+                liveActivity.sync(appState: appState)
                 Task {
                     await scheduler.reschedule(
                         settings: appState.settings,
@@ -50,6 +52,7 @@ struct SirajApp: App {
         }
         appState.onSettingsChangedForAlerts = { settings, place in
             guard !appState.isUITesting else { return }
+            liveActivity.sync(appState: appState)
             Task {
                 await scheduler.reschedule(
                     settings: settings,
@@ -61,6 +64,8 @@ struct SirajApp: App {
         }
 
         guard !appState.isUITesting else { return }
+
+        liveActivity.sync(appState: appState)
 
         scheduler.configure(localizer: appState.localizer, language: appState.settings.language)
         scheduler.registerBackgroundRefresh {

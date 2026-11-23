@@ -21,6 +21,25 @@ settings:
     GENERATE_INFOPLIST_FILE: NO
 
 targets:
+  SirajWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: SirajWidgets
+        excludes:
+          - "**/*.entitlements"
+          - "Info.plist"
+      - path: SirajApp/Resources/Data
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.siiraj.app.widgets
+        INFOPLIST_FILE: SirajWidgets/Info.plist
+        CODE_SIGN_ENTITLEMENTS: SirajWidgets/SirajWidgets.entitlements
+        SKIP_INSTALL: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+    dependencies:
+      - package: SirajCore
+
   Siraj:
     type: application
     platform: iOS
@@ -37,6 +56,8 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
     dependencies:
       - package: SirajCore
+      - target: SirajWidgets
+        embed: true
 
   SirajSideload:
     type: application
@@ -62,6 +83,7 @@ schemes:
     build:
       targets:
         Siraj: all
+        SirajWidgets: all
   SirajSideload:
     build:
       targets:

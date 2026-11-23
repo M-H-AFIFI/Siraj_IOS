@@ -112,11 +112,7 @@ struct SettingsHubView: View {
                 case .language:
                     LanguageFormatSettingsView(appState: appState)
                 case .widgets:
-                    MilestonePlaceholderView(
-                        iconAsset: "ic_siraj_emblem",
-                        titleKey: "widget_settings_title",
-                        descriptionKey: "ios_widget_gallery_hint"
-                    )
+                    WidgetGalleryView(appState: appState)
                 case .about:
                     AboutSirajView()
                 }
