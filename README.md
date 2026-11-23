@@ -1,6 +1,6 @@
 # Siraj for iOS
 
-An offline-first Islamic companion for iPhone, built in Swift and SwiftUI.
+Islamic companion for iPhone, built in Swift and SwiftUI.
 
 ## What is included
 
