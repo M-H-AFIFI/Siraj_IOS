@@ -5,13 +5,27 @@ struct RootView: View {
     @Environment(\.sirajTheme) private var theme
     @Bindable var appState: AppState
     let locationService: LocationService
+    let audioEngine: AdhanAudioEngine
+    let scheduler: AdhanNotificationScheduler
 
     var body: some View {
         ZStack(alignment: .bottom) {
             SirajRootBackdrop(activePrayer: appState.prayerDay.next?.type)
 
             if !appState.onboardingComplete {
-                OnboardingView(appState: appState, locationService: locationService)
+                OnboardingView(
+                    appState: appState,
+                    locationService: locationService,
+                    onPreviewVoice: { voiceId in
+                        audioEngine.playPreview(voiceId: voiceId, volume: appState.settings.adhanVolume)
+                    },
+                    onStopPreview: {
+                        audioEngine.stop()
+                    },
+                    onRequestNotifications: {
+                        _ = await scheduler.requestAuthorization()
+                    }
+                )
             } else {
                 Group {
                     switch appState.selectedTab {
@@ -47,10 +61,11 @@ struct RootView: View {
                             descriptionKey: "ios_milestone_azkar_desc"
                         )
                     case .settings:
-                        MilestonePlaceholderView(
-                            iconAsset: "ic_siraj_emblem",
-                            titleKey: "nav_settings",
-                            descriptionKey: "settings_appearance"
+                        SettingsHubView(
+                            appState: appState,
+                            locationService: locationService,
+                            audioEngine: audioEngine,
+                            scheduler: scheduler
                         )
                     }
                 }
@@ -58,6 +73,16 @@ struct RootView: View {
 
                 FloatingTabBar(selectedTab: $appState.selectedTab)
             }
+        }
+        .fullScreenCover(item: $appState.activeAdhanAlert) { prayer in
+            AdhanAlertView(
+                prayer: prayer,
+                appState: appState,
+                audioEngine: audioEngine,
+                onDismiss: {
+                    appState.activeAdhanAlert = nil
+                }
+            )
         }
     }
 }

@@ -98,7 +98,7 @@ struct PrayerTimesDetailView: View {
             .padding(.bottom, 100)
         }
         .background(SirajRootBackdrop(activePrayer: appState.prayerDay.next?.type))
-        .navigationTitle(theme.t("prayer_times"))
+        .navigationTitle(theme.t("settings_prayer_calculation"))
         .navigationBarTitleDisplayMode(.inline)
     }
 

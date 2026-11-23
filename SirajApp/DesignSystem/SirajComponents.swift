@@ -202,10 +202,10 @@ struct MihrabTimePickerSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(theme.t("cancel")) { dismiss() }
+                    Button(theme.t("settings_cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(theme.t("save")) {
+                    Button(theme.t("settings_save")) {
                         let comps = Calendar.current.dateComponents([.hour, .minute], from: selectedDate)
                         onSave(comps.hour ?? 9, comps.minute ?? 0)
                         dismiss()

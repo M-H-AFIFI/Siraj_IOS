@@ -28,7 +28,7 @@ struct OnboardingWelcomeStep: View {
                         .font(theme.scaledFont(size: 32, weight: .bold))
                         .foregroundStyle(theme.onBackground)
 
-                    Text(theme.t("onboarding_welcome_subtitle"))
+                    Text(theme.t("onb_easy_lang_desc"))
                         .font(theme.scaledFont(size: 16))
                         .foregroundStyle(theme.onSurfaceVariant)
                         .multilineTextAlignment(.center)
@@ -38,7 +38,7 @@ struct OnboardingWelcomeStep: View {
                 VStack(spacing: 12) {
                     featurePill(icon: "sun.horizon.fill", title: theme.t("nav_prayer"))
                     featurePill(icon: "bell.badge.fill", title: theme.t("settings_reminders"))
-                    featurePill(icon: "paintpalette.fill", title: theme.t("settings_appearance"))
+                    featurePill(icon: "paintpalette.fill", title: theme.t("settings_appearance_header"))
                 }
                 .padding(.top, 8)
             }
@@ -165,7 +165,7 @@ struct OnboardingLocationStep: View {
                         } else {
                             Image(systemName: "location.fill")
                         }
-                        Text(theme.t("detect_location"))
+                        Text(theme.t("settings_automatic_gps"))
                             .font(theme.scaledFont(size: 15, weight: .bold))
                     }
                     .foregroundStyle(theme.onPrimary)
@@ -176,7 +176,7 @@ struct OnboardingLocationStep: View {
                 .buttonStyle(.plain)
                 .disabled(locationService.isLocating)
 
-                TextField(theme.t("search_city"), text: $cityQuery)
+                TextField(theme.t("settings_search_city_hint"), text: $cityQuery)
                     .padding(13)
                     .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(theme.surfaceVariant))
                     .foregroundStyle(theme.onSurface)
@@ -232,7 +232,7 @@ struct OnboardingMethodStep: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                Text(theme.t("prayer_calculation_method"))
+                Text(theme.t("settings_calc_method_title"))
                     .font(theme.scaledFont(size: 24, weight: .bold))
                     .foregroundStyle(theme.onBackground)
 
@@ -300,7 +300,7 @@ struct OnboardingAlertsStep: View {
                 } label: {
                     HStack {
                         Image(systemName: granted ? "bell.badge.fill" : "bell.fill")
-                        Text(theme.t("enable_notifications"))
+                        Text(theme.t("onboarding_alerts_master"))
                             .font(theme.scaledFont(size: 15, weight: .bold))
                     }
                     .foregroundStyle(theme.onPrimary)
@@ -359,7 +359,7 @@ struct OnboardingAppearanceStep: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                Text(theme.t("settings_appearance"))
+                Text(theme.t("settings_appearance_header"))
                     .font(theme.scaledFont(size: 26, weight: .bold))
                     .foregroundStyle(theme.onBackground)
 
@@ -371,9 +371,9 @@ struct OnboardingAppearanceStep: View {
                     )
                 ) { mode in
                     switch mode {
-                    case .system: return theme.t("theme_system")
-                    case .light: return theme.t("theme_light")
-                    case .dark: return theme.t("theme_dark")
+                    case .system: return theme.t("live_theme_mode_system")
+                    case .light: return theme.t("live_theme_mode_light")
+                    case .dark: return theme.t("live_theme_mode_dark")
                     }
                 }
 
@@ -407,7 +407,7 @@ struct OnboardingAppearanceStep: View {
                 VStack(spacing: 0) {
                     SirajSettingsToggleRow(
                         icon: "moon.stars.fill",
-                        title: theme.t("amoled_black_mode"),
+                        title: theme.t("live_theme_amoled_title"),
                         isOn: Binding(
                             get: { appState.settings.isAmoled },
                             set: { on in appState.updateSettings { $0.isAmoled = on } }
@@ -416,7 +416,7 @@ struct OnboardingAppearanceStep: View {
                     Divider().padding(.leading, 62)
                     SirajSettingsToggleRow(
                         icon: "sparkles",
-                        title: theme.t("glass_ui_title"),
+                        title: theme.t("appearance_glass_ui"),
                         isOn: Binding(
                             get: { appState.settings.isGlassUi },
                             set: { on in appState.updateSettings { $0.isGlassUi = on } }

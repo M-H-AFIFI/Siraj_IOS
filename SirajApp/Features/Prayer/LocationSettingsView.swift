@@ -40,7 +40,7 @@ struct LocationSettingsView: View {
                         } else {
                             Image(systemName: "location.fill")
                         }
-                        Text(theme.t("detect_location"))
+                        Text(theme.t("settings_automatic_gps"))
                             .font(theme.scaledFont(size: 15, weight: .bold))
                     }
                     .foregroundStyle(theme.onPrimary)
@@ -51,7 +51,7 @@ struct LocationSettingsView: View {
                 .buttonStyle(.plain)
                 .disabled(locationService.isLocating)
 
-                TextField(theme.t("search_city"), text: $query)
+                TextField(theme.t("settings_search_city_hint"), text: $query)
                     .padding(13)
                     .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(theme.surfaceVariant))
                     .foregroundStyle(theme.onSurface)

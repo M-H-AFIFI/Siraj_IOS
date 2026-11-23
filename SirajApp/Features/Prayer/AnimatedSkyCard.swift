@@ -156,8 +156,7 @@ struct AnimatedSkyCard: View {
 
     private func prayerDisplayName(_ entry: PrayerTimeEntry, place: Place) -> String {
         if entry.type == .dhuhr && place.today(at: entry.time).weekdaySundayZero == 5 {
-            let jumuah = theme.t("prayer_jumuah")
-            if jumuah != "prayer_jumuah" { return jumuah }
+            return theme.t("prayer_jummah")
         }
         return theme.t(entry.type.stringKey)
     }
@@ -165,9 +164,9 @@ struct AnimatedSkyCard: View {
     private func statusLabel(state: PrayerState?, prayer: PrayerTimeEntry) -> String {
         switch state {
         case .azanCalled:
-            return theme.t("adhan_now")
+            return theme.t("azan_time_now")
         case .waitingForIqama:
-            return theme.t("iqama_in")
+            return theme.t("widget_iqama_in")
         case .inPrayer:
             return theme.t("in_prayer")
         default:

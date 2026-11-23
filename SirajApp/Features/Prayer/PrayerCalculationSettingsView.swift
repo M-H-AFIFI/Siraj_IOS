@@ -12,7 +12,7 @@ struct PrayerCalculationSettingsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 18) {
-                SirajSettingsSection(title: theme.t("prayer_calculation_method")) {
+                SirajSettingsSection(title: theme.t("settings_calc_method_title")) {
                     ForEach(CalculationMethods.all) { method in
                         let selected = appState.settings.calculationMethod == method.id
                         Button {
@@ -41,14 +41,14 @@ struct PrayerCalculationSettingsView: View {
                     }
                 }
 
-                SirajSettingsSection(title: theme.t("asr_juristic_method")) {
+                SirajSettingsSection(title: theme.t("settings_calc_madhab_title")) {
                     HStack(spacing: 8) {
                         ForEach(madhabs, id: \.self) { m in
                             let active = appState.settings.madhab == m
                             Button {
                                 appState.updateSettings { $0.madhab = m }
                             } label: {
-                                Text(m == "Hanafi" ? theme.t("hanafi") : theme.t("shafi_majority"))
+                                Text(m == "Hanafi" ? theme.t("settings_asr_hanafi") : theme.t("settings_asr_standard"))
                                     .font(theme.scaledFont(size: 14, weight: active ? .bold : .medium))
                                     .foregroundStyle(active ? theme.onPrimary : theme.onSurface)
                                     .frame(maxWidth: .infinity)
@@ -61,7 +61,7 @@ struct PrayerCalculationSettingsView: View {
                     .padding(14)
                 }
 
-                SirajSettingsSection(title: theme.t("high_latitude_rule")) {
+                SirajSettingsSection(title: theme.t("settings_calc_high_latitude_title")) {
                     ForEach(highLatRules, id: \.self) { rule in
                         let selected = appState.settings.highLatitudeRule == rule
                         Button {
@@ -83,7 +83,7 @@ struct PrayerCalculationSettingsView: View {
                     }
                 }
 
-                SirajSettingsSection(title: theme.t("manual_adjustments")) {
+                SirajSettingsSection(title: theme.t("settings_calc_offsets_title")) {
                     ForEach([PrayerType.fajr, .dhuhr, .asr, .maghrib, .isha]) { p in
                         let val = appState.settings.minuteOffsets[p.rawValue] ?? 0
                         HStack {
@@ -107,7 +107,7 @@ struct PrayerCalculationSettingsView: View {
                     }
                 }
 
-                SirajSettingsSection(title: theme.t("hijri_calendar")) {
+                SirajSettingsSection(title: theme.t("hub_calendar_title")) {
                     ForEach(hijriMethods, id: \.self) { hm in
                         let selected = appState.settings.hijriMethod == hm
                         Button {
@@ -128,7 +128,7 @@ struct PrayerCalculationSettingsView: View {
                         Divider().padding(.leading, 16)
                     }
                     HStack {
-                        Text(theme.t("hijri_date_adjustment"))
+                        Text(theme.t("hijri_adjust_title"))
                             .font(theme.scaledFont(size: 14.5, weight: .semibold))
                             .foregroundStyle(theme.onSurface)
                         Spacer()
@@ -150,25 +150,25 @@ struct PrayerCalculationSettingsView: View {
             .padding(.bottom, 100)
         }
         .background(SirajRootBackdrop(activePrayer: appState.prayerDay.next?.type))
-        .navigationTitle(theme.t("prayer_calculation_method"))
+        .navigationTitle(theme.t("settings_calc_method_title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
     private func ruleLabel(_ rule: String) -> String {
         switch rule {
-        case "SeventhOfTheNight": return "One Seventh of the Night"
-        case "TwilightAngle": return "Angle Based"
-        default: return "Middle of the Night"
+        case "SeventhOfTheNight": return theme.t("high_latitude_one_seventh")
+        case "TwilightAngle": return theme.t("high_latitude_angle_based")
+        default: return theme.t("high_latitude_middle_of_the_night")
         }
     }
 
     private func hijriMethodLabel(_ hm: String) -> String {
         switch hm {
-        case "umm_al_qura": return "Umm al-Qura"
-        case "egypt": return "Egypt (Dar al-Ifta)"
-        case "turkey": return "Diyanet (Turkey)"
-        case "mabims": return "MABIMS"
-        default: return "Auto (By Country)"
+        case "umm_al_qura": return theme.t("hijri_source_umm_al_qura")
+        case "egypt": return theme.t("hijri_source_egypt")
+        case "turkey": return theme.t("hijri_source_turkey")
+        case "mabims": return theme.t("hijri_source_mabims")
+        default: return theme.t("hijri_mode_auto")
         }
     }
 }

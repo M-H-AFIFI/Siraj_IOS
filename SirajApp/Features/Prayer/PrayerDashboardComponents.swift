@@ -88,8 +88,7 @@ struct MihrabPrayerTable: View {
         )
         let title: String = {
             if entry.type == .dhuhr && day.date.weekdaySundayZero == 5 {
-                let j = theme.t("prayer_jumuah")
-                if j != "prayer_jumuah" { return j }
+                return theme.t("prayer_jummah")
             }
             return theme.t(entry.type.stringKey)
         }()
@@ -186,9 +185,9 @@ struct MihrabQuickActions: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            tile(icon: "clock.badge.checkmark", title: theme.t("prayer_calculation_method"), action: onCalculation)
+            tile(icon: "clock.badge.checkmark", title: theme.t("settings_calc_method_title"), action: onCalculation)
             tile(icon: "bell.badge", title: theme.t("settings_reminders"), action: onReminders)
-            tile(icon: "square.grid.2x2", title: theme.t("widgets_title"), action: onWidgets)
+            tile(icon: "square.grid.2x2", title: theme.t("widget_settings_title"), action: onWidgets)
             tile(icon: "location", title: theme.t("settings_location"), action: onLocation)
         }
     }
@@ -235,7 +234,7 @@ struct DailyAyahCard: View {
 
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Label(theme.t("daily_ayah"), systemImage: "book.pages.fill")
+                Label(theme.t("ayah_of_the_day"), systemImage: "book.pages.fill")
                     .font(theme.scaledFont(size: 12, weight: .heavy))
                     .foregroundStyle(theme.primary)
                     .textCase(.uppercase)
@@ -382,7 +381,7 @@ struct HijriDateSheetView: View {
 
                     VStack(spacing: 10) {
                         HStack {
-                            Text(theme.t("hijri_date_adjustment"))
+                            Text(theme.t("hijri_adjust_title"))
                                 .font(theme.scaledFont(size: 15, weight: .semibold))
                                 .foregroundStyle(theme.onSurface)
                             Spacer()
@@ -420,11 +419,11 @@ struct HijriDateSheetView: View {
                 .padding(18)
             }
             .background(theme.background.ignoresSafeArea())
-            .navigationTitle(theme.t("hijri_calendar"))
+            .navigationTitle(theme.t("hub_calendar_title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(theme.t("done")) { dismiss() }
+                    Button(theme.t("hijri_done")) { dismiss() }
                 }
             }
         }
