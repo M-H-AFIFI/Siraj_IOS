@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_live_activity_title">لاک اسکرین اور ڈائنامک آئی لینڈ</string>
+    <string name="ios_live_activity_desc">فعال ہونے پر اگلی نماز کی الٹی گنتی دکھاتا ہے۔ چوبیس گھنٹے مسلسل گنتی کے لیے سراج کا لاک اسکرین ویجیٹ شامل کریں۔</string>
+    <string name="ios_notification_sound_note">iOS لاک اسکرین پر منتخب اذان کے زیادہ سے زیادہ 30 سیکنڈ چلاتا ہے؛ مکمل اذان سننے کے لیے اطلاع پر ٹیپ کریں۔</string>
+    <string name="ios_widget_gallery_hint">ہوم اسکرین یا لاک اسکرین پر دیر تک دبائیں، ترمیم ← ویجیٹ شامل کریں منتخب کریں اور سراج چنیں۔ شکل اور رنگ بدلنے کے لیے ویجیٹ پر ٹیپ کریں۔</string>
+    <string name="ios_open_adhan">اذان کھولیں</string>
+    <string name="ios_dismiss_adhan">بند کریں</string>
+    <string name="ios_milestone_quran_desc">مکمل مصحف، تلاوت، سننے کا مرکز، ختمِ قرآن اور ویڈیو ایکسپورٹ اگلی اپ ڈیٹ میں شامل ہوں گے۔</string>
+    <string name="ios_milestone_qibla_desc">لائیو قبلہ قطب نما روزمرہ ٹولز کی اپ ڈیٹ میں شامل ہوگا۔</string>
+    <string name="ios_milestone_azkar_desc">حصن المسلم اذکار، تسبیح، حدیث، اسمائے حسنیٰ، قرآن ریڈیو، روزہ اور زکوٰۃ روزمرہ ٹولز کی اپ ڈیٹ میں شامل ہوں گے۔</string>
+    <string name="ios_widget_category_prayer">اوقاتِ نماز</string>
+    <string name="ios_widget_category_clock">نماز گھڑی</string>
+    <string name="ios_widget_category_hijri">ہجری اور چاند</string>
+    <string name="ios_lockscreen_widget_title">اگلی نماز</string>
+    <string name="ios_lockscreen_widget_desc">انٹرنیٹ کے بغیر اگلی نماز کی مسلسل الٹی گنتی۔</string>
+</resources>

@@ -1,0 +1,17 @@
+# Xcode & SwiftPM
+.DS_Store
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+build/
+.build/
+.swiftpm/
+*.xcresult
+*.ipa
+artifacts/
+
+# Local developer scratch
+*.swp
+*.swo
+*~

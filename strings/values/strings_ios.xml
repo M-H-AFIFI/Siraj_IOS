@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_live_activity_title">Lock Screen &amp; Dynamic Island</string>
+    <string name="ios_live_activity_desc">Shows the next prayer countdown while active. For an always-on 24/7 countdown, add Siraj\'s Lock Screen widget.</string>
+    <string name="ios_notification_sound_note">iOS plays up to 30 seconds of the selected adhan on the lock screen; tap the alert to hear the full adhan.</string>
+    <string name="ios_widget_gallery_hint">Long-press your Home Screen or Lock Screen, tap Edit → Add Widget, and choose Siraj. Tap any placed widget to pick its face and palette.</string>
+    <string name="ios_open_adhan">Open Adhan</string>
+    <string name="ios_dismiss_adhan">Dismiss</string>
+    <string name="ios_milestone_quran_desc">The 604-page Mushaf, recitation, Listen Hub, Khatma, and video export arrive in the next update.</string>
+    <string name="ios_milestone_qibla_desc">The live compass and Qibla finder arrive in the daily tools update.</string>
+    <string name="ios_milestone_azkar_desc">Hisn al-Muslim adhkar, Tasbih, Hadith, 99 Names, Quran Radio, Fasting, and Zakat arrive in the daily tools update.</string>
+    <string name="ios_widget_category_prayer">Prayer Times</string>
+    <string name="ios_widget_category_clock">Prayer Clock</string>
+    <string name="ios_widget_category_hijri">Hijri &amp; Moon</string>
+    <string name="ios_lockscreen_widget_title">Next Prayer</string>
+    <string name="ios_lockscreen_widget_desc">Always-on offline countdown to the next prayer.</string>
+</resources>

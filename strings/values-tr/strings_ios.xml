@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ios_live_activity_title">Kilit Ekranı ve Dynamic Island</string>
+    <string name="ios_live_activity_desc">Etkin olduğunda sonraki namaz geri sayımını gösterir. Kesintisiz 7/24 geri sayım için Siraj Kilit Ekranı aracını ekleyin.</string>
+    <string name="ios_notification_sound_note">iOS kilit ekranında seçili ezanın en fazla 30 saniyesini çalar; tam ezan için bildirime dokunun.</string>
+    <string name="ios_widget_gallery_hint">Ana Ekrana veya Kilit Ekranına uzun basın, Düzenle → Araç Ekle adımlarını izleyip Siraj\'ı seçin. Görünümü değiştirmek için araca dokunun.</string>
+    <string name="ios_open_adhan">Ezanı Aç</string>
+    <string name="ios_dismiss_adhan">Kapat</string>
+    <string name="ios_milestone_quran_desc">604 sayfalık Mushaf, tilavet, Dinleme Merkezi, Hatim ve video dışa aktarma bir sonraki güncellemede geliyor.</string>
+    <string name="ios_milestone_qibla_desc">Canlı Kıble pusulası günlük araçlar güncellemesinde geliyor.</string>
+    <string name="ios_milestone_azkar_desc">Hısnü\'l-Müslim zikirleri, Tesbih, Hadis, Esmaül Hüsna, Kur\'an Radyosu, Oruç ve Zekât günlük araçlar güncellemesinde geliyor.</string>
+    <string name="ios_widget_category_prayer">Namaz Vakitleri</string>
+    <string name="ios_widget_category_clock">Namaz Saati</string>
+    <string name="ios_widget_category_hijri">Hicri ve Ay</string>
+    <string name="ios_lockscreen_widget_title">Sonraki Namaz</string>
+    <string name="ios_lockscreen_widget_desc">Sonraki namaza çevrimdışı kesintisiz geri sayım.</string>
+</resources>

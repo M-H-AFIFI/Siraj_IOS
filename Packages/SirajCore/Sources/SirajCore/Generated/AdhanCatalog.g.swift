@@ -1,0 +1,128 @@
+// Generated from AzanAudioUrlProvider.kt.
+
+import Foundation
+
+public struct AdhanGroup: Sendable, Equatable, Identifiable {
+    public var id: String { key }
+    public let key: String
+    public let titleAr: String
+    public let titleEn: String
+    public let titleTr: String
+    public let titleUr: String
+    public let isMosque: Bool
+
+    public func localizedTitle(language: String) -> String {
+        switch language {
+        case "ar": return titleAr
+        case "tr": return titleTr
+        case "ur": return titleUr
+        default: return titleEn
+        }
+    }
+}
+
+public struct AdhanVoice: Sendable, Equatable, Identifiable {
+    public let id: String
+    public let titleAr: String
+    public let titleEn: String
+    public let titleTr: String
+    public let titleUr: String
+    public let fileName: String
+    public let cdnUrl: String
+    public let fallbackUrl: String
+    public let estimatedSizeBytes: Int64
+    public let bundledIsBest: Bool
+    public let isBundled: Bool
+    public let isFajr: Bool
+    public let fajrVoiceId: String?
+    public let group: String
+    public let variantAr: String?
+    public let variantEn: String?
+    public let variantTr: String?
+    public let variantUr: String?
+
+    public var cafFileName: String {
+        let stem = (fileName as NSString).deletingPathExtension
+        return "\(stem).caf"
+    }
+
+    public func localizedTitle(language: String) -> String {
+        switch language {
+        case "ar": return titleAr
+        case "tr": return titleTr
+        case "ur": return titleUr
+        default: return titleEn
+        }
+    }
+
+    public func localizedVariant(language: String) -> String? {
+        switch language {
+        case "ar": return variantAr
+        case "tr": return variantTr
+        case "ur": return variantUr
+        default: return variantEn
+        }
+    }
+}
+
+public enum AdhanCatalog {
+    public static let defaultVoiceId = "Adhan Mecca"
+    public static let defaultBundledCaf = "Adhan-Makkah.caf"
+    public static let fajrSuffix = " (Fajr)"
+
+    public static let groups: [AdhanGroup] = [
+        AdhanGroup(key: "makkah", titleAr: "الحرم المكي الشريف", titleEn: "Makkah Al-Mukarramah", titleTr: "Mekke-i Mükerreme", titleUr: "مکہ مکرمہ", isMosque: true),
+        AdhanGroup(key: "madinah", titleAr: "المسجد النبوي الشريف", titleEn: "Madinah Al-Munawwarah", titleTr: "Medine-i Münevvere", titleUr: "مدینہ منورہ", isMosque: true),
+        AdhanGroup(key: "aqsa", titleAr: "المسجد الأقصى المبارك", titleEn: "Al-Aqsa Mosque", titleTr: "Mescid-i Aksa", titleUr: "مسجد اقصیٰ", isMosque: true),
+        AdhanGroup(key: "alafasy", titleAr: "الشيخ مشاري راشد العفاسي", titleEn: "Mishary Rashid Alafasy", titleTr: "Mişari Raşid el-Afasi", titleUr: "مشاری راشد العفاسی", isMosque: false),
+        AdhanGroup(key: "basit", titleAr: "الشيخ عبد الباسط عبد الصمد", titleEn: "Abdul Basit Abdus-Samad", titleTr: "Abdülbasit Abdüssamed", titleUr: "عبد الباسط عبد الصمد", isMosque: false),
+        AdhanGroup(key: "husary", titleAr: "الشيخ محمود خليل الحصري", titleEn: "Mahmoud Khalil Al-Husary", titleTr: "Mahmud Halil el-Husari", titleUr: "محمود خلیل الحصری", isMosque: false),
+        AdhanGroup(key: "banna", titleAr: "الشيخ محمود علي البنا", titleEn: "Mahmoud Ali Al-Banna", titleTr: "Mahmud Ali el-Benna", titleUr: "محمود علی البنا", isMosque: false),
+        AdhanGroup(key: "ismail", titleAr: "الشيخ مصطفى إسماعيل", titleEn: "Mustafa Ismail", titleTr: "Mustafa İsmail", titleUr: "مصطفیٰ اسماعیل", isMosque: false),
+        AdhanGroup(key: "minshawi", titleAr: "الشيخ محمد صديق المنشاوي", titleEn: "Mohamed Siddiq Al-Minshawi", titleTr: "Muhammed Sıddık el-Minşavi", titleUr: "محمد صدیق المنشاوی", isMosque: false),
+        AdhanGroup(key: "naqshbandi", titleAr: "الشيخ سيد النقشبندي", titleEn: "Sayed Naqshbandi", titleTr: "Seyyid Nakşibendi", titleUr: "سید نقشبندی", isMosque: false),
+        AdhanGroup(key: "nafees", titleAr: "الشيخ أحمد النفيس", titleEn: "Ahmad Al-Nafees", titleTr: "Ahmed en-Nefis", titleUr: "احمد النفیس", isMosque: false),
+        AdhanGroup(key: "zahrani", titleAr: "الشيخ منصور الزهراني", titleEn: "Mansour Al-Zahrani", titleTr: "Mansur ez-Zehrani", titleUr: "منصور الزہرانی", isMosque: false),
+        AdhanGroup(key: "qatami", titleAr: "الشيخ ناصر القطامي", titleEn: "Nasser Al-Qatami", titleTr: "Nâsır el-Katamî", titleUr: "ناصر القطامی", isMosque: false),
+        AdhanGroup(key: "islam_sobhi", titleAr: "القارئ إسلام صبحي", titleEn: "Islam Sobhi", titleTr: "İslam Subhi", titleUr: "اسلام صبحی", isMosque: false),
+        AdhanGroup(key: "utaybi", titleAr: "سلمان العتيبي", titleEn: "Salman Al-Utaybi", titleTr: "Selman el-Uteybi", titleUr: "سلمان العتیبی", isMosque: false),
+        AdhanGroup(key: "rajhi", titleAr: "مؤذن جامع الراجحي بالرياض", titleEn: "Al-Rajhi Mosque, Riyadh", titleTr: "Riyad Râcihî Camii", titleUr: "جامع الراجحی، ریاض", isMosque: false),
+        AdhanGroup(key: "egypt", titleAr: "مصر", titleEn: "Egypt", titleTr: "Mısır", titleUr: "مصر", isMosque: false),
+        AdhanGroup(key: "kuwait", titleAr: "الكويت", titleEn: "Kuwait", titleTr: "Kuveyt", titleUr: "کویت", isMosque: false),
+    ]
+
+    public static let voices: [AdhanVoice] = [
+        AdhanVoice(id: "Adhan Mecca", titleAr: "أذان الحرم المكي الشريف (علي ملا)", titleEn: "Makkah Al-Mukarramah (Ali Mala)", titleTr: "Mekke-i Mükerreme Ezanı", titleUr: "مکہ مکرمہ اذان", fileName: "Adhan-Makkah.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Ali_Ibn_Ahmad_Mala_HQ.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Ali_Ibn_Ahmad_Mala_HQ.mp3", estimatedSizeBytes: 3171055, bundledIsBest: false, isBundled: true, isFajr: false, fajrVoiceId: "Adhan Mecca (Fajr)", group: "makkah", variantAr: "الشيخ علي ملا", variantEn: "Sheikh Ali Mulla", variantTr: "Şeyh Ali Molla", variantUr: "شیخ علی ملا"),
+        AdhanVoice(id: "Adhan Madinah", titleAr: "أذان المسجد النبوي الشريف", titleEn: "Madinah Al-Munawwarah", titleTr: "Medine-i Münevvere Ezanı", titleUr: "مدینہ منورہ اذان", fileName: "Adhan-Madinah.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Adhan_Al_Haram_Al_Madani_-_Al_Madinah_1_%28%D8%A3%D8%B0%D8%A7%D9%86_%D8%A7%D9%84%D8%AD%D8%B1%D9%85_%D8%A7%D9%84%D9%85%D8%AF%D9%86%D9%8A_-_%D8%A7%D9%84%D9%85%D8%AF%D9%8A%D9%86%D8%A9_%D8%A7%D9%84%D9%85%D9%86%D9%88%D8%B1%D8%A9%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Adhan_Al_Haram_Al_Madani_-_Al_Madinah_1_%28%D8%A3%D8%B0%D8%A7%D9%86_%D8%A7%D9%84%D8%AD%D8%B1%D9%85_%D8%A7%D9%84%D9%85%D8%AF%D9%86%D9%8A_-_%D8%A7%D9%84%D9%85%D8%AF%D9%8A%D9%86%D8%A9_%D8%A7%D9%84%D9%85%D9%86%D9%88%D8%B1%D8%A9%29.mp3", estimatedSizeBytes: 379784, bundledIsBest: false, isBundled: true, isFajr: false, fajrVoiceId: "Adhan Madinah (Fajr)", group: "madinah", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Adhan Al-Aqsa", titleAr: "أذان المسجد الأقصى المبارك", titleEn: "Al-Aqsa Mosque (Jerusalem)", titleTr: "Mescid-i Aksa Ezanı", titleUr: "مسجد اقصی اذان", fileName: "Adhan-Alaqsa.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Adhan_Al_Aqsa_-_Jerusalem_%28%D8%A3%D8%B0%D8%A7%D9%86_%D8%A7%D9%84%D9%85%D8%B3%D8%AC%D8%AF_%D8%A7%D9%84%D8%A3%D9%82%D8%B5%D9%89_-_%D8%A7%D9%84%D9%82%D8%AF%D8%B3%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Adhan_Al_Aqsa_-_Jerusalem_%28%D8%A3%D8%B0%D8%A7%D9%86_%D8%A7%D9%84%D9%85%D8%B3%D8%AC%D8%AF_%D8%A7%D9%84%D8%A3%D9%82%D8%B5%D9%89_-_%D8%A7%D9%84%D9%82%D8%AF%D8%B3%29.mp3", estimatedSizeBytes: 307298, bundledIsBest: false, isBundled: true, isFajr: false, fajrVoiceId: nil, group: "aqsa", variantAr: "تسجيل 1", variantEn: "Recording 1", variantTr: "Kayıt 1", variantUr: "ریکارڈنگ 1"),
+        AdhanVoice(id: "Abdul Basit", titleAr: "الشيخ عبد الباسط عبد الصمد", titleEn: "Sheikh Abdul Basit Abdus-Samad", titleTr: "Şeyh Abdussamed", titleUr: "شیخ عبد الباسط", fileName: "Abdul-Basit.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Abdulbasit_Abdusamad_1_-_Egypt_%28%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%A8%D8%A7%D8%B3%D8%B7_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%B5%D9%85%D8%AF_-_%D9%85%D8%B5%D8%B1%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Abdulbasit_Abdusamad_1_-_Egypt_%28%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%A8%D8%A7%D8%B3%D8%B7_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%B5%D9%85%D8%AF_-_%D9%85%D8%B5%D8%B1%29.mp3", estimatedSizeBytes: 489872, bundledIsBest: true, isBundled: true, isFajr: false, fajrVoiceId: "Abdul Basit (Fajr)", group: "basit", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Mishary Alafasy", titleAr: "الشيخ مشاري راشد العفاسي", titleEn: "Mishary Rashid Alafasy", titleTr: "Mişari Raşid el-Afasi", titleUr: "مشاری راشد العفاسی", fileName: "Mishary-Alafasy.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Mishary_Al_Afasy_-_HQ_%28%D9%85%D8%B4%D8%A7%D8%B1%D9%8A_%D8%A7%D9%84%D8%B9%D9%81%D8%A7%D8%B3%D9%8A%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Mishary_Al_Afasy_-_HQ_%28%D9%85%D8%B4%D8%A7%D8%B1%D9%8A_%D8%A7%D9%84%D8%B9%D9%81%D8%A7%D8%B3%D9%8A%29.mp3", estimatedSizeBytes: 621967, bundledIsBest: true, isBundled: true, isFajr: false, fajrVoiceId: "Mishary Alafasy (Fajr)", group: "alafasy", variantAr: "تسجيل 1", variantEn: "Recording 1", variantTr: "Kayıt 1", variantUr: "ریکارڈنگ 1"),
+        AdhanVoice(id: "Ahmad al-Nafees", titleAr: "الشيخ أحمد النفيس", titleEn: "Ahmad Al-Nafees", titleTr: "Ahmed en-Nefis", titleUr: "احمد النفیس", fileName: "Ahmad-Al-Nafees.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Ahmad_Al_Nafees_%28%D8%A3%D8%AD%D9%85%D8%AF_%D8%A7%D9%84%D9%86%D9%81%D9%8A%D8%B3%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Ahmad_Al_Nafees_%28%D8%A3%D8%AD%D9%85%D8%AF_%D8%A7%D9%84%D9%86%D9%81%D9%8A%D8%B3%29.mp3", estimatedSizeBytes: 3409337, bundledIsBest: true, isBundled: true, isFajr: false, fajrVoiceId: nil, group: "nafees", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Naghshbandi", titleAr: "الشيخ سيد النقشبندي", titleEn: "Sayed Naqshbandi", titleTr: "Seyyid Nakşibendi", titleUr: "سید نقشبندی", fileName: "Sayed-Naqshbandi.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Sheikh_Al_Naqshbandi_%28%D8%A7%D9%84%D8%B4%D9%8A%D8%AE_%D8%A7%D9%84%D9%86%D9%82%D8%B4%D8%A8%D9%86%D8%AF%D9%89%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Sheikh_Al_Naqshbandi_%28%D8%A7%D9%84%D8%B4%D9%8A%D8%AE_%D8%A7%D9%84%D9%86%D9%82%D8%B4%D8%A8%D9%86%D8%AF%D9%89%29.mp3", estimatedSizeBytes: 2219550, bundledIsBest: false, isBundled: true, isFajr: false, fajrVoiceId: nil, group: "naqshbandi", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Minshawi", titleAr: "الشيخ محمد صديق المنشاوي", titleEn: "Mohamed Siddiq Al-Minshawi", titleTr: "Muhammed Sıddık el-Minşavi", titleUr: "محمد صدیق المنشاوی", fileName: "Mohamed-Siddiq-Minshawi.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Mohamed_Siddiq_El-Minshawi_-_Egypt_1_%28%D9%85%D8%AD%D9%85%D8%AF_%D8%B5%D8%AF%D9%8A%D9%82_%D8%A7%D9%84%D9%85%D9%86%D8%B4%D8%A7%D9%88%D9%8A_-_%D9%85%D8%B5%D8%B1%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Mohamed_Siddiq_El-Minshawi_-_Egypt_1_%28%D9%85%D8%AD%D9%85%D8%AF_%D8%B5%D8%AF%D9%8A%D9%82_%D8%A7%D9%84%D9%85%D9%86%D8%B4%D8%A7%D9%88%D9%8A_-_%D9%85%D8%B5%D8%B1%29.mp3", estimatedSizeBytes: 503264, bundledIsBest: false, isBundled: true, isFajr: false, fajrVoiceId: nil, group: "minshawi", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Nasser Al-Qatami", titleAr: "الشيخ ناصر القطامي", titleEn: "Nasser Al-Qatami", titleTr: "Nâsır el-Katamî", titleUr: "ناصر القطامی", fileName: "Nasser-Al-Qatami.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Nasser_Al_Qatami_-_HQ_%28%D9%86%D8%A7%D8%B5%D8%B1_%D8%A7%D9%84%D9%82%D8%B7%D8%A7%D9%85%D9%8A%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Nasser_Al_Qatami_-_HQ_%28%D9%86%D8%A7%D8%B5%D8%B1_%D8%A7%D9%84%D9%82%D8%B7%D8%A7%D9%85%D9%8A%29.mp3", estimatedSizeBytes: 530748, bundledIsBest: true, isBundled: true, isFajr: false, fajrVoiceId: nil, group: "qatami", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Makkah Ali Mulla 2", titleAr: "الحرم المكي الشريف · الشيخ علي ملا · تسجيل آخر", titleEn: "Makkah Al-Mukarramah · Sheikh Ali Mulla · another recording", titleTr: "Mekke-i Mükerreme · Şeyh Ali Molla · başka bir kayıt", titleUr: "مکہ مکرمہ · شیخ علی ملا · ایک اور ریکارڈنگ", fileName: "Makkah-Ali-Mulla-2.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Makkah-Ali-Mulla-2.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Makkah-Ali-Mulla-2.mp3", estimatedSizeBytes: 350820, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "makkah", variantAr: "الشيخ علي ملا · تسجيل آخر", variantEn: "Sheikh Ali Mulla · another recording", variantTr: "Şeyh Ali Molla · başka bir kayıt", variantUr: "شیخ علی ملا · ایک اور ریکارڈنگ"),
+        AdhanVoice(id: "Makkah Haram", titleAr: "الحرم المكي الشريف · تسجيل من الحرم", titleEn: "Makkah Al-Mukarramah · A recording from the Haram", titleTr: "Mekke-i Mükerreme · Harem'den bir kayıt", titleUr: "مکہ مکرمہ · حرم سے ایک ریکارڈنگ", fileName: "Makkah-Haram.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Makkah-Haram.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Makkah-Haram.mp3", estimatedSizeBytes: 421308, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "makkah", variantAr: "تسجيل من الحرم", variantEn: "A recording from the Haram", variantTr: "Harem'den bir kayıt", variantUr: "حرم سے ایک ریکارڈنگ"),
+        AdhanVoice(id: "Al-Aqsa Naji Qazzaz", titleAr: "المسجد الأقصى المبارك · الشيخ ناجي قزاز", titleEn: "Al-Aqsa Mosque · Sheikh Naji Qazzaz", titleTr: "Mescid-i Aksa · Şeyh Naci Kazzaz", titleUr: "مسجد اقصیٰ · شیخ ناجی قزاز", fileName: "Alaqsa-Naji-Qazzaz.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Alaqsa-Naji-Qazzaz.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Alaqsa-Naji-Qazzaz.mp3", estimatedSizeBytes: 370332, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "aqsa", variantAr: "الشيخ ناجي قزاز", variantEn: "Sheikh Naji Qazzaz", variantTr: "Şeyh Naci Kazzaz", variantUr: "شیخ ناجی قزاز"),
+        AdhanVoice(id: "Mishary Alafasy Dubai", titleAr: "الشيخ مشاري راشد العفاسي · أذان دبي", titleEn: "Mishary Rashid Alafasy · Dubai adhan", titleTr: "Mişari Raşid el-Afasi · Dubai ezanı", titleUr: "مشاری راشد العفاسی · دبئی کی اذان", fileName: "Mishary-Alafasy-Dubai.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Mishary-Alafasy-Dubai.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Mishary-Alafasy-Dubai.mp3", estimatedSizeBytes: 2695344, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "alafasy", variantAr: "أذان دبي", variantEn: "Dubai adhan", variantTr: "Dubai ezanı", variantUr: "دبئی کی اذان"),
+        AdhanVoice(id: "Mahmoud Khalil Al-Husary", titleAr: "الشيخ محمود خليل الحصري", titleEn: "Mahmoud Khalil Al-Husary", titleTr: "Mahmud Halil el-Husari", titleUr: "محمود خلیل الحصری", fileName: "Mahmoud-Khalil-Al-Husary.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Mahmoud-Khalil-Al-Husary.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Mahmoud-Khalil-Al-Husary.mp3", estimatedSizeBytes: 255060, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "husary", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Mahmoud Ali Al-Banna", titleAr: "الشيخ محمود علي البنا", titleEn: "Mahmoud Ali Al-Banna", titleTr: "Mahmud Ali el-Benna", titleUr: "محمود علی البنا", fileName: "Mahmoud-Ali-Al-Banna.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Mahmoud-Ali-Al-Banna.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Mahmoud-Ali-Al-Banna.mp3", estimatedSizeBytes: 306540, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "banna", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Mustafa Ismail", titleAr: "الشيخ مصطفى إسماعيل", titleEn: "Mustafa Ismail", titleTr: "Mustafa İsmail", titleUr: "مصطفیٰ اسماعیل", fileName: "Mustafa-Ismail.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Mustafa-Ismail.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Mustafa-Ismail.mp3", estimatedSizeBytes: 736104, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "ismail", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Islam Sobhi", titleAr: "القارئ إسلام صبحي", titleEn: "Islam Sobhi", titleTr: "İslam Subhi", titleUr: "اسلام صبحی", fileName: "Islam-Sobhi.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Islam-Sobhi.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Islam-Sobhi.mp3", estimatedSizeBytes: 3461760, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "islam_sobhi", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Al-Rajhi Riyadh", titleAr: "مؤذن جامع الراجحي بالرياض", titleEn: "Al-Rajhi Mosque, Riyadh", titleTr: "Riyad Râcihî Camii", titleUr: "جامع الراجحی، ریاض", fileName: "Al-Rajhi-Riyadh.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/Al-Rajhi-Riyadh.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/Al-Rajhi-Riyadh.mp3", estimatedSizeBytes: 298188, bundledIsBest: false, isBundled: false, isFajr: false, fajrVoiceId: nil, group: "rajhi", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+    ]
+
+    public static let fajrRecordings: [AdhanVoice] = [
+        AdhanVoice(id: "Adhan Mecca (Fajr)", titleAr: "أذان الحرم المكي الشريف - أذان الفجر", titleEn: "Makkah Al-Mukarramah - Fajr adhan", titleTr: "Mekke-i Mükerreme - Sabah ezanı", titleUr: "مکہ مکرمہ - فجر کی اذان", fileName: "Makkah-Ali-Mulla-Fajr.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/fajr/Makkah-Ali-Mulla-Fajr.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/fajr/Makkah-Ali-Mulla-Fajr.mp3", estimatedSizeBytes: 3671352, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "makkah", variantAr: "الشيخ علي ملا", variantEn: "Sheikh Ali Mulla", variantTr: "Şeyh Ali Molla", variantUr: "شیخ علی ملا"),
+        AdhanVoice(id: "Adhan Madinah (Fajr)", titleAr: "أذان المسجد النبوي الشريف - أذان الفجر", titleEn: "Madinah Al-Munawwarah - Fajr adhan", titleTr: "Medine-i Münevvere - Sabah ezanı", titleUr: "مدینہ منورہ - فجر کی اذان", fileName: "Adhan-Madinah-Fajr.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Adhan_Fajr_Al_Haram_Al_Madani_%28%D8%A3%D8%B0%D8%A7%D9%86_%D8%A7%D9%84%D9%81%D8%AC%D8%B1_%D8%A7%D9%84%D8%AD%D8%B1%D9%85_%D8%A7%D9%84%D9%85%D8%AF%D9%86%D9%8A%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Adhan_Fajr_Al_Haram_Al_Madani_%28%D8%A3%D8%B0%D8%A7%D9%86_%D8%A7%D9%84%D9%81%D8%AC%D8%B1_%D8%A7%D9%84%D8%AD%D8%B1%D9%85_%D8%A7%D9%84%D9%85%D8%AF%D9%86%D9%8A%29.mp3", estimatedSizeBytes: 561776, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "madinah", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Abdul Basit (Fajr)", titleAr: "الشيخ عبد الباسط عبد الصمد - أذان الفجر", titleEn: "Sheikh Abdul Basit Abdus-Samad - Fajr adhan", titleTr: "Şeyh Abdussamed - Sabah ezanı", titleUr: "شیخ عبد الباسط - فجر کی اذان", fileName: "Abdul-Basit-Fajr-Calm.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/fajr/Abdul-Basit-Fajr-Calm.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/fajr/Abdul-Basit-Fajr-Calm.mp3", estimatedSizeBytes: 3092479, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "basit", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Mishary Alafasy (Fajr)", titleAr: "الشيخ مشاري راشد العفاسي - أذان الفجر", titleEn: "Mishary Rashid Alafasy - Fajr adhan", titleTr: "Mişari Raşid el-Afasi - Sabah ezanı", titleUr: "مشاری راشد العفاسی - فجر کی اذان", fileName: "Mishary-Alafasy-Fajr.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/Kiwifu/adhan-mp3@master/Mishary_Rashid_Alafasy_3_-_Fajr_Kuwait_%28%D9%85%D8%B4%D8%A7%D8%B1%D9%8A_%D8%B1%D8%A7%D8%B4%D8%AF_%D8%A7%D9%84%D8%B9%D9%81%D8%A7%D8%B3%D9%8A_-_%D9%81%D8%AC%D8%B1_%D8%A7%D9%84%D9%83%D9%88%D9%8A%D8%AA%29.mp3", fallbackUrl: "https://raw.githubusercontent.com/Kiwifu/adhan-mp3/master/Mishary_Rashid_Alafasy_3_-_Fajr_Kuwait_%28%D9%85%D8%B4%D8%A7%D8%B1%D9%8A_%D8%B1%D8%A7%D8%B4%D8%AF_%D8%A7%D9%84%D8%B9%D9%81%D8%A7%D8%B3%D9%8A_-_%D9%81%D8%AC%D8%B1_%D8%A7%D9%84%D9%83%D9%88%D9%8A%D8%AA%29.mp3", estimatedSizeBytes: 1503337, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "alafasy", variantAr: "تسجيل 1", variantEn: "Recording 1", variantTr: "Kayıt 1", variantUr: "ریکارڈنگ 1"),
+        AdhanVoice(id: "Makkah 2 (Fajr)", titleAr: "الحرم المكي الشريف · تسجيل آخر - أذان الفجر", titleEn: "Makkah Al-Mukarramah · Another recording - Fajr adhan", titleTr: "Mekke-i Mükerreme · Başka bir kayıt - Sabah ezanı", titleUr: "مکہ مکرمہ · ایک اور ریکارڈنگ - فجر کی اذان", fileName: "Makkah-Fajr-2.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/fajr/Makkah-Fajr-2.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/fajr/Makkah-Fajr-2.mp3", estimatedSizeBytes: 430020, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "makkah", variantAr: "تسجيل آخر", variantEn: "Another recording", variantTr: "Başka bir kayıt", variantUr: "ایک اور ریکارڈنگ"),
+        AdhanVoice(id: "Mishary Alafasy 2 (Fajr)", titleAr: "الشيخ مشاري راشد العفاسي · تسجيل 2 - أذان الفجر", titleEn: "Mishary Rashid Alafasy · Recording 2 - Fajr adhan", titleTr: "Mişari Raşid el-Afasi · Kayıt 2 - Sabah ezanı", titleUr: "مشاری راشد العفاسی · ریکارڈنگ 2 - فجر کی اذان", fileName: "Mishary-Alafasy-Fajr-2.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/fajr/Mishary-Alafasy-Fajr-2.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/fajr/Mishary-Alafasy-Fajr-2.mp3", estimatedSizeBytes: 2308596, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "alafasy", variantAr: "تسجيل 2", variantEn: "Recording 2", variantTr: "Kayıt 2", variantUr: "ریکارڈنگ 2"),
+        AdhanVoice(id: "Salman Al-Utaybi (Fajr)", titleAr: "سلمان العتيبي - أذان الفجر", titleEn: "Salman Al-Utaybi - Fajr adhan", titleTr: "Selman el-Uteybi - Sabah ezanı", titleUr: "سلمان العتیبی - فجر کی اذان", fileName: "Salman-Al-Utaybi-Fajr.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/fajr/Salman-Al-Utaybi-Fajr.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/fajr/Salman-Al-Utaybi-Fajr.mp3", estimatedSizeBytes: 3727777, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "utaybi", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Egypt (Fajr)", titleAr: "مصر - أذان الفجر", titleEn: "Egypt - Fajr adhan", titleTr: "Mısır - Sabah ezanı", titleUr: "مصر - فجر کی اذان", fileName: "Egypt-Fajr.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/fajr/Egypt-Fajr.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/fajr/Egypt-Fajr.mp3", estimatedSizeBytes: 491292, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "egypt", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+        AdhanVoice(id: "Kuwait (Fajr)", titleAr: "الكويت - أذان الفجر", titleEn: "Kuwait - Fajr adhan", titleTr: "Kuveyt - Sabah ezanı", titleUr: "کویت - فجر کی اذان", fileName: "Kuwait-Fajr.mp3", cdnUrl: "https://cdn.jsdelivr.net/gh/M-H-AFIFI/Siraj-assets@main/audio/adhan/fajr/Kuwait-Fajr.mp3", fallbackUrl: "https://raw.githubusercontent.com/M-H-AFIFI/Siraj-assets/main/audio/adhan/fajr/Kuwait-Fajr.mp3", estimatedSizeBytes: 419868, bundledIsBest: false, isBundled: false, isFajr: true, fajrVoiceId: nil, group: "kuwait", variantAr: nil, variantEn: nil, variantTr: nil, variantUr: nil),
+    ]
+
+    public static let allRecordings: [AdhanVoice] = voices + fajrRecordings
+}

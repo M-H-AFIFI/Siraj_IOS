@@ -1,0 +1,195 @@
+// Generated from StaticCityRepository.kt and tzdata zone.tab.
+
+import Foundation
+
+public struct City: Sendable, Hashable, Identifiable {
+    public let id: String
+    public let name: String
+    public let nameAr: String
+    public let nameUr: String
+    public let country: String
+    public let countryAr: String
+    public let countryUr: String
+    public let latitude: Double
+    public let longitude: Double
+    public let timeZoneId: String
+    public let countryCode: String
+
+    public init(
+        name: String, nameAr: String, nameUr: String,
+        country: String, countryAr: String, countryUr: String,
+        latitude: Double, longitude: Double, timeZoneId: String, countryCode: String
+    ) {
+        self.id = "\(name)|\(country)|\(timeZoneId)"
+        self.name = name
+        self.nameAr = nameAr
+        self.nameUr = nameUr
+        self.country = country
+        self.countryAr = countryAr
+        self.countryUr = countryUr
+        self.latitude = latitude
+        self.longitude = longitude
+        self.timeZoneId = timeZoneId
+        self.countryCode = countryCode
+    }
+}
+
+public enum CityCatalog {
+    public static let all: [City] = [
+        City(name: "Mecca", nameAr: "مكة المكرمة", nameUr: "مکہ مکرمہ", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 21.4225, longitude: 39.8262, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Medina", nameAr: "المدينة المنورة", nameUr: "مدینہ منورہ", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 24.4672, longitude: 39.6024, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Riyadh", nameAr: "الرياض", nameUr: "ریاض", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 24.7136, longitude: 46.6753, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Jeddah", nameAr: "جدة", nameUr: "جدہ", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 21.5433, longitude: 39.1728, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Dammam", nameAr: "الدمام", nameUr: "دمام", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 26.4207, longitude: 50.0888, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Taif", nameAr: "الطائف", nameUr: "طائف", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 21.2854, longitude: 40.4222, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Tabuk", nameAr: "تبوك", nameUr: "تبوک", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 28.3835, longitude: 36.5662, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Abha", nameAr: "أبها", nameUr: "ابہا", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 18.2164, longitude: 42.5053, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Khobar", nameAr: "الخبر", nameUr: "الخبر", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 26.2172, longitude: 50.1971, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Buraidah", nameAr: "بريدة", nameUr: "بریدہ", country: "Saudi Arabia", countryAr: "المملكة العربية السعودية", countryUr: "سعودی عرب", latitude: 26.3260, longitude: 43.9750, timeZoneId: "Asia/Riyadh", countryCode: "SA"),
+        City(name: "Cairo", nameAr: "القاهرة", nameUr: "قاہرہ", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 30.0444, longitude: 31.2357, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Alexandria", nameAr: "الإسكندرية", nameUr: "اسکندریہ", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 31.2001, longitude: 29.9187, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Giza", nameAr: "الجيزة", nameUr: "جیزہ", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 30.0131, longitude: 31.2089, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Port Said", nameAr: "بورسعيد", nameUr: "پورٹ سعید", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 31.2653, longitude: 32.3019, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Suez", nameAr: "السويس", nameUr: "سوئز", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 29.9668, longitude: 32.5498, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Luxor", nameAr: "الأقصر", nameUr: "اقصر", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 25.6872, longitude: 32.6396, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Aswan", nameAr: "أسوان", nameUr: "اسوان", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 24.0889, longitude: 32.8998, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Tanta", nameAr: "طنطا", nameUr: "طنطا", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 30.7865, longitude: 31.0004, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Mansoura", nameAr: "المنصورة", nameUr: "منصورہ", country: "Egypt", countryAr: "مصر", countryUr: "مصر", latitude: 31.0409, longitude: 31.3785, timeZoneId: "Africa/Cairo", countryCode: "EG"),
+        City(name: "Dubai", nameAr: "دبي", nameUr: "دبئی", country: "United Arab Emirates", countryAr: "الإمارات العربية المتحدة", countryUr: "متحدہ عرب امارات", latitude: 25.2048, longitude: 55.2708, timeZoneId: "Asia/Dubai", countryCode: "AE"),
+        City(name: "Abu Dhabi", nameAr: "أبو ظبي", nameUr: "ابوظبی", country: "United Arab Emirates", countryAr: "الإمارات العربية المتحدة", countryUr: "متحدہ عرب امارات", latitude: 24.4539, longitude: 54.3773, timeZoneId: "Asia/Dubai", countryCode: "AE"),
+        City(name: "Sharjah", nameAr: "الشارقة", nameUr: "شارجہ", country: "United Arab Emirates", countryAr: "الإمارات العربية المتحدة", countryUr: "متحدہ عرب امارات", latitude: 25.3463, longitude: 55.4209, timeZoneId: "Asia/Dubai", countryCode: "AE"),
+        City(name: "Al Ain", nameAr: "العين", nameUr: "العین", country: "United Arab Emirates", countryAr: "الإمارات العربية المتحدة", countryUr: "متحدہ عرب امارات", latitude: 24.2075, longitude: 55.7447, timeZoneId: "Asia/Dubai", countryCode: "AE"),
+        City(name: "Ajman", nameAr: "عجمان", nameUr: "عجمان", country: "United Arab Emirates", countryAr: "الإمارات العربية المتحدة", countryUr: "متحدہ عرب امارات", latitude: 25.4052, longitude: 55.5136, timeZoneId: "Asia/Dubai", countryCode: "AE"),
+        City(name: "Ras Al Khaimah", nameAr: "رأس الخيمة", nameUr: "راس الخیمہ", country: "United Arab Emirates", countryAr: "الإمارات العربية المتحدة", countryUr: "متحدہ عرب امارات", latitude: 25.7895, longitude: 55.9432, timeZoneId: "Asia/Dubai", countryCode: "AE"),
+        City(name: "Doha", nameAr: "الدوحة", nameUr: "دوحہ", country: "Qatar", countryAr: "قطر", countryUr: "قطر", latitude: 25.2854, longitude: 51.5310, timeZoneId: "Asia/Qatar", countryCode: "QA"),
+        City(name: "Al Wakrah", nameAr: "الوكرة", nameUr: "الواکرہ", country: "Qatar", countryAr: "قطر", countryUr: "قطر", latitude: 25.1768, longitude: 51.6048, timeZoneId: "Asia/Qatar", countryCode: "QA"),
+        City(name: "Kuwait City", nameAr: "مدينة الكويت", nameUr: "کویت سٹی", country: "Kuwait", countryAr: "الكويت", countryUr: "کویت", latitude: 29.3759, longitude: 47.9774, timeZoneId: "Asia/Kuwait", countryCode: "KW"),
+        City(name: "Hawalli", nameAr: "حولي", nameUr: "حولی", country: "Kuwait", countryAr: "الكويت", countryUr: "کویت", latitude: 29.3328, longitude: 48.0289, timeZoneId: "Asia/Kuwait", countryCode: "KW"),
+        City(name: "Manama", nameAr: "المنامة", nameUr: "منامہ", country: "Bahrain", countryAr: "البحرين", countryUr: "بحرین", latitude: 26.2285, longitude: 50.5860, timeZoneId: "Asia/Bahrain", countryCode: "BH"),
+        City(name: "Riffa", nameAr: "الرفاع", nameUr: "رفاع", country: "Bahrain", countryAr: "البحرين", countryUr: "بحرین", latitude: 26.1300, longitude: 50.5550, timeZoneId: "Asia/Bahrain", countryCode: "BH"),
+        City(name: "Muscat", nameAr: "مسقط", nameUr: "مسقط", country: "Oman", countryAr: "عمان", countryUr: "عمان", latitude: 23.5859, longitude: 58.4059, timeZoneId: "Asia/Muscat", countryCode: "OM"),
+        City(name: "Salalah", nameAr: "صلالة", nameUr: "صلالہ", country: "Oman", countryAr: "عمان", countryUr: "عمان", latitude: 17.0151, longitude: 54.0924, timeZoneId: "Asia/Muscat", countryCode: "OM"),
+        City(name: "Jerusalem", nameAr: "القدس", nameUr: "یروشلم", country: "Palestine", countryAr: "فلسطين", countryUr: "فلسطین", latitude: 31.7683, longitude: 35.2137, timeZoneId: "Asia/Jerusalem", countryCode: "IL"),
+        City(name: "Gaza", nameAr: "غزة", nameUr: "غزہ", country: "Palestine", countryAr: "فلسطين", countryUr: "فلسطین", latitude: 31.5017, longitude: 34.4668, timeZoneId: "Asia/Gaza", countryCode: "PS"),
+        City(name: "Ramallah", nameAr: "رام الله", nameUr: "رام اللہ", country: "Palestine", countryAr: "فلسطين", countryUr: "فلسطین", latitude: 31.9038, longitude: 35.2034, timeZoneId: "Asia/Hebron", countryCode: "PS"),
+        City(name: "Nablus", nameAr: "نابلس", nameUr: "نابلس", country: "Palestine", countryAr: "فلسطين", countryUr: "فلسطین", latitude: 32.2211, longitude: 35.2544, timeZoneId: "Asia/Hebron", countryCode: "PS"),
+        City(name: "Hebron", nameAr: "الخليل", nameUr: "خلیل", country: "Palestine", countryAr: "فلسطين", countryUr: "فلسطین", latitude: 31.5326, longitude: 35.0998, timeZoneId: "Asia/Hebron", countryCode: "PS"),
+        City(name: "Amman", nameAr: "عمان", nameUr: "عمان", country: "Jordan", countryAr: "الأردن", countryUr: "اردن", latitude: 31.9454, longitude: 35.9284, timeZoneId: "Asia/Amman", countryCode: "JO"),
+        City(name: "Zarqa", nameAr: "الزرقاء", nameUr: "زرقاء", country: "Jordan", countryAr: "الأردن", countryUr: "اردن", latitude: 32.0728, longitude: 36.0880, timeZoneId: "Asia/Amman", countryCode: "JO"),
+        City(name: "Irbid", nameAr: "إربد", nameUr: "اربد", country: "Jordan", countryAr: "الأردن", countryUr: "اردن", latitude: 32.5568, longitude: 35.8469, timeZoneId: "Asia/Amman", countryCode: "JO"),
+        City(name: "Aqaba", nameAr: "العقبة", nameUr: "عقبہ", country: "Jordan", countryAr: "الأردن", countryUr: "اردن", latitude: 29.5321, longitude: 35.0063, timeZoneId: "Asia/Amman", countryCode: "JO"),
+        City(name: "Beirut", nameAr: "بيروت", nameUr: "بیروت", country: "Lebanon", countryAr: "لبنان", countryUr: "لبنان", latitude: 33.8938, longitude: 35.5018, timeZoneId: "Asia/Beirut", countryCode: "LB"),
+        City(name: "Tripoli (Lebanon)", nameAr: "طرابلس لبنان", nameUr: "طرابلس", country: "Lebanon", countryAr: "لبنان", countryUr: "لبنان", latitude: 34.4367, longitude: 35.8497, timeZoneId: "Asia/Beirut", countryCode: "LB"),
+        City(name: "Damascus", nameAr: "دمشق", nameUr: "دمشق", country: "Syria", countryAr: "سوريا", countryUr: "سوریا", latitude: 33.5138, longitude: 36.2765, timeZoneId: "Asia/Damascus", countryCode: "SY"),
+        City(name: "Aleppo", nameAr: "حلب", nameUr: "حلب", country: "Syria", countryAr: "سوريا", countryUr: "سوریا", latitude: 36.2021, longitude: 37.1343, timeZoneId: "Asia/Damascus", countryCode: "SY"),
+        City(name: "Homs", nameAr: "حمص", nameUr: "حمص", country: "Syria", countryAr: "سوريا", countryUr: "سوریا", latitude: 34.7324, longitude: 36.7137, timeZoneId: "Asia/Damascus", countryCode: "SY"),
+        City(name: "Baghdad", nameAr: "بغداد", nameUr: "بغداد", country: "Iraq", countryAr: "العراق", countryUr: "عراق", latitude: 33.3152, longitude: 44.3661, timeZoneId: "Asia/Baghdad", countryCode: "IQ"),
+        City(name: "Basra", nameAr: "البصرة", nameUr: "بصرہ", country: "Iraq", countryAr: "العراق", countryUr: "عراق", latitude: 30.5081, longitude: 47.7835, timeZoneId: "Asia/Baghdad", countryCode: "IQ"),
+        City(name: "Erbil", nameAr: "أربيل", nameUr: "اربیل", country: "Iraq", countryAr: "العراق", countryUr: "عراق", latitude: 36.1901, longitude: 44.0091, timeZoneId: "Asia/Baghdad", countryCode: "IQ"),
+        City(name: "Mosul", nameAr: "الموصل", nameUr: "موصل", country: "Iraq", countryAr: "العراق", countryUr: "عراق", latitude: 36.3400, longitude: 43.1300, timeZoneId: "Asia/Baghdad", countryCode: "IQ"),
+        City(name: "Najaf", nameAr: "النجف الأشرف", nameUr: "نجف", country: "Iraq", countryAr: "العراق", countryUr: "عراق", latitude: 32.0000, longitude: 44.3300, timeZoneId: "Asia/Baghdad", countryCode: "IQ"),
+        City(name: "Karbala", nameAr: "كربلاء المقدسة", nameUr: "کربلا", country: "Iraq", countryAr: "العراق", countryUr: "عراق", latitude: 32.6160, longitude: 44.0249, timeZoneId: "Asia/Baghdad", countryCode: "IQ"),
+        City(name: "Casablanca", nameAr: "الدار البيضاء", nameUr: "کاسابلانکا", country: "Morocco", countryAr: "المغرب", countryUr: "مراکش", latitude: 33.5731, longitude: -7.5898, timeZoneId: "Africa/Casablanca", countryCode: "MA"),
+        City(name: "Rabat", nameAr: "الرباط", nameUr: "رباط", country: "Morocco", countryAr: "المغرب", countryUr: "مراکش", latitude: 34.0209, longitude: -6.8416, timeZoneId: "Africa/Casablanca", countryCode: "MA"),
+        City(name: "Marrakech", nameAr: "مراكش", nameUr: "مراکش", country: "Morocco", countryAr: "المغرب", countryUr: "مراکش", latitude: 31.6295, longitude: -7.9811, timeZoneId: "Africa/Casablanca", countryCode: "MA"),
+        City(name: "Fes", nameAr: "فاس", nameUr: "فاس", country: "Morocco", countryAr: "المغرب", countryUr: "مراکش", latitude: 34.0181, longitude: -5.0078, timeZoneId: "Africa/Casablanca", countryCode: "MA"),
+        City(name: "Tangier", nameAr: "طنجة", nameUr: "طنجہ", country: "Morocco", countryAr: "المغرب", countryUr: "مراکش", latitude: 35.7595, longitude: -5.8340, timeZoneId: "Africa/Casablanca", countryCode: "MA"),
+        City(name: "Agadir", nameAr: "أكادير", nameUr: "اگادیر", country: "Morocco", countryAr: "المغرب", countryUr: "مراکش", latitude: 30.4278, longitude: -9.5981, timeZoneId: "Africa/Casablanca", countryCode: "MA"),
+        City(name: "Algiers", nameAr: "الجزائر", nameUr: "الجزائر", country: "Algeria", countryAr: "الجزائر", countryUr: "الجزائر", latitude: 36.7538, longitude: 3.0588, timeZoneId: "Africa/Algiers", countryCode: "DZ"),
+        City(name: "Oran", nameAr: "وهران", nameUr: "وہران", country: "Algeria", countryAr: "الجزائر", countryUr: "الجزائر", latitude: 35.6987, longitude: -0.6349, timeZoneId: "Africa/Algiers", countryCode: "DZ"),
+        City(name: "Constantine", nameAr: "قسنطينة", nameUr: "قسنطینہ", country: "Algeria", countryAr: "الجزائر", countryUr: "الجزائر", latitude: 36.3650, longitude: 6.6147, timeZoneId: "Africa/Algiers", countryCode: "DZ"),
+        City(name: "Tunis", nameAr: "تونس", nameUr: "تیونس", country: "Tunisia", countryAr: "تونس", countryUr: "تیونس", latitude: 36.8065, longitude: 10.1815, timeZoneId: "Africa/Tunis", countryCode: "TN"),
+        City(name: "Sfax", nameAr: "صفاقس", nameUr: "صفاقس", country: "Tunisia", countryAr: "تونس", countryUr: "تیونس", latitude: 34.7406, longitude: 10.7603, timeZoneId: "Africa/Tunis", countryCode: "TN"),
+        City(name: "Sousse", nameAr: "سوسة", nameUr: "سوسہ", country: "Tunisia", countryAr: "تونس", countryUr: "تیونس", latitude: 35.8254, longitude: 10.6360, timeZoneId: "Africa/Tunis", countryCode: "TN"),
+        City(name: "Tripoli", nameAr: "طرابلس", nameUr: "طرابلس", country: "Libya", countryAr: "ليبيا", countryUr: "لیبیا", latitude: 32.8872, longitude: 13.1913, timeZoneId: "Africa/Tripoli", countryCode: "LY"),
+        City(name: "Benghazi", nameAr: "بنغازي", nameUr: "بنغازی", country: "Libya", countryAr: "ليبيا", countryUr: "لیبیا", latitude: 32.1167, longitude: 20.0667, timeZoneId: "Africa/Tripoli", countryCode: "LY"),
+        City(name: "Khartoum", nameAr: "الخرطوم", nameUr: "خرطوم", country: "Sudan", countryAr: "السودان", countryUr: "سوڈان", latitude: 15.5007, longitude: 32.5599, timeZoneId: "Africa/Khartoum", countryCode: "SD"),
+        City(name: "Omdurman", nameAr: "أم درمان", nameUr: "ام درمان", country: "Sudan", countryAr: "السودان", countryUr: "سوڈان", latitude: 15.6500, longitude: 32.4800, timeZoneId: "Africa/Khartoum", countryCode: "SD"),
+        City(name: "Nouakchott", nameAr: "نواكشوط", nameUr: "نواکشوط", country: "Mauritania", countryAr: "موريتانيا", countryUr: "موریتانیہ", latitude: 18.0735, longitude: -15.9582, timeZoneId: "Africa/Nouakchott", countryCode: "MR"),
+        City(name: "Mogadishu", nameAr: "مقديشو", nameUr: "موغادیشو", country: "Somalia", countryAr: "الصومال", countryUr: "صومالیہ", latitude: 2.0469, longitude: 45.3182, timeZoneId: "Africa/Mogadishu", countryCode: "SO"),
+        City(name: "Djibouti City", nameAr: "جيبوتي", nameUr: "جبوتی", country: "Djibouti", countryAr: "جيبوتي", countryUr: "جبوتی", latitude: 11.5721, longitude: 43.1456, timeZoneId: "Africa/Djibouti", countryCode: "DJ"),
+        City(name: "Sana'a", nameAr: "صنعاء", nameUr: "صنعاء", country: "Yemen", countryAr: "اليمن", countryUr: "یمن", latitude: 15.3694, longitude: 44.1910, timeZoneId: "Asia/Aden", countryCode: "YE"),
+        City(name: "Aden", nameAr: "عدن", nameUr: "عدن", country: "Yemen", countryAr: "اليمن", countryUr: "یمن", latitude: 12.7855, longitude: 45.0187, timeZoneId: "Asia/Aden", countryCode: "YE"),
+        City(name: "Istanbul", nameAr: "اسطنبول", nameUr: "استنبول", country: "Turkey", countryAr: "تركيا", countryUr: "ترکی", latitude: 41.0082, longitude: 28.9784, timeZoneId: "Europe/Istanbul", countryCode: "TR"),
+        City(name: "Ankara", nameAr: "أنقرة", nameUr: "انقرہ", country: "Turkey", countryAr: "تركيا", countryUr: "ترکی", latitude: 39.9334, longitude: 32.8597, timeZoneId: "Europe/Istanbul", countryCode: "TR"),
+        City(name: "Izmir", nameAr: "إزمير", nameUr: "ازمیر", country: "Turkey", countryAr: "تركيا", countryUr: "ترکی", latitude: 38.4237, longitude: 27.1428, timeZoneId: "Europe/Istanbul", countryCode: "TR"),
+        City(name: "Bursa", nameAr: "بورصة", nameUr: "بورصہ", country: "Turkey", countryAr: "تركيا", countryUr: "ترکی", latitude: 40.1885, longitude: 29.0610, timeZoneId: "Europe/Istanbul", countryCode: "TR"),
+        City(name: "Konya", nameAr: "قونية", nameUr: "قونیہ", country: "Turkey", countryAr: "تركيا", countryUr: "ترکی", latitude: 37.8746, longitude: 32.4932, timeZoneId: "Europe/Istanbul", countryCode: "TR"),
+        City(name: "Islamabad", nameAr: "إسلام آباد", nameUr: "اسلام آباد", country: "Pakistan", countryAr: "باكستان", countryUr: "پاکستان", latitude: 33.6844, longitude: 73.0479, timeZoneId: "Asia/Karachi", countryCode: "PK"),
+        City(name: "Karachi", nameAr: "كاراتشي", nameUr: "کراچی", country: "Pakistan", countryAr: "باكستان", countryUr: "پاکستان", latitude: 24.8607, longitude: 67.0011, timeZoneId: "Asia/Karachi", countryCode: "PK"),
+        City(name: "Lahore", nameAr: "لاهور", nameUr: "لاہور", country: "Pakistan", countryAr: "باكستان", countryUr: "پاکستان", latitude: 31.5204, longitude: 74.3587, timeZoneId: "Asia/Karachi", countryCode: "PK"),
+        City(name: "Rawalpindi", nameAr: "راولبندي", nameUr: "راولپنڈی", country: "Pakistan", countryAr: "باكستان", countryUr: "پاکستان", latitude: 33.5651, longitude: 73.0169, timeZoneId: "Asia/Karachi", countryCode: "PK"),
+        City(name: "Peshawar", nameAr: "بيشاور", nameUr: "پشاور", country: "Pakistan", countryAr: "باكستان", countryUr: "پاکستان", latitude: 34.0151, longitude: 71.5249, timeZoneId: "Asia/Karachi", countryCode: "PK"),
+        City(name: "Dhaka", nameAr: "دكا", nameUr: "ڈھاکہ", country: "Bangladesh", countryAr: "بنغلاديش", countryUr: "بنگلہ دیش", latitude: 23.8103, longitude: 90.4125, timeZoneId: "Asia/Dhaka", countryCode: "BD"),
+        City(name: "Chittagong", nameAr: "شيتاغونغ", nameUr: "چٹاگانگ", country: "Bangladesh", countryAr: "بنغلاديش", countryUr: "بنگلہ دیش", latitude: 22.3569, longitude: 91.7832, timeZoneId: "Asia/Dhaka", countryCode: "BD"),
+        City(name: "Kuala Lumpur", nameAr: "كوالالمبور", nameUr: "کوالالمپور", country: "Malaysia", countryAr: "ماليزيا", countryUr: "ملائیشیا", latitude: 3.1390, longitude: 101.6869, timeZoneId: "Asia/Kuala_Lumpur", countryCode: "MY"),
+        City(name: "George Town", nameAr: "جورج تاون", nameUr: "جارج ٹاؤن", country: "Malaysia", countryAr: "ماليزيا", countryUr: "ملائیشیا", latitude: 5.4141, longitude: 100.3288, timeZoneId: "Asia/Kuala_Lumpur", countryCode: "MY"),
+        City(name: "Jakarta", nameAr: "جاكرتا", nameUr: "جکارتہ", country: "Indonesia", countryAr: "إندونيسيا", countryUr: "انڈونیشیا", latitude: -6.2088, longitude: 106.8456, timeZoneId: "Asia/Jakarta", countryCode: "ID"),
+        City(name: "Surabaya", nameAr: "سورابايا", nameUr: "سورابایا", country: "Indonesia", countryAr: "إندونيسيا", countryUr: "انڈونیشیا", latitude: -7.2575, longitude: 112.7521, timeZoneId: "Asia/Jakarta", countryCode: "ID"),
+        City(name: "Bandung", nameAr: "باندونغ", nameUr: "بانڈونگ", country: "Indonesia", countryAr: "إندونيسيا", countryUr: "انڈونیشیا", latitude: -6.9175, longitude: 107.6191, timeZoneId: "Asia/Jakarta", countryCode: "ID"),
+        City(name: "Medan", nameAr: "ميدان", nameUr: "میدان", country: "Indonesia", countryAr: "إندونيسيا", countryUr: "انڈونیشیا", latitude: 3.5952, longitude: 98.6722, timeZoneId: "Asia/Jakarta", countryCode: "ID"),
+        City(name: "Tehran", nameAr: "طهران", nameUr: "تہران", country: "Iran", countryAr: "إيران", countryUr: "ایران", latitude: 35.6892, longitude: 51.3890, timeZoneId: "Asia/Tehran", countryCode: "IR"),
+        City(name: "Mashhad", nameAr: "مشهد", nameUr: "مشہد", country: "Iran", countryAr: "إيران", countryUr: "ایران", latitude: 36.2605, longitude: 59.6168, timeZoneId: "Asia/Tehran", countryCode: "IR"),
+        City(name: "Isfahan", nameAr: "أصفهان", nameUr: "اصفہان", country: "Iran", countryAr: "إيران", countryUr: "ایران", latitude: 32.6546, longitude: 51.6680, timeZoneId: "Asia/Tehran", countryCode: "IR"),
+        City(name: "Kabul", nameAr: "كابول", nameUr: "کابل", country: "Afghanistan", countryAr: "أفغانستان", countryUr: "افغانستان", latitude: 34.5553, longitude: 69.2075, timeZoneId: "Asia/Kabul", countryCode: "AF"),
+        City(name: "Tashkent", nameAr: "طشقند", nameUr: "تاشقند", country: "Uzbekistan", countryAr: "أوزبكستان", countryUr: "ازبکستان", latitude: 41.2995, longitude: 69.2401, timeZoneId: "Asia/Tashkent", countryCode: "UZ"),
+        City(name: "Samarkand", nameAr: "سمرقند", nameUr: "سمرقند", country: "Uzbekistan", countryAr: "أوزبكستان", countryUr: "ازبکستان", latitude: 39.6270, longitude: 66.9750, timeZoneId: "Asia/Tashkent", countryCode: "UZ"),
+        City(name: "Baku", nameAr: "باكو", nameUr: "باکو", country: "Azerbaijan", countryAr: "أذربيجان", countryUr: "آذربائیجان", latitude: 40.4093, longitude: 49.8671, timeZoneId: "Asia/Baku", countryCode: "AZ"),
+        City(name: "Almaty", nameAr: "ألماتي", nameUr: "الماتی", country: "Kazakhstan", countryAr: "كازاخستان", countryUr: "قازقستان", latitude: 43.2220, longitude: 76.8512, timeZoneId: "Asia/Almaty", countryCode: "KZ"),
+        City(name: "Astana", nameAr: "أستانا", nameUr: "آستانہ", country: "Kazakhstan", countryAr: "كازاخستان", countryUr: "قازقستان", latitude: 51.1694, longitude: 71.4491, timeZoneId: "Asia/Almaty", countryCode: "KZ"),
+        City(name: "Bishkek", nameAr: "بيشكك", nameUr: "بشکیک", country: "Kyrgyzstan", countryAr: "قيرغيزستان", countryUr: "کرغزستان", latitude: 42.8746, longitude: 74.5698, timeZoneId: "Asia/Bishkek", countryCode: "KG"),
+        City(name: "Dushanbe", nameAr: "دوشنبه", nameUr: "دوشنبہ", country: "Tajikistan", countryAr: "طاجيكستان", countryUr: "تاجکستان", latitude: 38.5598, longitude: 68.7870, timeZoneId: "Asia/Dushanbe", countryCode: "TJ"),
+        City(name: "Ashgabat", nameAr: "عشق آباد", nameUr: "عشق آباد", country: "Turkmenistan", countryAr: "تركمانستان", countryUr: "ترکمانستان", latitude: 37.9601, longitude: 58.3261, timeZoneId: "Asia/Ashgabat", countryCode: "TM"),
+        City(name: "New Delhi", nameAr: "نيودلهي", nameUr: "نئی دہلی", country: "India", countryAr: "الهند", countryUr: "بھارت", latitude: 28.6139, longitude: 77.2090, timeZoneId: "Asia/Kolkata", countryCode: "IN"),
+        City(name: "Mumbai", nameAr: "مومباي", nameUr: "ممبئی", country: "India", countryAr: "الهند", countryUr: "بھارت", latitude: 19.0760, longitude: 72.8777, timeZoneId: "Asia/Kolkata", countryCode: "IN"),
+        City(name: "Hyderabad", nameAr: "حيدر آباد", nameUr: "حیدرآباد", country: "India", countryAr: "الهند", countryUr: "بھارت", latitude: 17.3850, longitude: 78.4867, timeZoneId: "Asia/Kolkata", countryCode: "IN"),
+        City(name: "London", nameAr: "لندن", nameUr: "لندن", country: "United Kingdom", countryAr: "المملكة المتحدة", countryUr: "برطانیہ", latitude: 51.5074, longitude: -0.1278, timeZoneId: "Europe/London", countryCode: "GB"),
+        City(name: "Birmingham", nameAr: "برمنغهام", nameUr: "برمنگھم", country: "United Kingdom", countryAr: "المملكة المتحدة", countryUr: "برطانیہ", latitude: 52.4862, longitude: -1.8904, timeZoneId: "Europe/London", countryCode: "GB"),
+        City(name: "Manchester", nameAr: "مانشستر", nameUr: "مانچسٹر", country: "United Kingdom", countryAr: "المملكة المتحدة", countryUr: "برطانیہ", latitude: 53.4808, longitude: -2.2426, timeZoneId: "Europe/London", countryCode: "GB"),
+        City(name: "Paris", nameAr: "باريس", nameUr: "پیرس", country: "France", countryAr: "فرنسا", countryUr: "فرانس", latitude: 48.8566, longitude: 2.3522, timeZoneId: "Europe/Paris", countryCode: "FR"),
+        City(name: "Marseille", nameAr: "مارسيليا", nameUr: "مارسیلی", country: "France", countryAr: "فرنسا", countryUr: "فرانس", latitude: 43.2965, longitude: 5.3698, timeZoneId: "Europe/Paris", countryCode: "FR"),
+        City(name: "Berlin", nameAr: "برلين", nameUr: "برلن", country: "Germany", countryAr: "ألمانيا", countryUr: "جرمنی", latitude: 52.5200, longitude: 13.4050, timeZoneId: "Europe/Berlin", countryCode: "DE"),
+        City(name: "Munich", nameAr: "ميونخ", nameUr: "میونخ", country: "Germany", countryAr: "ألمانيا", countryUr: "جرمنی", latitude: 48.1351, longitude: 11.5820, timeZoneId: "Europe/Berlin", countryCode: "DE"),
+        City(name: "Frankfurt", nameAr: "فرانكفورت", nameUr: "فرینکفرٹ", country: "Germany", countryAr: "ألمانيا", countryUr: "جرمنی", latitude: 50.1109, longitude: 8.6821, timeZoneId: "Europe/Berlin", countryCode: "DE"),
+        City(name: "Rome", nameAr: "روما", nameUr: "روم", country: "Italy", countryAr: "إيطاليا", countryUr: "اٹلی", latitude: 41.9028, longitude: 12.4964, timeZoneId: "Europe/Rome", countryCode: "IT"),
+        City(name: "Milan", nameAr: "ميلانو", nameUr: "میلان", country: "Italy", countryAr: "إيطاليا", countryUr: "اٹلی", latitude: 45.4642, longitude: 9.1900, timeZoneId: "Europe/Rome", countryCode: "IT"),
+        City(name: "Madrid", nameAr: "مدريد", nameUr: "میڈرڈ", country: "Spain", countryAr: "إسبانيا", countryUr: "اسپین", latitude: 40.4168, longitude: -3.7038, timeZoneId: "Europe/Madrid", countryCode: "ES"),
+        City(name: "Barcelona", nameAr: "برشلونة", nameUr: "بارسلونا", country: "Spain", countryAr: "إسبانيا", countryUr: "اسپین", latitude: 41.3879, longitude: 2.1699, timeZoneId: "Europe/Madrid", countryCode: "ES"),
+        City(name: "Amsterdam", nameAr: "أمستردام", nameUr: "ایمسٹرڈیم", country: "Netherlands", countryAr: "هولندا", countryUr: "نیدرلینڈز", latitude: 52.3676, longitude: 4.9041, timeZoneId: "Europe/Amsterdam", countryCode: "NL"),
+        City(name: "Rotterdam", nameAr: "روتردام", nameUr: "روٹرڈیم", country: "Netherlands", countryAr: "هولندا", countryUr: "نیدرلینڈز", latitude: 51.9244, longitude: 4.4777, timeZoneId: "Europe/Amsterdam", countryCode: "NL"),
+        City(name: "Brussels", nameAr: "بروكسل", nameUr: "برسلز", country: "Belgium", countryAr: "بلجيكا", countryUr: "بیلجیم", latitude: 50.8503, longitude: 4.3517, timeZoneId: "Europe/Brussels", countryCode: "BE"),
+        City(name: "Vienna", nameAr: "فيينا", nameUr: "ویانا", country: "Austria", countryAr: "النمسا", countryUr: "آسٹریا", latitude: 48.2082, longitude: 16.3738, timeZoneId: "Europe/Vienna", countryCode: "AT"),
+        City(name: "Stockholm", nameAr: "ستوكهولم", nameUr: "اسٹاک ہوم", country: "Sweden", countryAr: "السويد", countryUr: "سویڈن", latitude: 59.3293, longitude: 18.0686, timeZoneId: "Europe/Stockholm", countryCode: "SE"),
+        City(name: "Oslo", nameAr: "أوسلو", nameUr: "اوسلو", country: "Norway", countryAr: "النرويج", countryUr: "ناروے", latitude: 59.9139, longitude: 10.7522, timeZoneId: "Europe/Oslo", countryCode: "NO"),
+        City(name: "Copenhagen", nameAr: "كوبنهاغن", nameUr: "کوپن ہیگن", country: "Denmark", countryAr: "الدنمارك", countryUr: "ڈنمارک", latitude: 55.6761, longitude: 12.5683, timeZoneId: "Europe/Copenhagen", countryCode: "DK"),
+        City(name: "Zurich", nameAr: "زيورخ", nameUr: "زیورخ", country: "Switzerland", countryAr: "سويسرا", countryUr: "سوئٹزرلینڈ", latitude: 47.3769, longitude: 8.5417, timeZoneId: "Europe/Zurich", countryCode: "CH"),
+        City(name: "Geneva", nameAr: "جنيف", nameUr: "جنیوا", country: "Switzerland", countryAr: "سويسرا", countryUr: "سوئٹزرلینڈ", latitude: 46.2044, longitude: 6.1432, timeZoneId: "Europe/Zurich", countryCode: "CH"),
+        City(name: "Moscow", nameAr: "موسكو", nameUr: "ماسکو", country: "Russia", countryAr: "روسيا", countryUr: "روس", latitude: 55.7558, longitude: 37.6173, timeZoneId: "Europe/Moscow", countryCode: "RU"),
+        City(name: "Saint Petersburg", nameAr: "سانت بطرسبرغ", nameUr: "سینٹ پیٹرز برگ", country: "Russia", countryAr: "روسيا", countryUr: "روس", latitude: 59.9311, longitude: 30.3609, timeZoneId: "Europe/Moscow", countryCode: "RU"),
+        City(name: "Kazan", nameAr: "قازان", nameUr: "قازان", country: "Russia", countryAr: "روسيا", countryUr: "روس", latitude: 55.8304, longitude: 49.0661, timeZoneId: "Europe/Moscow", countryCode: "RU"),
+        City(name: "New York", nameAr: "نيويورك", nameUr: "نیویارک", country: "USA", countryAr: "الولايات المتحدة الأمريكية", countryUr: "امریکہ", latitude: 40.7128, longitude: -74.0060, timeZoneId: "America/New_York", countryCode: "US"),
+        City(name: "Los Angeles", nameAr: "لوس أنجلوس", nameUr: "لاس اینجلس", country: "USA", countryAr: "الولايات المتحدة الأمريكية", countryUr: "امریکہ", latitude: 34.0522, longitude: -118.2437, timeZoneId: "America/Los_Angeles", countryCode: "US"),
+        City(name: "Chicago", nameAr: "شيكاغو", nameUr: "شکاگو", country: "USA", countryAr: "الولايات المتحدة الأمريكية", countryUr: "امریکہ", latitude: 41.8781, longitude: -87.6298, timeZoneId: "America/Chicago", countryCode: "US"),
+        City(name: "Houston", nameAr: "هيوستن", nameUr: "ہیوسٹن", country: "USA", countryAr: "الولايات المتحدة الأمريكية", countryUr: "امریکہ", latitude: 29.7604, longitude: -95.3698, timeZoneId: "America/Chicago", countryCode: "US"),
+        City(name: "Dallas", nameAr: "دالاس", nameUr: "ڈیلاس", country: "USA", countryAr: "الولايات المتحدة الأمريكية", countryUr: "امریکہ", latitude: 32.7767, longitude: -96.7970, timeZoneId: "America/Chicago", countryCode: "US"),
+        City(name: "Washington D.C.", nameAr: "واشنطن العاصمة", nameUr: "واشنگٹن ڈی سی", country: "USA", countryAr: "الولايات المتحدة الأمريكية", countryUr: "امریکہ", latitude: 38.9072, longitude: -77.0369, timeZoneId: "America/New_York", countryCode: "US"),
+        City(name: "Toronto", nameAr: "تورونتو", nameUr: "ٹورنٹو", country: "Canada", countryAr: "كندا", countryUr: "کینیڈا", latitude: 43.6532, longitude: -79.3832, timeZoneId: "America/Toronto", countryCode: "CA"),
+        City(name: "Montreal", nameAr: "مونتريال", nameUr: "مانٹریال", country: "Canada", countryAr: "كندا", countryUr: "کینیڈا", latitude: 45.5017, longitude: -73.5673, timeZoneId: "America/Toronto", countryCode: "CA"),
+        City(name: "Vancouver", nameAr: "فانكوفر", nameUr: "وینکوور", country: "Canada", countryAr: "كندا", countryUr: "کینیڈا", latitude: 49.2827, longitude: -123.1207, timeZoneId: "America/Vancouver", countryCode: "CA"),
+        City(name: "Sydney", nameAr: "سيدني", nameUr: "سڈنی", country: "Australia", countryAr: "أستراليا", countryUr: "آسٹریلیا", latitude: -33.8688, longitude: 151.2093, timeZoneId: "Australia/Sydney", countryCode: "AU"),
+        City(name: "Melbourne", nameAr: "ملبورن", nameUr: "میلبورن", country: "Australia", countryAr: "أستراليا", countryUr: "آسٹریلیا", latitude: -37.8136, longitude: 144.9631, timeZoneId: "Australia/Melbourne", countryCode: "AU"),
+        City(name: "Tokyo", nameAr: "طوكيو", nameUr: "ٹوکیو", country: "Japan", countryAr: "اليابان", countryUr: "جاپان", latitude: 35.6762, longitude: 139.6503, timeZoneId: "Asia/Tokyo", countryCode: "JP"),
+        City(name: "Seoul", nameAr: "سيول", nameUr: "سیول", country: "South Korea", countryAr: "كوريا الجنوبية", countryUr: "جنوبی کوریا", latitude: 37.5665, longitude: 126.9780, timeZoneId: "Asia/Seoul", countryCode: "KR"),
+        City(name: "Beijing", nameAr: "بكين", nameUr: "بیجنگ", country: "China", countryAr: "الصين", countryUr: "چین", latitude: 39.9042, longitude: 116.4074, timeZoneId: "Asia/Shanghai", countryCode: "CN"),
+        City(name: "Shanghai", nameAr: "شنغهاي", nameUr: "شنگھائی", country: "China", countryAr: "الصين", countryUr: "چین", latitude: 31.2304, longitude: 121.4737, timeZoneId: "Asia/Shanghai", countryCode: "CN"),
+        City(name: "Singapore", nameAr: "سنغافورة", nameUr: "سنگاپور", country: "Singapore", countryAr: "سنغافورة", countryUr: "سنگاپور", latitude: 1.3521, longitude: 103.8198, timeZoneId: "Asia/Singapore", countryCode: "SG"),
+        City(name: "Johannesburg", nameAr: "جوهانسبرغ", nameUr: "جوہانسبرگ", country: "South Africa", countryAr: "جنوب أفريقيا", countryUr: "جنوبی افریقہ", latitude: -26.2041, longitude: 28.0473, timeZoneId: "Africa/Johannesburg", countryCode: "ZA"),
+        City(name: "Cape Town", nameAr: "كيب تاون", nameUr: "کیپ ٹاؤن", country: "South Africa", countryAr: "جنوب أفريقيا", countryUr: "جنوبی افریقہ", latitude: -33.9249, longitude: 18.4241, timeZoneId: "Africa/Johannesburg", countryCode: "ZA"),
+        City(name: "Lagos", nameAr: "لاغوس", nameUr: "لاگوس", country: "Nigeria", countryAr: "نيجيريا", countryUr: "نائجیریا", latitude: 6.5244, longitude: 3.3792, timeZoneId: "Africa/Lagos", countryCode: "NG"),
+        City(name: "Abuja", nameAr: "أبوجا", nameUr: "ابوجا", country: "Nigeria", countryAr: "نيجيريا", countryUr: "نائجیریا", latitude: 9.0765, longitude: 7.3986, timeZoneId: "Africa/Lagos", countryCode: "NG"),
+        City(name: "Nairobi", nameAr: "نيروبي", nameUr: "نیروبی", country: "Kenya", countryAr: "كينيا", countryUr: "کینیا", latitude: -1.2921, longitude: 36.8219, timeZoneId: "Africa/Nairobi", countryCode: "KE"),
+        City(name: "Addis Ababa", nameAr: "أديس أبابا", nameUr: "ادیس ابابا", country: "Ethiopia", countryAr: "إثيوبيا", countryUr: "ایتھوپیا", latitude: 9.0300, longitude: 38.7400, timeZoneId: "Africa/Addis_Ababa", countryCode: "ET"),
+        City(name: "Sao Paulo", nameAr: "ساو باولو", nameUr: "ساؤ پالو", country: "Brazil", countryAr: "البرازيل", countryUr: "برازیل", latitude: -23.5505, longitude: -46.6333, timeZoneId: "America/Sao_Paulo", countryCode: "BR"),
+        City(name: "Buenos Aires", nameAr: "بوينس آيرس", nameUr: "بیونس آئرس", country: "Argentina", countryAr: "الأرجنتين", countryUr: "ارجنٹائن", latitude: -34.6037, longitude: -58.3816, timeZoneId: "America/Argentina/Buenos_Aires", countryCode: "AR"),
+    ]
+}
