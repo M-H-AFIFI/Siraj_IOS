@@ -101,6 +101,7 @@ private struct PlacedMushafPage {
 private enum MushafLayoutBuilder {
     static let nominalLines = 15
 
+    @MainActor
     static func prepare(page: MushafPage, edition: MushafEdition, store: QuranStore) -> PreparedMushafLayout? {
         switch edition {
         case .madinah:
@@ -115,6 +116,7 @@ private enum MushafLayoutBuilder {
         }
     }
 
+    @MainActor
     private static func prepareQcfMadinah(page: MushafPage, store: QuranStore) -> PreparedMushafLayout? {
         guard let pageFace = store.fontCache.pageFace(for: page.pageNumber),
               let table = store.qcfTable,
@@ -202,6 +204,7 @@ private enum MushafLayoutBuilder {
         )
     }
 
+    @MainActor
     private static func prepareFallbackMadinah(page: MushafPage, store: QuranStore) -> PreparedMushafLayout? {
         guard let face = store.fontCache.madinahFallback() ?? store.fontCache.shamarly() else { return nil }
         let sortedLines = page.lines.sorted { $0.lineNumber < $1.lineNumber }
@@ -230,12 +233,15 @@ private enum MushafLayoutBuilder {
             ))
         }
         let gap: CGFloat = 0.24
-        let columnEm = renderedLines
-            .filter { !$0.words.isEmpty && !$0.isCentered }
-            .map { $0.emWidth + gap * CGFloat(max(0, $0.words.count - 1)) }
-            .max()
-            ?? renderedLines.filter { !$0.words.isEmpty }.map { $0.emWidth + gap * CGFloat(max(0, $0.words.count - 1)) }.max()
-            ?? 16.0
+        let fullLineWidths: [CGFloat] = renderedLines.compactMap { line in
+            guard !line.words.isEmpty && !line.isCentered else { return nil }
+            return line.emWidth + gap * CGFloat(max(0, line.words.count - 1))
+        }
+        let anyLineWidths: [CGFloat] = renderedLines.compactMap { line in
+            guard !line.words.isEmpty else { return nil }
+            return line.emWidth + gap * CGFloat(max(0, line.words.count - 1))
+        }
+        let columnEm: CGFloat = fullLineWidths.max() ?? anyLineWidths.max() ?? 16.0
         let nonEmpty = renderedLines.filter { $0.lineType != .empty }
         return PreparedMushafLayout(
             page: page,
@@ -264,6 +270,7 @@ private enum MushafLayoutBuilder {
         )
     }
 
+    @MainActor
     private static func prepareIndopak(page: MushafPage, store: QuranStore) -> PreparedMushafLayout? {
         guard let face = store.fontCache.indopak() else { return nil }
         let sortedLines = page.lines.sorted { $0.lineNumber < $1.lineNumber }
@@ -306,12 +313,15 @@ private enum MushafLayoutBuilder {
         }
 
         let naturalGap: CGFloat = 0.20
-        let columnEm = renderedLines
-            .filter { !$0.words.isEmpty && !$0.isCentered }
-            .map { $0.emWidth + naturalGap * CGFloat(max(0, $0.words.count - 1)) }
-            .max()
-            ?? renderedLines.filter { !$0.words.isEmpty }.map { $0.emWidth + naturalGap * CGFloat(max(0, $0.words.count - 1)) }.max()
-            ?? 16.0
+        let fullLineWidths: [CGFloat] = renderedLines.compactMap { line in
+            guard !line.words.isEmpty && !line.isCentered else { return nil }
+            return line.emWidth + naturalGap * CGFloat(max(0, line.words.count - 1))
+        }
+        let anyLineWidths: [CGFloat] = renderedLines.compactMap { line in
+            guard !line.words.isEmpty else { return nil }
+            return line.emWidth + naturalGap * CGFloat(max(0, line.words.count - 1))
+        }
+        let columnEm: CGFloat = fullLineWidths.max() ?? anyLineWidths.max() ?? 16.0
         let nonEmpty = renderedLines.filter { $0.lineType != .empty }
 
         return PreparedMushafLayout(
@@ -341,6 +351,7 @@ private enum MushafLayoutBuilder {
         )
     }
 
+    @MainActor
     private static func prepareShamarly(page: MushafPage, store: QuranStore) -> PreparedMushafLayout? {
         guard let face = store.fontCache.shamarly() else { return nil }
         let sortedLines = page.lines.sorted { $0.lineNumber < $1.lineNumber }

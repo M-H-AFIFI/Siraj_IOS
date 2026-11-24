@@ -315,8 +315,8 @@ final class QuranStore {
     var notes: [QuranNote] = []
     var downloadedTafsirs: Set<String> = [TafsirBook.builtInId]
 
-    private(set) var qcfTable: QcfGlyphTable?
-    private(set) var shamarlyBreaks: MushafLineBreaksTable = .empty
+    let qcfTable: QcfGlyphTable?
+    let shamarlyBreaks: MushafLineBreaksTable
 
     private var database: QuranDatabase?
     private var pageCache: [String: MushafPage] = [:]
