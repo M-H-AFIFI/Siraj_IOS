@@ -41,12 +41,19 @@ struct RootView: View {
                                     appState.selectedTab = .quran
                                 }
                             },
-                            onOpenTasbih: { appState.selectedTab = .azkar },
+                            onOpenTasbih: {
+                                appState.selectedTab = .azkar
+                                appState.requestedWorshipRoute = .tasbih
+                            },
                             onOpenListen: {
                                 appState.selectedTab = .quran
                                 appState.requestedQuranRoute = "listen"
                             },
-                            onOpenDuas: { appState.selectedTab = .azkar }
+                            onOpenDuas: { appState.selectedTab = .azkar },
+                            onOpenHadith: { hadithId in
+                                appState.selectedTab = .azkar
+                                appState.requestedWorshipRoute = .hadith(hadithId)
+                            }
                         )
                     case .quran:
                         SurahListView(
@@ -55,16 +62,17 @@ struct RootView: View {
                             onOpenReader: { appState.activeReader = $0 }
                         )
                     case .qibla:
-                        ComingSoonTabView(
-                            iconAsset: "ic_nav_qibla",
-                            titleKey: "nav_qibla",
-                            descriptionKey: "tab_coming_soon_qibla"
+                        QiblaCompassView(
+                            appState: appState,
+                            locationService: locationService
                         )
                     case .azkar:
-                        ComingSoonTabView(
-                            iconAsset: "ic_nav_azkar",
-                            titleKey: "nav_azkar",
-                            descriptionKey: "tab_coming_soon_azkar"
+                        WorshipHubView(
+                            appState: appState,
+                            worshipStore: appState.worshipStore,
+                            onOpenListenPlayer: {
+                                appState.showListenPlayer = true
+                            }
                         )
                     case .settings:
                         SettingsHubView(

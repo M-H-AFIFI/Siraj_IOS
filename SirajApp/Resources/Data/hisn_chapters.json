@@ -1,0 +1,702 @@
+{
+  "أذكار الاستيقاظ من النوم": {
+    "en": "Remembrance Upon Waking Up",
+    "tr": "Uykudan Uyanırken Yapılacak Dualar",
+    "ur": "نیند سے بیدار ہونے کے اذکار"
+  },
+  "دعاء لبس الثوب": {
+    "en": "Supplication for Wearing Clothes",
+    "tr": "Elbise Giyerken Yapılacak Dua",
+    "ur": "لباس پہننے کی دعا"
+  },
+  "دعاء لبس الثوب الجديد": {
+    "en": "Supplication for Wearing New Clothes",
+    "tr": "Yeni Elbise Giyerken Yapılacak Dua",
+    "ur": "نیا لباس پہننے کی دعا"
+  },
+  "الدعاء لمن لبس ثوبًا جديدًا": {
+    "en": "Supplication for Someone Wearing New Clothes",
+    "tr": "Yeni Elbise Giyene Yapılacak Dua",
+    "ur": "نیا لباس پہننے والے کے لیے دعا"
+  },
+  "ما يقول إذا وضع الثوب": {
+    "en": "What to Say When Taking Off Clothes",
+    "tr": "Elbiseyi Çıkarırken Söylenecek Dua",
+    "ur": "کپڑے اتارتے وقت کیا کہے"
+  },
+  "دعاء دخول الخلاء": {
+    "en": "Supplication When Entering the Toilet",
+    "tr": "Tuvalete Girerken Yapılacak Dua",
+    "ur": "بیت الخلا میں داخل ہونے کی دعا"
+  },
+  "دعاء الخروج من الخلاء": {
+    "en": "Supplication When Leaving the Toilet",
+    "tr": "Tuvaletten Çıkarken Yapılacak Dua",
+    "ur": "بیت الخلا سے نکلنے کی دعا"
+  },
+  "الذكر قبل الوضوء": {
+    "en": "Remembrance Before Ablution",
+    "tr": "Abdeste Başlarken Okunacak Zikir",
+    "ur": "وضو سے پہلے کا ذکر"
+  },
+  "الذكر بعد الفراغ من الوضوء": {
+    "en": "Remembrance After Completing Ablution",
+    "tr": "Abdesti Tamamladıktan Sonraki Dua",
+    "ur": "وضو کے بعد کا ذکر"
+  },
+  "الذكر عند الخروج من المنزل": {
+    "en": "Remembrance When Leaving the House",
+    "tr": "Evden Çıkarken Okunacak Dua",
+    "ur": "گھر سے نکلنے کا ذکر"
+  },
+  "الذكر عند دخول المنزل": {
+    "en": "Remembrance When Entering the House",
+    "tr": "Eve Girerken Okunacak Dua",
+    "ur": "گھر میں داخل ہونے کا ذکر"
+  },
+  "دعاء الذهاب إلى المسجد": {
+    "en": "Supplication for Going to the Mosque",
+    "tr": "Camiye Giderken Okunacak Dua",
+    "ur": "مسجد جانے کی دعا"
+  },
+  "دعاء دخول المسجد": {
+    "en": "Supplication Upon Entering the Mosque",
+    "tr": "Camiye Girerken Yapılacak Dua",
+    "ur": "مسجد میں داخل ہونے کی دعا"
+  },
+  "دعاء الخروج من المسجد": {
+    "en": "Supplication Upon Leaving the Mosque",
+    "tr": "Camiden Çıkarken Yapılacak Dua",
+    "ur": "مسجد سے نکلنے کی دعا"
+  },
+  "أذكار الأذان": {
+    "en": "Remembrances of the Adhan",
+    "tr": "Ezan ve Kamet Zikirleri",
+    "ur": "اذان کے اذکار"
+  },
+  "دعاء الاستفتاح": {
+    "en": "Opening Supplication of Prayer (Istiftah)",
+    "tr": "Namaza Başlama Duası (İstifta)",
+    "ur": "دعائے استفتاح"
+  },
+  "دعاء الركوع": {
+    "en": "Supplication During Ruku' (Bowing)",
+    "tr": "Rükuda Okunacak Dualar",
+    "ur": "رکوع کی دعا"
+  },
+  "دعاء الرفع من الركوع": {
+    "en": "Supplication When Rising from Ruku'",
+    "tr": "Rükudan Doğrulurken Okunacak Dua",
+    "ur": "رکوع سے اٹھنے کی دعا"
+  },
+  "دعاء السجود": {
+    "en": "Supplication During Sujud (Prostration)",
+    "tr": "Secdede Okunacak Dualar",
+    "ur": "سجدے کی دعا"
+  },
+  "دعاء الجلسة بين السجدتين": {
+    "en": "Supplication Between the Two Prostrations",
+    "tr": "İki Secde Arasında Okunacak Dua",
+    "ur": "دو سجدوں کے درمیان کی دعا"
+  },
+  "دعاء سجود التلاوة": {
+    "en": "Supplication for Sajdah Tilawah",
+    "tr": "Tilavet Secdesi Duası",
+    "ur": "سجدہ تلاوت کی دعا"
+  },
+  "التشهد": {
+    "en": "The Tashahhud",
+    "tr": "Et-Tehiyyat (Teşehhüd)",
+    "ur": "التحیات (تشہد)"
+  },
+  "الصلاة على النبي صلى الله عليه وسلم بعد التشهد": {
+    "en": "Salawat Upon the Prophet After Tashahhud",
+    "tr": "Teşehhüdden Sonra Peygamberimize Salavat",
+    "ur": "تشہد کے بعد درود شریف"
+  },
+  "الدعاء بعد التشهد الأخير وقبل السلام": {
+    "en": "Supplication After Final Tashahhud Before Salam",
+    "tr": "Son Teşehhütten Sonra Selamdan Önce Dua",
+    "ur": "سلام سے پہلے آخری تشہد کی دعا"
+  },
+  "الأذكار بعد السلام من الصلاة": {
+    "en": "Remembrances After the Prayer's Salam",
+    "tr": "Namazda Selam Verdikten Sonraki Zikirler",
+    "ur": "نماز کے سلام کے بعد کے اذکار"
+  },
+  "دعاء صلاة الاستخارة": {
+    "en": "Supplication of Istikharah (Seeking Guidance)",
+    "tr": "İstihare Namazı ve Duası",
+    "ur": "نماز استخارہ کی دعا"
+  },
+  "أذكار الصباح": {
+    "en": "Morning Adhkar",
+    "tr": "Sabah Zikirleri",
+    "ur": "صبح کے اذکار"
+  },
+  "أذكار النوم": {
+    "en": "Remembrances Before Sleeping",
+    "tr": "Uyku Zikirleri ve Duaları",
+    "ur": "سونے کے اذکار"
+  },
+  "الدعاء إذا تقلَّب ليلًا": {
+    "en": "Supplication When Tossing at Night",
+    "tr": "Gece Uykuda Dönüp Dururken Okunacak Dua",
+    "ur": "رات کو کروٹ بدلتے وقت کی دعا"
+  },
+  "دعاء القلق والفزع في النوم ومن بُلي بالوحشة": {
+    "en": "Supplication for Anxiety or Fear During Sleep",
+    "tr": "Uykuda Korku, Dehşet ve Yalnızlık Hissinde Dua",
+    "ur": "نیند میں خوف اور وحشت کے وقت کی دعا"
+  },
+  "ما يفعل من رأى الرؤيا أو الحلم": {
+    "en": "What to Do When Having a Vision or Bad Dream",
+    "tr": "İyi veya Kötü Rüya Görenin Yapacağı Şeyler",
+    "ur": "اچھا یا برا خواب دیکھنے والا کیا کرے"
+  },
+  "دعاء قنوت الوتر": {
+    "en": "Supplication for Qunut al-Witr",
+    "tr": "Vitr Namazında Kunut Duası",
+    "ur": "دعائے قنوت وتر"
+  },
+  "الذكر عقب السلام من الوتر": {
+    "en": "Remembrance Immediately After Witr",
+    "tr": "Vitr Namazında Selamdan Sonraki Zikir",
+    "ur": "وتر کے سلام کے بعد کا ذکر"
+  },
+  "دعاء الهم والحزن": {
+    "en": "Supplication for Grief and Sorrow",
+    "tr": "Tasa, Gam ve Üzüntü Halinde Dua",
+    "ur": "غم اور پریشانی کی دعا"
+  },
+  "دعاء الكرب": {
+    "en": "Supplication for Severe Distress",
+    "tr": "Sıkıntı ve Zorluk Anında Dua",
+    "ur": "سخت مصیبت اور پریشانی کی دعا"
+  },
+  "دعاء لقاء العدو وذي السلطان": {
+    "en": "Supplication When Facing an Enemy or Ruler",
+    "tr": "Düşmanla veya Zalim Yöneticiyle Karşılaşınca Dua",
+    "ur": "دشمن اور صاحب اقتدار سے ملتے وقت کی دعا"
+  },
+  "دعاء من خاف ظلم السلطان": {
+    "en": "Supplication When Fearing Injustice From a Ruler",
+    "tr": "Yöneticinin Zulmünden Korkan Kimsenin Duası",
+    "ur": "حاکم کے ظلم کا خوف ہو تو دعا"
+  },
+  "الدعاء على العدو": {
+    "en": "Supplication Against the Oppressors/Enemies",
+    "tr": "Düşmana Karşı Okunacak Dua",
+    "ur": "دشمن کے خلاف دعا"
+  },
+  "ما يقول من خاف قومًا": {
+    "en": "What to Say When Fearing a Group of People",
+    "tr": "Bir Topluluktan Korkan Kimsenin Söyleyeceği Dua",
+    "ur": "کسی قوم سے خوف محسوس ہو تو دعا"
+  },
+  "دعاء من أصابه شك في الإيمان": {
+    "en": "Supplication for One Afflicted With Doubts in Faith",
+    "tr": "İmanda Şüpheye Düşenin Okuyacağı Dua",
+    "ur": "ایمان میں وسوسہ آئے تو دعا"
+  },
+  "الدعاء قضاء الدين": {
+    "en": "Supplication for Settling Debts",
+    "tr": "Borcu Ödemek ve Borçtan Kurtulmak İçin Dua",
+    "ur": "قرض کی ادائیگی کی دعا"
+  },
+  "دعاء الوسوسة في الصلاة والقراءة": {
+    "en": "Supplication for Whispers in Prayer & Recitation",
+    "tr": "Namaz ve Kıraatte Vesveseye Düşenin Duası",
+    "ur": "نماز اور تلاوت میں وسوسے کی دعا"
+  },
+  "دعاء من استصعب عليه أمر": {
+    "en": "Supplication for One Facing a Difficult Matter",
+    "tr": "İşi Zorlaşan Kimsenin Okuyacağı Dua",
+    "ur": "کوئی مشکل کام درپیش ہو تو دعا"
+  },
+  "ما يقول ويفعل من أذنب ذنبًا": {
+    "en": "What to Say and Do After Committing a Sin",
+    "tr": "Bir Günah İşleyen Kimsenin Yapacağı ve Söyleyeceği Şeyler",
+    "ur": "گناہ سرزد ہو جائے تو کیا کہے اور کرے"
+  },
+  "دعاء طرد الشيطان ووساوسه": {
+    "en": "Supplication for Expelling Satan and His Whispers",
+    "tr": "Şeytanı ve Vesveselerini Kovma Duası",
+    "ur": "شیطان اور اس کے وسوسوں کو دور کرنے کی دعا"
+  },
+  "الدعاء حينما يقع ما لا يرضاه أو غلب على أمره": {
+    "en": "Supplication When Something Undesired Occurs",
+    "tr": "Hoşa Gitmeyen Bir Durum Olduğunda Okunacak Dua",
+    "ur": "ناپسندیدہ بات پیش آنے پر دعا"
+  },
+  "تهنئة المولود له وجوابه": {
+    "en": "Congratulating on a Newborn and Its Response",
+    "tr": "Çocuğu Olanı Tebrik ve Cevabı",
+    "ur": "نومولود کی مبارکباد اور اس کا جواب"
+  },
+  "ما يعوذ به الأولاد": {
+    "en": "Seeking Allah's Protection for Children",
+    "tr": "Çocukları Korumak İçin Okunacak Dua",
+    "ur": "بچوں کو پناہ میں دینے کی دعا"
+  },
+  "الدعاء للمريض في عيادته": {
+    "en": "Supplication for the Sick When Visiting Them",
+    "tr": "Hasta Ziyaretinde Okunacak Dua",
+    "ur": "عیادت کے وقت مریض کے لیے دعا"
+  },
+  "فضل عيادة المريض": {
+    "en": "The Virtue of Visiting the Sick",
+    "tr": "Hasta Ziyaretinin Fazileti",
+    "ur": "مریض کی عیادت کی فضیلت"
+  },
+  "دعاء المريض الذي يئس من حياته": {
+    "en": "Supplication of a Sick Person Despairing of Life",
+    "tr": "Yaşamından Ümidini Kesen Hastanın Duası",
+    "ur": "زندگی سے مایوس مریض کی دعا"
+  },
+  "تلقين المحتضر": {
+    "en": "Prompting the Dying Person (Talqin)",
+    "tr": "Ölüm Döşeğindeki Kimseye Telkin",
+    "ur": "نزع کے وقت میت کو کلمہ کی تلقین"
+  },
+  "دعاء من أصيب بمصيبة": {
+    "en": "Supplication for One Struck by a Calamity",
+    "tr": "Bir Musibete Uğrayanın Okuyacağı Dua",
+    "ur": "مصیبت میں مبتلا ہونے پر دعا"
+  },
+  "الدعاء عند إغماض الميت": {
+    "en": "Supplication Upon Closing the Eyes of the Deceased",
+    "tr": "Ölünün Gözleri Kapatılırken Okunacak Dua",
+    "ur": "میت کی آنکھیں بند کرتے وقت کی دعا"
+  },
+  "الدعاء للميت في الصلاة عليه": {
+    "en": "Supplication for the Deceased in Funeral Prayer",
+    "tr": "Cenaze Namazında Okunacak Dua",
+    "ur": "نماز جنازہ میں میت کے لیے دعا"
+  },
+  "الدعاء للفرط في الصلاة عليه": {
+    "en": "Supplication for a Deceased Child (Farāt)",
+    "tr": "Çocuk Cenaze Namazında Okunacak Dua",
+    "ur": "نابالغ بچے کے جنازے کی دعا"
+  },
+  "دعاء التعزية": {
+    "en": "Supplication for Condolences",
+    "tr": "Taziye (Başsağlığı) Duası",
+    "ur": "تعزیت کی دعا"
+  },
+  "الدعاء عند إدخال الميت القبر": {
+    "en": "Supplication When Lowering the Deceased into Grave",
+    "tr": "Ölüyü Kabre Koyarken Okunacak Dua",
+    "ur": "میت کو قبر میں اتارتے وقت کی دعا"
+  },
+  "الدعاء بعد دفن الميت": {
+    "en": "Supplication After Burying the Deceased",
+    "tr": "Definden Sonra Okunacak Dua",
+    "ur": "میت کو دفنانے کے بعد کی دعا"
+  },
+  "دعاء زيارة القبور": {
+    "en": "Supplication for Visiting Graves",
+    "tr": "Kabir Ziyaretinde Okunacak Dua",
+    "ur": "قبرستان کی زیارت کی دعا"
+  },
+  "دعاء الريح": {
+    "en": "Supplication When the Wind Blows",
+    "tr": "Rüzgar Estiğinde Okunacak Dua",
+    "ur": "تیز ہوا چلتے وقت کی دعا"
+  },
+  "دعاء الرعد": {
+    "en": "Supplication When Hearing Thunder",
+    "tr": "Gök Gürültüsü İşitildiğinde Okunacak Dua",
+    "ur": "بادل کی گرج سنتے وقت کی دعا"
+  },
+  "من أدعية الاستسقاء": {
+    "en": "Supplications for Rainfall (Istisqa)",
+    "tr": "Yağmur İstemek İçin Okunacak Dualar",
+    "ur": "طلب باران کی دعائیں"
+  },
+  "الدعاء إذا نزل المطر": {
+    "en": "Supplication When It Rains",
+    "tr": "Yağmur Yağarken Okunacak Dua",
+    "ur": "بارش برستے وقت کی دعا"
+  },
+  "الذكر بعد نزول المطر": {
+    "en": "Remembrance After the Rain Stops",
+    "tr": "Yağmur Yağdıktan Sonraki Zikir",
+    "ur": "بارش برسنے کے بعد کا ذکر"
+  },
+  "من أدعية الاستصحاء": {
+    "en": "Supplication for Stopping Excessive Rain",
+    "tr": "Aşırı Yağmurun Durması İçin Dua",
+    "ur": "بارش کے نقصانات سے بچنے کی دعا"
+  },
+  "دعاء رؤية الهلال": {
+    "en": "Supplication Upon Sighting the Crescent Moon",
+    "tr": "Hilali Görünce Okunacak Dua",
+    "ur": "نیا چاند دیکھنے کی دعا"
+  },
+  "الدعاء عند إفطار الصائم": {
+    "en": "Supplication at Iftar (Breaking the Fast)",
+    "tr": "İftar Vaktinde Okunacak Dua",
+    "ur": "افطار کے وقت کی دعا"
+  },
+  "الدعاء قبل الطعام": {
+    "en": "Supplication Before Eating",
+    "tr": "Yemekten Önce Okunacak Dua",
+    "ur": "کھانے سے پہلے کی دعا"
+  },
+  "الدعاء عند الفراغ من الطعام": {
+    "en": "Supplication After Finishing a Meal",
+    "tr": "Yemekten Sonra Okunacak Dua",
+    "ur": "کھانے کے بعد کی دعا"
+  },
+  "دعاء الضيف لصاحب الطعام": {
+    "en": "Guest's Supplication for the Host",
+    "tr": "Misafirin Ev Sahibine ve Yemek Sahibine Duası",
+    "ur": "مہمان کی میزبان کے لیے دعا"
+  },
+  "الدعاء لمن سقاه أو إذا أراد ذلك": {
+    "en": "Supplication for One Who Gives Drink",
+    "tr": "Kendisine Su İkram Edene Dua",
+    "ur": "پانی پلانے والے کے لیے دعا"
+  },
+  "دعاء إذا أفطر عند أهل بيت": {
+    "en": "Supplication When Breaking Fast at Someone's House",
+    "tr": "Bir Evde İftar Açıldığında Okunacak Dua",
+    "ur": "کسی کے ہاں روزہ افطار کرنے کی دعا"
+  },
+  "دعاء الصائم إذا حضر الطعام ولم يفطر": {
+    "en": "Supplication of a Fasting Person When Food is Served",
+    "tr": "Oruçlunun Yemek Hazırlandığında Yapacağı Dua",
+    "ur": "روزہ دار کے سامنے کھانا آئے تو دعا"
+  },
+  "ما يقول الصائم إذا سابَّه أحد": {
+    "en": "What a Fasting Person Says If Insulted",
+    "tr": "Biri Kendisine Sövünce Oruçlunun Diyeceği Söz",
+    "ur": "روزہ دار کو کوئی گالی دے تو کیا کہے"
+  },
+  "الدعاء عند رؤية باكورة الثمر": {
+    "en": "Supplication Upon Seeing First Fruits of the Season",
+    "tr": "Mevsimin İlk Meyvesini Görünce Okunacak Dua",
+    "ur": "موسم کا پہلا پھل دیکھنے پر دعا"
+  },
+  "دعاء العطاس": {
+    "en": "Supplication of Sneezing (Etiquette)",
+    "tr": "Aksırırken ve Aksırana Söylenecek Dua",
+    "ur": "چھینک آنے پر دعا اور آداب"
+  },
+  "ما يقالُ للكافر إذا عطس فحمد الله": {
+    "en": "What is Said to a Disbeliever Who Sneezes & Praises God",
+    "tr": "Gayrimüslim Aksırıp Allah'a Hamdederse Söylenecek Söz",
+    "ur": "غیر مسلم چھینک کر الحمد للہ کہے تو کیا کہے"
+  },
+  "الدعاء للمتزوج": {
+    "en": "Supplication for the Newlywed",
+    "tr": "Yeni Evlenen Kimseye Yapılacak Dua",
+    "ur": "شادی شدہ کے لیے مبارکباد کی دعا"
+  },
+  "دعاء المتزوج وشراء الدابة": {
+    "en": "Supplication of Newlywed & Buying a Mount/Vehicle",
+    "tr": "Evlenen ve Binek (Araç) Alan Kimsenin Duası",
+    "ur": "شادی اور سواری خریدنے کے وقت کی دعا"
+  },
+  "الدعاء قبل إتيان الزوجة": {
+    "en": "Supplication Before Marital Intimacy",
+    "tr": "Cinsi Münasebetten Önce Okunacak Dua",
+    "ur": "ہمبستری سے پہلے کی دعا"
+  },
+  "دعاء الغضب": {
+    "en": "Supplication for Calming Anger",
+    "tr": "Öfkelenince Okunacak Dua",
+    "ur": "غصے کے وقت کی دعا"
+  },
+  "دعاء من رأى مبتلى": {
+    "en": "Supplication When Seeing an Afflicted Person",
+    "tr": "Belaya Uğrayan Birini Görünce Okunacak Dua",
+    "ur": "کسی مصیبت زدہ کو دیکھ کر دعا"
+  },
+  "ما يقال في المجلس": {
+    "en": "What to Say in a Gathering",
+    "tr": "Mecliste Otururken Söylenecek Sözler",
+    "ur": "مجلس میں کیا کہا جائے"
+  },
+  "كفارة المجلس": {
+    "en": "Expiation of the Gathering (Kaffarat al-Majlis)",
+    "tr": "Meclis Keffareti Duası",
+    "ur": "مجلس کا کفارہ"
+  },
+  "الدعاء لمن قال: غفر الله لك": {
+    "en": "Supplication for One Who Says 'May Allah Forgive You'",
+    "tr": "Sana 'Allah Seni Bağışlasın' Diyene Dua",
+    "ur": "جو کہے 'اللہ آپ کی مغفرت کرے' اس کا جواب"
+  },
+  "الدعاء لمن صنع إليك معروفًا": {
+    "en": "Supplication for One Who Does You a Favor",
+    "tr": "Sana Bir İyilik Yapana Edilecek Dua (Cezakellah)",
+    "ur": "احسان کرنے والے کے لیے دعا"
+  },
+  "ما يعصم الله به من الدجال": {
+    "en": "Protection from the False Messiah (Dajjal)",
+    "tr": "Deccal'ın Şerrinden Korunma Yolları",
+    "ur": "دجال کے فتنے سے بچاؤ کی دعا"
+  },
+  "الدعاء لمن قال: إني أحبك في الله": {
+    "en": "Supplication for One Who Says 'I Love You for Allah'",
+    "tr": "'Seni Allah İçin Seviyorum' Diyene Verilecek Cevap",
+    "ur": "'میں تم سے اللہ کی رضا کے لیے محبت کرتا ہوں' کا جواب"
+  },
+  "الدعاء لمن عرض عليك ماله": {
+    "en": "Supplication for One Who Offers You His Wealth",
+    "tr": "Sana Malını Teklif Eden Kimseye Dua",
+    "ur": "مال پیش کرنے والے کے لیے دعا"
+  },
+  "الدعاء لمن أقرض عند القضاء": {
+    "en": "Supplication for the Lender When Repaying a Loan",
+    "tr": "Borcu Öderken Alacaklıya Yapılacak Dua",
+    "ur": "قرض ادا کرتے وقت قرض خواہ کے لیے دعا"
+  },
+  "دعاء الخوف من الشرك": {
+    "en": "Supplication Fearing Hidden Shirk (Polytheism)",
+    "tr": "Şirke Düşmekten Korkan Kimsenin Duası",
+    "ur": "شرک کے خوف کی دعا"
+  },
+  "الدعاء لمن قال بارك الله فيك": {
+    "en": "Supplication for One Who Says 'May Allah Bless You'",
+    "tr": "'Allah Sana Bereket Versin' Diyene Cevap",
+    "ur": "'بارک اللہ فیک' کا جواب"
+  },
+  "دعاء كراهية الطيرة": {
+    "en": "Supplication When Disliking Bad Omens (Superstitions)",
+    "tr": "Uğursuzluk Hissinden Kurtulma Duası",
+    "ur": "بدشگونی کے وسوسے کی دعا"
+  },
+  "دعاء الركوب": {
+    "en": "Supplication for Riding/Boarding a Vehicle",
+    "tr": "Binite / Taşıta Binerken Okunacak Dua",
+    "ur": "سواری پر سوار ہونے کی دعا"
+  },
+  "دعاء السفر": {
+    "en": "Supplication for Travel",
+    "tr": "Yolculuk (Sefer) Duası",
+    "ur": "سفر کی دعا"
+  },
+  "دعاء دخول القرية أو البلدة": {
+    "en": "Supplication When Entering a Town or City",
+    "tr": "Bir Şehre veya Köye Girerken Okunacak Dua",
+    "ur": "کسی بستی یا شہر میں داخلے کی دعا"
+  },
+  "دعاء دخول السوق": {
+    "en": "Supplication for Entering the Marketplace",
+    "tr": "Çarşıya ve Pazara Girerken Okunacak Dua",
+    "ur": "بازار میں داخل ہونے کی دعا"
+  },
+  "الدعاء إذا تعس المركوب": {
+    "en": "Supplication When One's Mount or Vehicle Stumbles",
+    "tr": "Binek Hayvanı Tökezlediğinde / Araç Arızalandığında Dua",
+    "ur": "سواری لڑکھڑائے تو دعا"
+  },
+  "دعاء المسافر للمقيم": {
+    "en": "Traveler's Supplication for the Resident",
+    "tr": "Yolcunun Geride Kalan Mukime Duası",
+    "ur": "مسافر کی مقیم کے لیے دعا"
+  },
+  "دعاء المقيم للمسافر": {
+    "en": "Resident's Supplication for the Traveler",
+    "tr": "Mukimin Yolcuya Yapacağı Dua",
+    "ur": "مقیم کی مسافر کے لیے دعا"
+  },
+  "التكبير والتسبيح في سير السفر": {
+    "en": "Takbir & Tasbih During Travel Elevation/Descent",
+    "tr": "Yolculukta Yükselirken Tekbir, İnerken Tesbih",
+    "ur": "سفر میں چڑھائی پر تکبیر اور اترائی پر تسبیح"
+  },
+  "دعاء المسافر إذا أسحر": {
+    "en": "Traveler's Supplication at Daybreak (Sahar)",
+    "tr": "Yolcunun Seher Vaktinde Okuyacağı Dua",
+    "ur": "سفر میں سحر کے وقت کی دعا"
+  },
+  "الدعاء إذا نزل منزلًا في سفر أو غيره": {
+    "en": "Supplication When Stopping at a Place During Travel",
+    "tr": "Bir Konakta veya Yerde Mola Verildiğinde Okunacak Dua",
+    "ur": "سفر میں کسی مقام پر پڑاؤ ڈالتے وقت دعا"
+  },
+  "ذكر الرجوع من السفر": {
+    "en": "Remembrance When Returning From Travel",
+    "tr": "Yolculuktan Dönerken Okunacak Dua",
+    "ur": "سفر سے واپسی کا ذکر"
+  },
+  "ما يقول ويفعل من أتاه أمر يسره أو يكرهه": {
+    "en": "What to Say & Do When Pleased or Displeased by an Event",
+    "tr": "Sevindirici veya Üzücü Bir Olayla Karşılaşınca Dua",
+    "ur": "خوشی یا ناپسندیدہ بات پیش آنے پر کیا کہے اور کرے"
+  },
+  "فضل الصلاة على النبي صلى الله عليه وسلم": {
+    "en": "Virtue of Invoking Blessings Upon the Prophet",
+    "tr": "Peygamberimize Salavat Getirmenin Fazileti",
+    "ur": "نبی کریم ﷺ پر درود بھیجنے کی فضیلت"
+  },
+  "إفشاء السلام": {
+    "en": "Spreading the Greeting of Peace (Salam)",
+    "tr": "Selamı Yaymanın Önemi ve Fazileti",
+    "ur": "سلام کو عام کرنے کی فضیلت"
+  },
+  "كيف يرد السلام على الكافر إذا سلم": {
+    "en": "How to Return Greeting to a Non-Muslim",
+    "tr": "Gayrimüslim Selam Verirse Nasıl Karşılık Verilir",
+    "ur": "غیر مسلم کے سلام کا جواب کیسے دیں"
+  },
+  "دعاء صياح الديك ونهيق الحمار": {
+    "en": "Supplication Upon Hearing a Rooster Crow or Donkey Bray",
+    "tr": "Horoz Öttüğünde veya Eşek Anırdığında Dua",
+    "ur": "مرغ کی بانگ اور گدھے کی آواز پر دعا"
+  },
+  "دعاء نباح الكلاب بالليل": {
+    "en": "Supplication Upon Hearing Dogs Barking at Night",
+    "tr": "Geceleyin Köpek Havlaması Duyulunca Dua",
+    "ur": "رات کو کتوں کے بھونکنے پر دعا"
+  },
+  "الدعاء لمن سببته": {
+    "en": "Supplication for Someone You May Have Insulted",
+    "tr": "Kırdığın veya Sövdüğün Bir Kimse İçin Dua",
+    "ur": "جس کو برا بھلا کہہ دیا ہو اس کے لیے دعا"
+  },
+  "ما يقول المسلم إذا مدح المسلم": {
+    "en": "What a Muslim Says When Praising Another Muslim",
+    "tr": "Bir Müslümanı Överken Söylenecek Söz",
+    "ur": "کسی مسلمان کی تعریف کرتے وقت کیا کہے"
+  },
+  "ما يقول المسلم إذا زُكِّي": {
+    "en": "What a Muslim Says If He is Praised",
+    "tr": "Övülen Kimsenin Söyleyeceği Söz",
+    "ur": "اپنی تعریف سن کر کیا کہے"
+  },
+  "كيف يلبي المحرم في الحج أو العمرة": {
+    "en": "How the Pilgrim Chants Talbiyah in Hajj or Umrah",
+    "tr": "Hac ve Umrede Telbiye Nasıl Getirilir",
+    "ur": "حج و عمرہ میں تلبیہ کیسے کہیں"
+  },
+  "التكبيرة إذا أتي الركن الأسود": {
+    "en": "Takbir When Reaching the Black Stone Corner",
+    "tr": "Hacerü'l-Esved Köşesine Gelindiğinde Tekbir",
+    "ur": "حجر اسود کے پاس تکبیر"
+  },
+  "الدعاء بين الركن اليماني والحجر الأسود": {
+    "en": "Supplication Between Yemeni Corner & Black Stone",
+    "tr": "Rükn-i Yemani ile Hacerü'l-Esved Arasındaki Dua",
+    "ur": "رکن یمانی اور حجر اسود کے درمیان کی دعا"
+  },
+  "دعاء الوقوف على الصفا والمروة": {
+    "en": "Supplication When Standing at Safa and Marwah",
+    "tr": "Safa ve Merve Tepesinde Yapılacak Dua",
+    "ur": "صفا اور مروہ پر دعا"
+  },
+  "الدعاء يوم عرفة": {
+    "en": "Supplication on the Day of Arafah",
+    "tr": "Arefe Günü Yapılacak En Faziletli Dua",
+    "ur": "عرفہ کے دن کی دعا"
+  },
+  "الذكر عند المشعر الحرام": {
+    "en": "Remembrance at the Sacred Monument (Muzdalifah)",
+    "tr": "Meş'ar-i Haram'da (Müzdelife) Yapılacak Zikir",
+    "ur": "مشعر حرام (مزدلفہ) میں ذکر"
+  },
+  "التكبيرة عند رمي الجمار مع كل حصاة": {
+    "en": "Takbir When Stoning the Jamarat with Each Pebble",
+    "tr": "Şeytan Taşlarken Her Taş Atışında Tekbir",
+    "ur": "جمرات پر کنکریاں مارتے وقت تکبیر"
+  },
+  "ما يقول عند التعجب والأمر السار": {
+    "en": "What to Say When Astonished or Delighted",
+    "tr": "Şaşırılan veya Sevindirici Bir Şey Görünce Dua",
+    "ur": "تعجب یا خوشی کے موقع پر کیا کہے"
+  },
+  "ما يفعل من أتاه أمر يسره": {
+    "en": "What to Do When Receiving Pleasing News (Sajdah Shukr)",
+    "tr": "Sevindirici Bir Haber Alanın Yapacağı Şükür Secdesi",
+    "ur": "خوشی کی خبر پر سجدہ شکر"
+  },
+  "ما يقول من أحس وجعًا في جسده": {
+    "en": "What to Say When Feeling Pain in One's Body",
+    "tr": "Vücudunda Ağrı Hissedenin Okuyacağı Dua",
+    "ur": "جسم میں درد محسوس ہو تو دعا"
+  },
+  "دعاء من خشي أن يصيب شيئًا بعينه": {
+    "en": "Supplication Fearing to Cast the Evil Eye (Hasad)",
+    "tr": "Göz Değdirmekten Korkan Kimsenin Okuyacağı Dua",
+    "ur": "کسی چیز کو نظر لگنے کا اندیشہ ہو تو دعا"
+  },
+  "ما يقال عند الفزع": {
+    "en": "What to Say When Startled or Terrified",
+    "tr": "Korku ve Panik Anında Söylenecek Dua",
+    "ur": "خوف اور گھبراہٹ کے وقت کیا کہے"
+  },
+  "ما يقول عند الذبح أو النحر": {
+    "en": "What to Say When Slaughtering or Sacrificing",
+    "tr": "Kurban veya Hayvan Keserken Okunacak Dua",
+    "ur": "ذبح یا قربانی کرتے وقت کیا کہے"
+  },
+  "ما يقول لرد كيد مردة الشياطين": {
+    "en": "Supplication to Repel the Plots of Rebellious Devils",
+    "tr": "Azdırıcı Şeytanların Tuzağını Bozmak İçin Dua",
+    "ur": "سرکش شیاطین کی چالوں کو دور کرنے کی دعا"
+  },
+  "الاستغفار والتوبة": {
+    "en": "Seeking Forgiveness and Repentance (Istighfar)",
+    "tr": "İstiğfar ve Tevbe Duaları",
+    "ur": "استغفار اور توبہ"
+  },
+  "فضل التسبيح، والتحميد، والتهليل، والتكبير": {
+    "en": "Virtue of Tasbih, Tahmid, Tahlil, and Takbir",
+    "tr": "Tesbih, Tahmid, Tehlil ve Tekbirin Fazileti",
+    "ur": "تسبیح، تحمید، تہلیل اور تکبیر کی فضیلت"
+  },
+  "كيف كان النبي صلى الله عليه وسلم يسبح؟": {
+    "en": "How the Prophet Recited Tasbih with His Fingers",
+    "tr": "Peygamberimiz (s.a.v.) Nasıl Tesbih Çekerdi?",
+    "ur": "نبی کریم ﷺ کیسے تسبیح پڑھتے تھے؟"
+  },
+  "من أنواع الخير والآداب الجامعة": {
+    "en": "Comprehensive Goods and Universal Islamic Etiquettes",
+    "tr": "Kapsamlı Hayırlar ve Genel İslami Adaplar",
+    "ur": "جامع بھلائیاں اور اسلامی آداب"
+  },
+  "أذكار المساء": {
+    "en": "Evening Adhkar",
+    "tr": "Akşam Zikirleri",
+    "ur": "شام کے اذکار"
+  },
+  "أدعية قرآنية (40 ربنا)": {
+    "en": "Quranic Supplications (40 Rabbana)",
+    "tr": "Kur'ani Dualar (40 Rabbena)",
+    "ur": "قرآنی دعائیں (40 ربنا)"
+  },
+  "أحكام وأدعية المسبوق في الصلاة (المسبوق)": {
+    "en": "Rulings & Supplications for Latecomer in Prayer (Masbuq)",
+    "tr": "Cemaate Geç Kalanın (Mesbûk) Hüküm ve Duaları",
+    "ur": "مسبوق کی نماز کے احکام و دعائیں"
+  },
+  "الرقية الشرعية وأدعية المرض": {
+    "en": "Ruqyah and Supplications in Illness",
+    "tr": "Rukye ve Hastalık Duaları",
+    "ur": "شرعی دم اور بیماری کی دعائیں"
+  },
+  "دعاء ليلة القدر": {
+    "en": "Supplication on Laylat al-Qadr",
+    "tr": "Kadir Gecesi Duası",
+    "ur": "شبِ قدر کی دعا"
+  },
+  "الدعاء لطلب العلم": {
+    "en": "Supplications for Knowledge",
+    "tr": "İlim İçin Dualar",
+    "ur": "علم کے لیے دعائیں"
+  },
+  "الدعاء للوالدين والذرية": {
+    "en": "Supplications for Parents and Children",
+    "tr": "Anne Baba ve Evlat İçin Dualar",
+    "ur": "والدین اور اولاد کے لیے دعائیں"
+  },
+  "أدعية جامعة ومختارة": {
+    "en": "Comprehensive & Selected Prophetic Supplications",
+    "tr": "Kapsamlı ve Seçilmiş Nebevî Dualar",
+    "ur": "جامع اور منتخب مسنون دعائیں"
+  }
+}

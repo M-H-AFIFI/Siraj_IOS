@@ -11,6 +11,7 @@ final class AppState {
     let quranStore: QuranStore
     let audioStore: QuranAudioStore
     let khatmaStore: KhatmaStore
+    let worshipStore: WorshipStore
     var settings: SettingsSnapshot
     var onboardingComplete: Bool
     var selectedTab: SirajTab = .prayer
@@ -22,6 +23,7 @@ final class AppState {
     var showListenPlayer = false
     var requestedRoute: String?
     var requestedQuranRoute: String?
+    var requestedWorshipRoute: WorshipRoute?
     var prayerDay: PrayerDay
     var hijriDate: HijriDate
     var upcomingOccasions: [DatedOccasion]
@@ -39,6 +41,7 @@ final class AppState {
         self.quranStore = QuranStore(userStore: resolvedStore)
         self.audioStore = QuranAudioStore(userStore: resolvedStore)
         self.khatmaStore = KhatmaStore(userStore: resolvedStore)
+        self.worshipStore = WorshipStore(userStore: resolvedStore)
 
         let loadedSettings = resolvedStore.loadSettings()
         self.settings = loadedSettings

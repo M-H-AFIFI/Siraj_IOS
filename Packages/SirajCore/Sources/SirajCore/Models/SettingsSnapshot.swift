@@ -116,6 +116,7 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
     public var isShowTranslation: Bool
     public var isShowTransliteration: Bool
     public var isShowVirtues: Bool
+    public var isHideCompletedAzkar: Bool
 
     // Quran & Mushaf reading preferences
     public var mushafEdition: String
@@ -191,6 +192,7 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
         isShowTranslation: Bool = true,
         isShowTransliteration: Bool = true,
         isShowVirtues: Bool = true,
+        isHideCompletedAzkar: Bool = false,
         mushafEdition: String = MushafEdition.madinah.rawValue,
         isQuranPageView: Bool = true,
         quranScrollDirection: String = "Horizontal",
@@ -257,6 +259,7 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
         self.isShowTranslation = isShowTranslation
         self.isShowTransliteration = isShowTransliteration
         self.isShowVirtues = isShowVirtues
+        self.isHideCompletedAzkar = isHideCompletedAzkar
         self.mushafEdition = MushafEdition.resolve(mushafEdition).rawValue
         self.isQuranPageView = isQuranPageView
         self.quranScrollDirection = quranScrollDirection
@@ -330,6 +333,7 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
             isShowTranslation: try c.decodeIfPresent(Bool.self, forKey: .isShowTranslation) ?? def.isShowTranslation,
             isShowTransliteration: try c.decodeIfPresent(Bool.self, forKey: .isShowTransliteration) ?? def.isShowTransliteration,
             isShowVirtues: try c.decodeIfPresent(Bool.self, forKey: .isShowVirtues) ?? def.isShowVirtues,
+            isHideCompletedAzkar: try c.decodeIfPresent(Bool.self, forKey: .isHideCompletedAzkar) ?? def.isHideCompletedAzkar,
             mushafEdition: try c.decodeIfPresent(String.self, forKey: .mushafEdition) ?? def.mushafEdition,
             isQuranPageView: try c.decodeIfPresent(Bool.self, forKey: .isQuranPageView) ?? def.isQuranPageView,
             quranScrollDirection: try c.decodeIfPresent(String.self, forKey: .quranScrollDirection) ?? def.quranScrollDirection,

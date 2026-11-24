@@ -46,6 +46,13 @@ public struct OfflineDailyHadith: Sendable, Equatable, Identifiable {
         return translationEn
     }
 
+    public func hasOwnTranslation(language: String) -> Bool {
+        if language.hasPrefix("ar") { return true }
+        if language.hasPrefix("ur") { return !translationUr.isEmpty }
+        if language.hasPrefix("tr") { return !translationTr.isEmpty }
+        return !translationEn.isEmpty
+    }
+
     public func localizedExplanation(language: String) -> String? {
         let pick: String
         if language.hasPrefix("ar") {

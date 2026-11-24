@@ -38,6 +38,20 @@ public final class UserDataStore: @unchecked Sendable {
     private let notesURL: URL
     private let khatmaURL: URL
     private let listeningSessionURL: URL
+    private let azkarProgressURL: URL
+    private let tasbihURL: URL
+
+    public struct AzkarDailyProgressRecord: Codable, Sendable, Equatable {
+        public let dateISO: String
+        public let seedVersion: Int
+        public var categories: [String: [Int: Int]]
+
+        public init(dateISO: String, seedVersion: Int = AzkarCatalog.seedVersion, categories: [String: [Int: Int]] = [:]) {
+            self.dateISO = dateISO
+            self.seedVersion = seedVersion
+            self.categories = categories
+        }
+    }
 
     public init(appGroupId: String? = UserDataStore.defaultAppGroupId, fallbackDirectory: URL? = nil) {
         let fm = FileManager.default
@@ -59,6 +73,8 @@ public final class UserDataStore: @unchecked Sendable {
         self.notesURL = directoryURL.appendingPathComponent("quran_notes.json")
         self.khatmaURL = directoryURL.appendingPathComponent("khatma_record.json")
         self.listeningSessionURL = directoryURL.appendingPathComponent("listening_session.json")
+        self.azkarProgressURL = directoryURL.appendingPathComponent("azkar_progress.json")
+        self.tasbihURL = directoryURL.appendingPathComponent("tasbih_state.json")
         try? fm.createDirectory(at: directoryURL, withIntermediateDirectories: true)
     }
 
@@ -188,6 +204,43 @@ public final class UserDataStore: @unchecked Sendable {
         } else {
             try? FileManager.default.removeItem(at: listeningSessionURL)
         }
+    }
+
+    public func loadAzkarProgress(for dateISO: String) -> [String: [Int: Int]] {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let record = readJSON(AzkarDailyProgressRecord.self, from: azkarProgressURL),
+              record.dateISO == dateISO,
+              record.seedVersion == AzkarCatalog.seedVersion else {
+            return [:]
+        }
+        return record.categories
+    }
+
+    public func saveAzkarProgress(_ categories: [String: [Int: Int]], for dateISO: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        let cleaned = categories.compactMapValues { counts -> [Int: Int]? in
+            let positive = counts.filter { $0.value > 0 }
+            return positive.isEmpty ? nil : positive
+        }
+        let record = AzkarDailyProgressRecord(dateISO: dateISO, seedVersion: AzkarCatalog.seedVersion, categories: cleaned)
+        writeJSON(record, to: azkarProgressURL)
+    }
+
+    public func loadTasbihSnapshot() -> TasbihSnapshot {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON(TasbihSnapshot.self, from: tasbihURL) ?? TasbihSnapshot()
+    }
+
+    public func saveTasbihSnapshot(_ snapshot: TasbihSnapshot) {
+        lock.lock()
+        defer { lock.unlock() }
+        writeJSON(snapshot, to: tasbihURL)
+        var p = readJSON(UserProgressSnapshot.self, from: progressURL) ?? UserProgressSnapshot()
+        p.tasbihCount = max(0, snapshot.todayTotal)
+        writeJSON(p, to: progressURL)
     }
 
     private func readJSON<T: Decodable>(_ type: T.Type, from url: URL) -> T? {

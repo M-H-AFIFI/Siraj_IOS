@@ -111,6 +111,50 @@ struct LanguageFormatSettingsView: View {
                 }
 
                 SirajSettingsSection(title: theme.t("settings_appearance_more")) {
+                    if !theme.language.hasPrefix("ar") {
+                        SirajSettingsToggleRow(
+                            icon: "character.book.closed.fill",
+                            title: theme.t("settings_show_translation"),
+                            subtitle: theme.t("settings_show_translation_desc"),
+                            isOn: Binding(
+                                get: { appState.settings.isShowTranslation },
+                                set: { v in appState.updateSettings { $0.isShowTranslation = v } }
+                            )
+                        )
+                        if appState.settings.isShowTranslation {
+                            Divider().padding(.leading, 16)
+                            SirajSettingsToggleRow(
+                                icon: "textformat.abc",
+                                title: theme.t("settings_show_transliteration"),
+                                subtitle: theme.t("settings_show_transliteration_desc"),
+                                isOn: Binding(
+                                    get: { appState.settings.isShowTransliteration },
+                                    set: { v in appState.updateSettings { $0.isShowTransliteration = v } }
+                                )
+                            )
+                        }
+                        Divider().padding(.leading, 16)
+                    }
+                    SirajSettingsToggleRow(
+                        icon: "sparkles",
+                        title: theme.t("settings_show_virtues"),
+                        subtitle: theme.t("settings_show_virtues_desc"),
+                        isOn: Binding(
+                            get: { appState.settings.isShowVirtues },
+                            set: { v in appState.updateSettings { $0.isShowVirtues = v } }
+                        )
+                    )
+                    Divider().padding(.leading, 16)
+                    SirajSettingsToggleRow(
+                        icon: "eye.slash.fill",
+                        title: theme.t("settings_hide_completed_title"),
+                        subtitle: theme.t("settings_hide_completed_desc"),
+                        isOn: Binding(
+                            get: { appState.settings.isHideCompletedAzkar },
+                            set: { v in appState.updateSettings { $0.isHideCompletedAzkar = v } }
+                        )
+                    )
+                    Divider().padding(.leading, 16)
                     SirajSettingsToggleRow(
                         icon: "hand.tap.fill",
                         title: theme.t("settings_haptic_title"),

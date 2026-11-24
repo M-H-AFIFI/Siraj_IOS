@@ -27,6 +27,15 @@ extension ArgbColor {
     }
 }
 
+struct QiblaAlignmentColors: Sendable {
+    let hubFill: Color
+    let border: Color
+    let borderLight: Color
+    let borderDark: Color
+    let glow: Color
+    let accent: Color
+}
+
 struct SirajResolvedTheme: Sendable {
     let scheme: SirajColorSchemeSpec
     let settings: SettingsSnapshot
@@ -62,7 +71,23 @@ struct SirajResolvedTheme: Sendable {
     var surfaceContainer: Color { Color(argb: scheme.surfaceContainer) }
     var surfaceContainerHigh: Color { Color(argb: scheme.surfaceContainerHigh) }
     var gold: Color { Color(argb: scheme.gold) }
+    var tertiary: Color { Color(argb: scheme.secondary) }
     var error: Color { Color(argbHex: isDark ? 0xFFF2B8B5 : 0xFFB3261E) }
+
+    var alignmentColors: QiblaAlignmentColors {
+        let lightSpec = SirajColorSchemeSpec.resolve(palette: settings.themePalette, isDark: false, isBlack: false)
+        let darkSpec = SirajColorSchemeSpec.resolve(palette: settings.themePalette, isDark: true, isBlack: false)
+        let palette = SirajPalettes.canonicalId(settings.themePalette)
+        let keepDeepHub = palette == "Sand" || palette == "Olive" || palette == "Gold"
+        return QiblaAlignmentColors(
+            hubFill: (isDark && !keepDeepHub) ? Color(argb: lightSpec.secondary) : Color(argb: lightSpec.primary),
+            border: isDark ? Color(argb: darkSpec.primary) : Color(argb: lightSpec.secondary),
+            borderLight: Color(argb: darkSpec.secondary),
+            borderDark: Color(argb: lightSpec.primary),
+            glow: Color(argb: darkSpec.primary),
+            accent: isDark ? Color(argb: darkSpec.primary) : Color(argb: lightSpec.primary)
+        )
+    }
 
     func t(_ key: String) -> String {
         localizer.string(key, lang: settings.language)
@@ -96,6 +121,10 @@ struct SirajResolvedTheme: Sendable {
 
     func amiriFont(size: CGFloat, weight: Font.Weight = .regular) -> Font {
         .custom("Amiri-Regular", size: size * textScale).weight(weight)
+    }
+
+    func hafsFont(size: CGFloat) -> Font {
+        .custom("KFGQPCHAFSUthmanicScript-Regula", size: size * textScale)
     }
 
     func quranMadinahFont(size: CGFloat) -> Font {

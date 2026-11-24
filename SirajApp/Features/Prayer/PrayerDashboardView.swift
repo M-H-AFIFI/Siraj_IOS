@@ -16,6 +16,7 @@ struct PrayerDashboardView: View {
     let onOpenTasbih: () -> Void
     let onOpenListen: () -> Void
     let onOpenDuas: () -> Void
+    let onOpenHadith: (String) -> Void
 
     @State private var path = NavigationPath()
     @State private var showHijriSheet = false
@@ -105,7 +106,7 @@ struct PrayerDashboardView: View {
                     DailyAyahCard(verse: verse, onTapCard: onOpenQuran)
                         .padding(.top, 20)
 
-                    DailyInspirationCard(hadith: hadith, onOpenCollection: onOpenDuas)
+                    DailyInspirationCard(hadith: hadith, onOpenCollection: { onOpenHadith(hadith.id) })
                         .padding(.top, 20)
                 }
                 .padding(.horizontal, 20)
