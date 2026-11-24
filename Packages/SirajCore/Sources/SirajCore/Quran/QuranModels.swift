@@ -81,13 +81,13 @@ public enum QuranReadingTheme: String, CaseIterable, Codable, Sendable, Identifi
 }
 
 public enum MushafColors {
-    public static let paperLight = ArgbColor(0xFFFAF6EB)
-    public static let mushafGold = ArgbColor(0xFF9E8047)
-    public static let mushafGoldDark = ArgbColor(0xFFD4AF37)
-    public static let mushafGoldBlack = ArgbColor(0xFFFFD700)
-    public static let mushafInk = ArgbColor(0xFF1E1B18)
-    public static let mushafInkDark = ArgbColor(0xFFF2EFE9)
-    public static let mushafInkBlack = ArgbColor(0xFFFFFFFF)
+    public static let paperLight = ArgbColor.hex(0xFFFAF6EB)
+    public static let mushafGold = ArgbColor.hex(0xFF9E8047)
+    public static let mushafGoldDark = ArgbColor.hex(0xFFD4AF37)
+    public static let mushafGoldBlack = ArgbColor.hex(0xFFFFD700)
+    public static let mushafInk = ArgbColor.hex(0xFF1E1B18)
+    public static let mushafInkDark = ArgbColor.hex(0xFFF2EFE9)
+    public static let mushafInkBlack = ArgbColor.hex(0xFFFFFFFF)
 
     public static func resolvePrinted(
         isDark: Bool,
@@ -98,19 +98,19 @@ public enum MushafColors {
         if isDark {
             let lower = darkStyle.lowercased()
             if isBlackMode || lower == "black" || lower == "amoled" {
-                return (ArgbColor(0xFF000000), mushafInkBlack)
+                return (ArgbColor.hex(0xFF000000), mushafInkBlack)
             }
             if lower == "navy" {
-                return (ArgbColor(0xFF0B132B), ArgbColor(0xFFE2E8F0))
+                return (ArgbColor.hex(0xFF0B132B), ArgbColor.hex(0xFFE2E8F0))
             }
-            return (ArgbColor(0xFF1E1E22), ArgbColor(0xFFE2E2E6))
+            return (ArgbColor.hex(0xFF1E1E22), ArgbColor.hex(0xFFE2E2E6))
         }
         let lowerPaper = paperColor.lowercased()
         if lowerPaper == "white" {
-            return (ArgbColor(0xFFFFFFFF), ArgbColor(0xFF111111))
+            return (ArgbColor.hex(0xFFFFFFFF), ArgbColor.hex(0xFF111111))
         }
         if lowerPaper == "sepia" {
-            return (ArgbColor(0xFFF4ECD8), ArgbColor(0xFF2C241B))
+            return (ArgbColor.hex(0xFFF4ECD8), ArgbColor.hex(0xFF2C241B))
         }
         return (paperLight, mushafInk)
     }
