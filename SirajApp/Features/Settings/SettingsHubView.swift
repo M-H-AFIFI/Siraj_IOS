@@ -23,7 +23,7 @@ struct SettingsHubView: View {
     var body: some View {
         let cityName = appState.activePlace.displayName(language: theme.language)
         let activeVoice = AdhanVoiceResolver.findVoice(appState.settings.azanSound).localizedTitle(language: theme.language)
-        let digitsSample = DigitFormatter.shouldUseArabicDigits(
+        let digitsSample = DigitFormatter.useEastern(
             numeralSystem: appState.settings.numeralSystem,
             lang: theme.language
         ) ? "١٢٣" : "123"

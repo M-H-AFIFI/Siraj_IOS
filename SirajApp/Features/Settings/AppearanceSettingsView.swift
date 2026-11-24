@@ -47,7 +47,7 @@ struct AppearanceSettingsView: View {
             get: { TextSizePreset.nearest(to: appState.settings.textScale) },
             set: { preset in appState.updateSettings { $0.textScale = preset.rawValue } }
         )
-        let isArabicDigits = DigitFormatter.shouldUseArabicDigits(
+        let isArabicDigits = DigitFormatter.useEastern(
             numeralSystem: appState.settings.numeralSystem,
             lang: theme.language
         )
