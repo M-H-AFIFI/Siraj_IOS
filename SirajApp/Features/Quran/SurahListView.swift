@@ -11,6 +11,9 @@ struct ReaderDestination: Identifiable, Hashable {
 enum QuranIndexRoute: Hashable {
     case bookmarks
     case settings
+    case listen
+    case khatma
+    case video(surah: Int, ayah: Int)
 }
 
 private enum SearchFilterTab: CaseIterable {
@@ -77,8 +80,40 @@ struct SurahListView: View {
                     )
                 case .settings:
                     QuranSettingsView(appState: appState, quranStore: quranStore)
+                case .listen:
+                    ListenHubView(
+                        appState: appState,
+                        audioStore: appState.audioStore,
+                        onOpenPlayer: { appState.showListenPlayer = true }
+                    )
+                case .khatma:
+                    KhatmaView(
+                        appState: appState,
+                        khatmaStore: appState.khatmaStore,
+                        onOpenReader: onOpenReader
+                    )
+                case .video(let surah, let ayah):
+                    QuranVideoView(
+                        appState: appState,
+                        quranStore: quranStore,
+                        initialSurah: surah,
+                        initialAyah: ayah
+                    )
                 }
             }
+            .task { consumeRequestedQuranRoute() }
+            .onChange(of: appState.requestedQuranRoute) { _, _ in consumeRequestedQuranRoute() }
+        }
+    }
+
+    private func consumeRequestedQuranRoute() {
+        guard let route = appState.requestedQuranRoute else { return }
+        appState.requestedQuranRoute = nil
+        switch route {
+        case "listen": path.append(QuranIndexRoute.listen)
+        case "khatma": path.append(QuranIndexRoute.khatma)
+        case "video": path.append(QuranIndexRoute.video(surah: 1, ayah: 1))
+        default: break
         }
     }
 
@@ -106,8 +141,76 @@ struct SurahListView: View {
                 } else {
                     if let pos = quranStore.readingPosition {
                         continueReadingHero(position: pos, surahs: surahs)
-                            .padding(.bottom, 4)
                     }
+
+                    // Listen Hub + Khatma quick cards
+                    HStack(spacing: 10) {
+                        Button {
+                            path.append(QuranIndexRoute.listen)
+                        } label: {
+                            HStack(spacing: 10) {
+                                ZStack {
+                                    Circle()
+                                        .fill(theme.primary.opacity(0.14))
+                                        .frame(width: 40, height: 40)
+                                    Image("ic_quick_listen")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 20, height: 20)
+                                        .foregroundStyle(theme.primary)
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(theme.t("listen_card_badge"))
+                                        .font(theme.scaledFont(size: 10.5, weight: .black))
+                                        .foregroundStyle(theme.primary)
+                                        .textCase(.uppercase)
+                                    Text(theme.t("listen_card_title"))
+                                        .font(theme.scaledFont(size: 13.5, weight: .bold))
+                                        .foregroundStyle(theme.onSurface)
+                                        .lineLimit(1)
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .padding(12)
+                            .sirajCardSurface(cornerRadius: 20)
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            path.append(QuranIndexRoute.video(surah: quranStore.readingPosition?.surahNumber ?? 1, ayah: quranStore.readingPosition?.ayahNumber ?? 1))
+                        } label: {
+                            HStack(spacing: 10) {
+                                ZStack {
+                                    Circle()
+                                        .fill(theme.gold.opacity(0.16))
+                                        .frame(width: 40, height: 40)
+                                    Image(systemName: "film.stack.fill")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundStyle(theme.primary)
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(theme.t("quran_video_section_video"))
+                                        .font(theme.scaledFont(size: 10.5, weight: .black))
+                                        .foregroundStyle(theme.primary)
+                                        .textCase(.uppercase)
+                                    Text(theme.t("quran_video_title"))
+                                        .font(theme.scaledFont(size: 13.5, weight: .bold))
+                                        .foregroundStyle(theme.onSurface)
+                                        .lineLimit(1)
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .padding(12)
+                            .sirajCardSurface(cornerRadius: 20)
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    KhatmaHeroCard(plan: appState.khatmaStore.plan(surahs: surahs)) {
+                        path.append(QuranIndexRoute.khatma)
+                    }
+                    .padding(.bottom, 4)
 
                     if isJuzView {
                         ForEach(1...30, id: \.self) { juzNum in

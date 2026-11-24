@@ -444,31 +444,59 @@ struct AdhanVoiceAvatar: View {
         0xFF9B2C2C, 0xFF2F855A, 0xFFB7791F, 0xFF2C7A7B
     ]
 
+    private static func portraitAsset(for voiceId: String) -> String? {
+        let key = voiceId.lowercased()
+        if key.contains("abdulbasit") || key.contains("abdul_basit") { return "reciter_abdulbasit" }
+        if key.contains("minshawi") { return "reciter_minshawi" }
+        if key.contains("alafasy") || key.contains("mishary") { return "reciter_alafasy" }
+        if key.contains("nafees") || key.contains("nufeis") { return "reciter_nufeis" }
+        if key.contains("zahrani") { return "reciter_mansour_zahrani" }
+        if key.contains("naqshbandi") { return "reciter_naqshbandi" }
+        if key.contains("qatami") { return "reciter_qatami" }
+        if key.contains("yusuf") { return "reciter_yusuf_islam" }
+        if key.contains("dossari") { return "reciter_dossari" }
+        if key.contains("ghamidi") { return "reciter_ghamidi" }
+        if key.contains("sudais") { return "reciter_sudais" }
+        if key.contains("shuraym") { return "reciter_shuraym" }
+        if key.contains("maher") { return "reciter_maher" }
+        if key.contains("husary") { return "reciter_husary" }
+        return nil
+    }
+
     var body: some View {
         let name = voice.localizedTitle(language: theme.language)
-        let words = name.split(separator: " ").filter { !$0.isEmpty }
-        let initials: String = {
-            if words.count >= 2 {
-                return "\(words[0].prefix(1))\(words[1].prefix(1))".uppercased()
-            }
-            return String(name.prefix(2)).uppercased()
-        }()
-        let hash = abs(voice.id.unicodeScalars.reduce(0) { $0 &* 31 &+ Int($1.value) })
-        let bg = Color(argbHex: Self.tints[hash % Self.tints.count])
+        if let portrait = Self.portraitAsset(for: voice.id) {
+            Image(portrait)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size, height: size)
+                .clipShape(Circle())
+                .overlay(Circle().strokeBorder(theme.outlineVariant.opacity(0.4), lineWidth: 1))
+        } else {
+            let words = name.split(separator: " ").filter { !$0.isEmpty }
+            let initials: String = {
+                if words.count >= 2 {
+                    return "\(words[0].prefix(1))\(words[1].prefix(1))".uppercased()
+                }
+                return String(name.prefix(2)).uppercased()
+            }()
+            let hash = abs(voice.id.unicodeScalars.reduce(0) { $0 &* 31 &+ Int($1.value) })
+            let bg = Color(argbHex: Self.tints[hash % Self.tints.count])
 
-        ZStack {
-            Circle()
-                .fill(
-                    LinearGradient(
-                        colors: [bg, bg.opacity(0.76)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [bg, bg.opacity(0.76)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
                     )
-                )
-            Text(initials)
-                .font(.system(size: size * 0.36, weight: .bold))
-                .foregroundStyle(.white)
+                Text(initials)
+                    .font(.system(size: size * 0.36, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: size, height: size)
         }
-        .frame(width: size, height: size)
     }
 }

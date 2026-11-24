@@ -16,6 +16,8 @@ struct QuranReaderView: View {
     @State private var showNavigator = false
     @State private var navigatorInitialTab = 0
     @State private var showSettingsSheet = false
+    @State private var showAudioOptions = false
+    @State private var showReciterPicker = false
     @State private var ayahForActions: Ayah?
     @State private var ayahForTafsir: Ayah?
     @State private var ayahForNote: Ayah?
@@ -174,6 +176,14 @@ struct QuranReaderView: View {
                 page: currentPage,
                 edition: edition
             )
+            appState.audioStore.onReaderAyahChanged = { surah, ayah in
+                currentSurahNumber = surah
+                selectedAyahNumber = ayah
+                let targetP = quranStore.pageForAyah(surah: surah, ayah: ayah, edition: edition)
+                if targetP != currentPage {
+                    currentPage = min(edition.totalPages, max(1, targetP))
+                }
+            }
         }
         .sheet(isPresented: $showNavigator) {
             QuranNavigatorSheet(
@@ -257,6 +267,34 @@ struct QuranReaderView: View {
                             }
                         }
                     }
+            }
+        }
+        .sheet(isPresented: $showAudioOptions) {
+            let activeSurah = appState.audioStore.readerActive ? appState.audioStore.readerSurah : (pageOpeningAyah?.surah ?? currentSurahNumber)
+            let activeAyah = appState.audioStore.readerActive ? appState.audioStore.readerAyah : (selectedAyahNumber ?? pageOpeningAyah?.ayah ?? 1)
+            AudioOptionsSheet(
+                appState: appState,
+                audioStore: appState.audioStore,
+                surahNumber: activeSurah,
+                surahName: surahTitle,
+                ayahNumber: activeAyah,
+                onOpenReciterPicker: {
+                    Task {
+                        try? await Task.sleep(for: .milliseconds(220))
+                        showReciterPicker = true
+                    }
+                }
+            )
+        }
+        .sheet(isPresented: $showReciterPicker) {
+            ReciterPickerSheet(
+                reciters: Reciter.readerReciters,
+                selectedId: appState.settings.selectedReciterId
+            ) { picked in
+                appState.updateSettings { $0.selectedReciterId = picked.id }
+                if appState.audioStore.readerIsPlaying {
+                    startOrToggleAudio(surahTitle: surahTitle, forceRestart: true)
+                }
             }
         }
     }
@@ -657,61 +695,173 @@ struct QuranReaderView: View {
     }
 
     private func readerBottomBar(surahTitle: String, colors: (paper: Color, ink: Color)) -> some View {
-        let barBg: Color = isMushafBlack ? Color(hex: 0xFF141418) : (isReaderDark ? colors.paper.opacity(0.94) : Color.white.opacity(0.92))
+        let barBg: Color = isMushafBlack ? Color(hex: 0xFF141418) : (isReaderDark ? colors.paper.opacity(0.95) : Color.white.opacity(0.94))
         let border = colors.ink.opacity(isReaderDark ? 0.14 : 0.11)
-        let juz = QuranTables.juzForPage(currentPage, edition: edition)
+        let reciter = Reciter.byId(appState.settings.selectedReciterId)
+        let audio = appState.audioStore
+        let activeAyah = audio.readerActive ? audio.readerAyah : (selectedAyahNumber ?? pageOpeningAyah?.ayah ?? 1)
+        let isPlaying = audio.readerIsPlaying
+        let isDownloaded = audio.isSurahDownloaded(reciterId: reciter.id, surah: currentSurahNumber)
 
-        return HStack(spacing: 12) {
-            Button {
-                navigatorInitialTab = 2
-                showNavigator = true
-            } label: {
-                Image(systemName: "bookmark.fill")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(accentColor)
-                    .frame(width: 40, height: 40)
-                    .background(accentColor.opacity(0.12), in: Circle())
-            }
-            .buttonStyle(.plain)
+        return VStack(spacing: 6) {
+            HStack(spacing: 10) {
+                Button {
+                    showAudioOptions = true
+                } label: {
+                    HStack(spacing: 10) {
+                        ReciterAvatarView(
+                            reciterId: reciter.id,
+                            name: reciter.shortDisplayName(language: theme.language),
+                            size: 40,
+                            isSelected: isPlaying,
+                            isPlaying: isPlaying
+                        )
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(theme.t("quran_page_label", theme.digits(String(currentPage)))) · \(theme.t("quran_juz_label", theme.digits(String(juz))))")
-                    .font(theme.scaledFont(size: 13, weight: .bold))
-                    .foregroundStyle(colors.ink)
-                Text(editionTitle)
-                    .font(theme.scaledFont(size: 11))
-                    .foregroundStyle(colors.ink.opacity(0.62))
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            Button {
-                Task {
-                    if let open = pageOpeningAyah,
-                       let ayah = await quranStore.ayah(surah: open.surah, ayah: open.ayah, edition: edition) {
-                        ayahForTafsir = ayah
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 6) {
+                                Text(surahTitle)
+                                    .font(theme.scaledFont(size: 13.5, weight: .bold))
+                                    .foregroundStyle(colors.ink)
+                                    .lineLimit(1)
+                                Text(theme.t("quran_ayah_label", theme.digits(String(activeAyah))))
+                                    .font(theme.scaledFont(size: 10.5, weight: .bold))
+                                    .foregroundStyle(accentColor)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(accentColor.opacity(0.13), in: Capsule())
+                                    .lineLimit(1)
+                            }
+                            HStack(spacing: 4) {
+                                Text(reciter.shortDisplayName(language: theme.language))
+                                    .font(theme.scaledFont(size: 11.5, weight: .semibold))
+                                    .foregroundStyle(accentColor)
+                                    .lineLimit(1)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.system(size: 9, weight: .bold))
+                                    .foregroundStyle(accentColor.opacity(0.75))
+                                if abs(audio.readerSpeed - 1.0) > 0.01 {
+                                    let sp = audio.readerSpeed == Float(Int(audio.readerSpeed))
+                                        ? "\(Int(audio.readerSpeed))"
+                                        : String(format: "%g", audio.readerSpeed)
+                                    Text("\(theme.digits(sp))×")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundStyle(accentColor)
+                                        .padding(.horizontal, 5)
+                                        .padding(.vertical, 1)
+                                        .background(accentColor.opacity(0.12), in: Capsule())
+                                }
+                                if isDownloaded {
+                                    Image(systemName: "checkmark.icloud.fill")
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(accentColor)
+                                }
+                            }
+                        }
+                        Spacer(minLength: 0)
                     }
+                    .contentShape(Rectangle())
                 }
-            } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "text.book.closed")
-                        .font(.system(size: 14, weight: .semibold))
-                    Text(theme.t("quran_action_tafsir"))
-                        .font(theme.scaledFont(size: 12.5, weight: .bold))
+                .buttonStyle(.plain)
+
+                HStack(spacing: 2) {
+                    Button {
+                        navigatorInitialTab = 2
+                        showNavigator = true
+                    } label: {
+                        Image(systemName: "bookmark")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(colors.ink.opacity(0.75))
+                            .frame(width: 34, height: 38)
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        audio.previousReaderAyah()
+                    } label: {
+                        Image(systemName: theme.isRTL ? "forward.end.fill" : "backward.end.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(colors.ink.opacity(0.8))
+                            .frame(width: 30, height: 38)
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        startOrToggleAudio(surahTitle: surahTitle, forceRestart: false)
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .stroke(accentColor.opacity(0.20), lineWidth: 2.5)
+                            if audio.readerDurationSec > 0 && !appState.settings.isPlayerProgressBarEnabled {
+                                Circle()
+                                    .trim(from: 0, to: audio.readerProgress)
+                                    .stroke(accentColor, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                                    .rotationEffect(.degrees(-90))
+                            }
+                            Circle()
+                                .fill(accentColor)
+                                .padding(3)
+                            Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(theme.onPrimary)
+                        }
+                        .frame(width: 40, height: 40)
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        audio.nextReaderAyah()
+                    } label: {
+                        Image(systemName: theme.isRTL ? "backward.end.fill" : "forward.end.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(colors.ink.opacity(0.8))
+                            .frame(width: 30, height: 38)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .foregroundStyle(theme.onPrimary)
-                .padding(.horizontal, 14)
-                .frame(height: 38)
-                .background(accentColor, in: Capsule())
             }
-            .buttonStyle(.plain)
+
+            if appState.settings.isPlayerProgressBarEnabled && audio.readerDurationSec > 0 {
+                WavyProgressBar(
+                    progress: audio.readerProgress,
+                    isPlaying: isPlaying,
+                    onSeek: { frac in audio.seekReader(toSeconds: frac * audio.readerDurationSec) },
+                    strokeWidth: 2.8,
+                    amplitude: 2.4,
+                    wavelength: 22,
+                    height: 18
+                )
+            }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
         .background(barBg, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(border, lineWidth: 1))
         .shadow(color: Color.black.opacity(isReaderDark ? 0 : 0.10), radius: 10, y: 3)
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 12)
         .padding(.bottom, 8)
+    }
+
+    private func startOrToggleAudio(surahTitle: String, forceRestart: Bool) {
+        let audio = appState.audioStore
+        if audio.readerActive && !forceRestart {
+            audio.toggleReaderPlayPause()
+            return
+        }
+        let open = pageOpeningAyah ?? (currentSurahNumber, 1)
+        let targetSurah = selectedAyahNumber != nil ? currentSurahNumber : open.surah
+        let targetAyah = selectedAyahNumber ?? open.ayah
+        let surahObj = quranStore.surahs.first { $0.number == targetSurah }
+        let lastOnPage = quranStore.mushafPage(pageNumber: currentPage, edition: edition)?.ayahs
+            .filter { $0.surahNumber == targetSurah }
+            .map(\.numberInSurah).max()
+        audio.playReaderAyah(
+            surah: targetSurah,
+            ayah: targetAyah,
+            reciterId: appState.settings.selectedReciterId,
+            surahName: surahTitle,
+            surahAyahCount: surahObj?.numberOfAyahs ?? 7,
+            pageLastAyah: lastOnPage
+        )
     }
 
     private var editionTitle: String {

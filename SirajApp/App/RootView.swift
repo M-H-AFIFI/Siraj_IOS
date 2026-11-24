@@ -42,7 +42,10 @@ struct RootView: View {
                                 }
                             },
                             onOpenTasbih: { appState.selectedTab = .azkar },
-                            onOpenListen: { appState.selectedTab = .quran },
+                            onOpenListen: {
+                                appState.selectedTab = .quran
+                                appState.requestedQuranRoute = "listen"
+                            },
                             onOpenDuas: { appState.selectedTab = .azkar }
                         )
                     case .quran:
@@ -81,10 +84,35 @@ struct RootView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                FloatingTabBar(selectedTab: $appState.selectedTab, isCollapsed: appState.isTabBarCollapsed)
-                    .onChange(of: appState.selectedTab) { _, _ in
-                        appState.isTabBarCollapsed = false
+                VStack(spacing: 8) {
+                    if appState.audioStore.hasAnyMiniPlayer {
+                        QuranMiniPlayer(
+                            appState: appState,
+                            audioStore: appState.audioStore,
+                            onOpenReader: { dest in
+                                if appState.quranStore.assetState.isReady {
+                                    appState.activeReader = dest
+                                } else {
+                                    appState.selectedTab = .quran
+                                }
+                            },
+                            onOpenListenPlayer: {
+                                appState.showListenPlayer = true
+                            }
+                        )
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
+
+                    FloatingTabBar(selectedTab: $appState.selectedTab, isCollapsed: appState.isTabBarCollapsed)
+                        .onChange(of: appState.selectedTab) { _, _ in
+                            appState.isTabBarCollapsed = false
+                        }
+                }
+            }
+        }
+        .onChange(of: appState.activeAdhanAlert) { _, alert in
+            if alert != nil {
+                appState.audioStore.pauseForAdhan()
             }
         }
         .fullScreenCover(item: $appState.activeAdhanAlert) { prayer in
@@ -102,6 +130,12 @@ struct RootView: View {
                 appState: appState,
                 quranStore: appState.quranStore,
                 initialDestination: destination
+            )
+        }
+        .fullScreenCover(isPresented: $appState.showListenPlayer) {
+            ListenPlayerView(
+                appState: appState,
+                audioStore: appState.audioStore
             )
         }
     }

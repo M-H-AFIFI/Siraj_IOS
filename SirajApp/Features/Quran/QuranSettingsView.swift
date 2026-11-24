@@ -143,6 +143,16 @@ struct QuranSettingsView: View {
                         subtitle: theme.t("quran_reading"),
                         isOn: dashboardCardBinding
                     )
+                    Divider().padding(.leading, 16)
+                    SirajSettingsToggleRow(
+                        icon: "waveform",
+                        title: theme.t("quran_player_progress_title"),
+                        subtitle: theme.t("quran_player_progress_desc"),
+                        isOn: Binding(
+                            get: { appState.settings.isPlayerProgressBarEnabled },
+                            set: { val in appState.updateSettings { $0.isPlayerProgressBarEnabled = val } }
+                        )
+                    )
                 }
 
                 // 6. Tafsir & Translation

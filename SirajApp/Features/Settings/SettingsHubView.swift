@@ -7,6 +7,7 @@ enum SettingsRoute: Hashable {
     case reminders
     case quranSettings
     case bookmarks
+    case quranVideo
     case appearance
     case language
     case widgets
@@ -85,6 +86,14 @@ struct SettingsHubView: View {
                         ) {
                             path.append(SettingsRoute.bookmarks)
                         }
+                        Divider().padding(.leading, 16)
+                        SirajSettingsRow(
+                            icon: "film.stack.fill",
+                            title: theme.t("settings_quran_video_title"),
+                            subtitle: theme.t("settings_quran_video_desc")
+                        ) {
+                            path.append(SettingsRoute.quranVideo)
+                        }
                     }
 
                     SirajSettingsSection(title: theme.t("settings_section_language"), icon: "globe") {
@@ -151,6 +160,8 @@ struct SettingsHubView: View {
                         let page = appState.quranStore.pageForAyah(surah: surah, ayah: ayah, edition: ed)
                         onOpenReader(ReaderDestination(page: page, surahNumber: surah, ayahNumber: ayah))
                     }
+                case .quranVideo:
+                    QuranVideoView(appState: appState, quranStore: appState.quranStore)
                 case .appearance:
                     AppearanceSettingsView(appState: appState)
                 case .language:

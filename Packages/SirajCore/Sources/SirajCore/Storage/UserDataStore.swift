@@ -4,11 +4,21 @@ public struct UserProgressSnapshot: Codable, Sendable, Equatable {
     public var onboardingComplete: Bool
     public var tasbihCount: Int
     public var lastReadPage: Int?
+    public var khatmasCompleted: Int
 
-    public init(onboardingComplete: Bool = false, tasbihCount: Int = 0, lastReadPage: Int? = nil) {
+    public init(onboardingComplete: Bool = false, tasbihCount: Int = 0, lastReadPage: Int? = nil, khatmasCompleted: Int = 0) {
         self.onboardingComplete = onboardingComplete
         self.tasbihCount = tasbihCount
         self.lastReadPage = lastReadPage
+        self.khatmasCompleted = khatmasCompleted
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.onboardingComplete = try c.decodeIfPresent(Bool.self, forKey: .onboardingComplete) ?? false
+        self.tasbihCount = try c.decodeIfPresent(Int.self, forKey: .tasbihCount) ?? 0
+        self.lastReadPage = try c.decodeIfPresent(Int.self, forKey: .lastReadPage)
+        self.khatmasCompleted = try c.decodeIfPresent(Int.self, forKey: .khatmasCompleted) ?? 0
     }
 }
 
@@ -26,6 +36,8 @@ public final class UserDataStore: @unchecked Sendable {
     private let readingPositionURL: URL
     private let bookmarksURL: URL
     private let notesURL: URL
+    private let khatmaURL: URL
+    private let listeningSessionURL: URL
 
     public init(appGroupId: String? = UserDataStore.defaultAppGroupId, fallbackDirectory: URL? = nil) {
         let fm = FileManager.default
@@ -45,6 +57,8 @@ public final class UserDataStore: @unchecked Sendable {
         self.readingPositionURL = directoryURL.appendingPathComponent("reading_position.json")
         self.bookmarksURL = directoryURL.appendingPathComponent("quran_bookmarks.json")
         self.notesURL = directoryURL.appendingPathComponent("quran_notes.json")
+        self.khatmaURL = directoryURL.appendingPathComponent("khatma_record.json")
+        self.listeningSessionURL = directoryURL.appendingPathComponent("listening_session.json")
         try? fm.createDirectory(at: directoryURL, withIntermediateDirectories: true)
     }
 
@@ -130,6 +144,50 @@ public final class UserDataStore: @unchecked Sendable {
         lock.lock()
         defer { lock.unlock() }
         writeJSON(notes, to: notesURL)
+    }
+
+    public func loadKhatmaRecord() -> KhatmaRecord? {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON(KhatmaRecord.self, from: khatmaURL)
+    }
+
+    public func saveKhatmaRecord(_ record: KhatmaRecord?) {
+        lock.lock()
+        defer { lock.unlock() }
+        if let record {
+            writeJSON(record, to: khatmaURL)
+        } else {
+            try? FileManager.default.removeItem(at: khatmaURL)
+        }
+    }
+
+    public func loadKhatmasCompleted() -> Int {
+        loadProgress().khatmasCompleted
+    }
+
+    public func saveKhatmasCompleted(_ count: Int) {
+        lock.lock()
+        defer { lock.unlock() }
+        var p = readJSON(UserProgressSnapshot.self, from: progressURL) ?? UserProgressSnapshot()
+        p.khatmasCompleted = max(0, count)
+        writeJSON(p, to: progressURL)
+    }
+
+    public func loadListeningSession() -> ListeningSession? {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON(ListeningSession.self, from: listeningSessionURL)
+    }
+
+    public func saveListeningSession(_ session: ListeningSession?) {
+        lock.lock()
+        defer { lock.unlock() }
+        if let session {
+            writeJSON(session, to: listeningSessionURL)
+        } else {
+            try? FileManager.default.removeItem(at: listeningSessionURL)
+        }
     }
 
     private func readJSON<T: Decodable>(_ type: T.Type, from url: URL) -> T? {

@@ -9,6 +9,8 @@ final class AppState {
     let store: UserDataStore
     let localizer: SirajLocalizer
     let quranStore: QuranStore
+    let audioStore: QuranAudioStore
+    let khatmaStore: KhatmaStore
     var settings: SettingsSnapshot
     var onboardingComplete: Bool
     var selectedTab: SirajTab = .prayer
@@ -17,7 +19,9 @@ final class AppState {
     var activeAdhanAlert: PrayerType?
     var isAdhanAlertTest = false
     var activeReader: ReaderDestination?
+    var showListenPlayer = false
     var requestedRoute: String?
+    var requestedQuranRoute: String?
     var prayerDay: PrayerDay
     var hijriDate: HijriDate
     var upcomingOccasions: [DatedOccasion]
@@ -33,6 +37,8 @@ final class AppState {
         self.store = resolvedStore
         self.localizer = resolvedLoc
         self.quranStore = QuranStore(userStore: resolvedStore)
+        self.audioStore = QuranAudioStore(userStore: resolvedStore)
+        self.khatmaStore = KhatmaStore(userStore: resolvedStore)
 
         let loadedSettings = resolvedStore.loadSettings()
         self.settings = loadedSettings
