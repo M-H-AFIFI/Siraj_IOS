@@ -384,7 +384,7 @@ struct QuranSettingsView: View {
         title: String,
         options: [(id: String, titleKey: String, descKey: String)],
         selectedId: String,
-        colorsFor: (String) -> (paper: ArgbColor, ink: ArgbColor),
+        colorsFor: @escaping (String) -> (paper: ArgbColor, ink: ArgbColor),
         onSelect: @escaping (String) -> Void
     ) -> some View {
         let activeDesc = options.first(where: { $0.id == selectedId })?.descKey ?? options[0].descKey
