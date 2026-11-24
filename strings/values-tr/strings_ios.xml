@@ -6,12 +6,13 @@
     <string name="ios_widget_gallery_hint">Ana Ekrana veya Kilit Ekranına uzun basın, Düzenle → Araç Ekle adımlarını izleyip Siraj\'ı seçin. Görünümü değiştirmek için araca dokunun.</string>
     <string name="ios_open_adhan">Ezanı Aç</string>
     <string name="ios_dismiss_adhan">Kapat</string>
-    <string name="ios_milestone_quran_desc">604 sayfalık Mushaf, tilavet, Dinleme Merkezi, Hatim ve video dışa aktarma bir sonraki güncellemede geliyor.</string>
-    <string name="ios_milestone_qibla_desc">Canlı Kıble pusulası günlük araçlar güncellemesinde geliyor.</string>
-    <string name="ios_milestone_azkar_desc">Hısnü\'l-Müslim zikirleri, Tesbih, Hadis, Esmaül Hüsna, Kur\'an Radyosu, Oruç ve Zekât günlük araçlar güncellemesinde geliyor.</string>
+    <string name="tab_coming_soon_quran">604 sayfalık Mushaf, tilavet, Dinleme Merkezi, Hatim ve video dışa aktarma bir sonraki güncellemede geliyor.</string>
+    <string name="tab_coming_soon_qibla">Canlı Kıble pusulası günlük araçlar güncellemesinde geliyor.</string>
+    <string name="tab_coming_soon_azkar">Hısnü\'l-Müslim zikirleri, Tesbih, Hadis, Esmaül Hüsna, Kur\'an Radyosu, Oruç ve Zekât günlük araçlar güncellemesinde geliyor.</string>
     <string name="ios_widget_category_prayer">Namaz Vakitleri</string>
     <string name="ios_widget_category_clock">Namaz Saati</string>
     <string name="ios_widget_category_hijri">Hicri ve Ay</string>
     <string name="ios_lockscreen_widget_title">Sonraki Namaz</string>
     <string name="ios_lockscreen_widget_desc">Sonraki namaza çevrimdışı kesintisiz geri sayım.</string>
+    <string name="appearance_icon_card_desc">Ana ekran simgenizi ve Siraj içindeki logoyu günceller.</string>
 </resources>

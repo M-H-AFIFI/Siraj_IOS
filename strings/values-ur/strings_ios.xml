@@ -6,12 +6,13 @@
     <string name="ios_widget_gallery_hint">ہوم اسکرین یا لاک اسکرین پر دیر تک دبائیں، ترمیم ← ویجیٹ شامل کریں منتخب کریں اور سراج چنیں۔ شکل اور رنگ بدلنے کے لیے ویجیٹ پر ٹیپ کریں۔</string>
     <string name="ios_open_adhan">اذان کھولیں</string>
     <string name="ios_dismiss_adhan">بند کریں</string>
-    <string name="ios_milestone_quran_desc">مکمل مصحف، تلاوت، سننے کا مرکز، ختمِ قرآن اور ویڈیو ایکسپورٹ اگلی اپ ڈیٹ میں شامل ہوں گے۔</string>
-    <string name="ios_milestone_qibla_desc">لائیو قبلہ قطب نما روزمرہ ٹولز کی اپ ڈیٹ میں شامل ہوگا۔</string>
-    <string name="ios_milestone_azkar_desc">حصن المسلم اذکار، تسبیح، حدیث، اسمائے حسنیٰ، قرآن ریڈیو، روزہ اور زکوٰۃ روزمرہ ٹولز کی اپ ڈیٹ میں شامل ہوں گے۔</string>
+    <string name="tab_coming_soon_quran">مکمل مصحف، تلاوت، سننے کا مرکز، ختمِ قرآن اور ویڈیو ایکسپورٹ اگلی اپ ڈیٹ میں شامل ہوں گے۔</string>
+    <string name="tab_coming_soon_qibla">لائیو قبلہ قطب نما روزمرہ ٹولز کی اپ ڈیٹ میں شامل ہوگا۔</string>
+    <string name="tab_coming_soon_azkar">حصن المسلم اذکار، تسبیح، حدیث، اسمائے حسنیٰ، قرآن ریڈیو، روزہ اور زکوٰۃ روزمرہ ٹولز کی اپ ڈیٹ میں شامل ہوں گے۔</string>
     <string name="ios_widget_category_prayer">اوقاتِ نماز</string>
     <string name="ios_widget_category_clock">نماز گھڑی</string>
     <string name="ios_widget_category_hijri">ہجری اور چاند</string>
     <string name="ios_lockscreen_widget_title">اگلی نماز</string>
     <string name="ios_lockscreen_widget_desc">انٹرنیٹ کے بغیر اگلی نماز کی مسلسل الٹی گنتی۔</string>
+    <string name="appearance_icon_card_desc">آپ کی ہوم اسکرین کا آئیکن اور ایپ میں سراج کا نشان اپ ڈیٹ کرتا ہے۔</string>
 </resources>

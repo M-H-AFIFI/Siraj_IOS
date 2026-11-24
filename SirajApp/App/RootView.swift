@@ -43,22 +43,22 @@ struct RootView: View {
                             }
                         )
                     case .quran:
-                        MilestonePlaceholderView(
+                        ComingSoonTabView(
                             iconAsset: "ic_nav_quran",
                             titleKey: "nav_quran",
-                            descriptionKey: "ios_milestone_quran_desc"
+                            descriptionKey: "tab_coming_soon_quran"
                         )
                     case .qibla:
-                        MilestonePlaceholderView(
+                        ComingSoonTabView(
                             iconAsset: "ic_nav_qibla",
                             titleKey: "nav_qibla",
-                            descriptionKey: "ios_milestone_qibla_desc"
+                            descriptionKey: "tab_coming_soon_qibla"
                         )
                     case .azkar:
-                        MilestonePlaceholderView(
+                        ComingSoonTabView(
                             iconAsset: "ic_nav_azkar",
                             titleKey: "nav_azkar",
-                            descriptionKey: "ios_milestone_azkar_desc"
+                            descriptionKey: "tab_coming_soon_azkar"
                         )
                     case .settings:
                         SettingsHubView(

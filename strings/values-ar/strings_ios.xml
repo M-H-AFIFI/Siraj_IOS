@@ -6,12 +6,13 @@
     <string name="ios_widget_gallery_hint">اضغط مطوّلاً على الشاشة الرئيسية أو شاشة القفل، ثم تعديل ← إضافة أداة واختر سراج. اضغط على الأداة لاختيار التصميم واللون.</string>
     <string name="ios_open_adhan">فتح الأذان</string>
     <string name="ios_dismiss_adhan">إغلاق</string>
-    <string name="ios_milestone_quran_desc">المصحف الكامل والتلاوات ومكتبة الاستماع والختمة وتصدير الفيديو ستصل في التحديث القادم.</string>
-    <string name="ios_milestone_qibla_desc">بوصلة القبلة المباشرة ستصل في تحديث الأدوات اليومية.</string>
-    <string name="ios_milestone_azkar_desc">حصن المسلم والتسبيح والحديث وأسماء الله الحسنى وإذاعة القرآن والصيام والزكاة ستصل في تحديث الأدوات اليومية.</string>
+    <string name="tab_coming_soon_quran">المصحف الكامل والتلاوات ومكتبة الاستماع والختمة وتصدير الفيديو ستصل في التحديث القادم.</string>
+    <string name="tab_coming_soon_qibla">بوصلة القبلة المباشرة ستصل في تحديث الأدوات اليومية.</string>
+    <string name="tab_coming_soon_azkar">حصن المسلم والتسبيح والحديث وأسماء الله الحسنى وإذاعة القرآن والصيام والزكاة ستصل في تحديث الأدوات اليومية.</string>
     <string name="ios_widget_category_prayer">مواقيت الصلاة</string>
     <string name="ios_widget_category_clock">ساعة الصلاة</string>
     <string name="ios_widget_category_hijri">التقويم الهجري والقمر</string>
     <string name="ios_lockscreen_widget_title">الصلاة القادمة</string>
     <string name="ios_lockscreen_widget_desc">عدّ تنازلي دائم للصلاة القادمة دون إنترنت.</string>
+    <string name="appearance_icon_card_desc">يحدّث أيقونة الشاشة الرئيسية وشعار سراج في أنحاء التطبيق.</string>
 </resources>

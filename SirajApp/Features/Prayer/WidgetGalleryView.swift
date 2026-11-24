@@ -54,7 +54,7 @@ struct WidgetGalleryView: View {
                 switch category {
                 case .prayer:
                     lockScreenPreviewCard
-                    ForEach(WidgetFace.milestone1PrayerFaces) { face in
+                    ForEach(WidgetFace.prayerFaces) { face in
                         widgetPreviewWrapper(title: faceTitle(face), subtitle: faceDesc(face), spec: previewSpec) {
                             prayerFacePreview(face, spec: previewSpec)
                         }
@@ -66,7 +66,7 @@ struct WidgetGalleryView: View {
                         }
                     }
                 case .hijri:
-                    ForEach(WidgetFace.milestone1HijriMoonFaces) { face in
+                    ForEach(WidgetFace.hijriMoonFaces) { face in
                         widgetPreviewWrapper(title: faceTitle(face), subtitle: faceDesc(face), spec: previewSpec) {
                             hijriFacePreview(face, spec: previewSpec)
                         }

@@ -6,12 +6,13 @@
     <string name="ios_widget_gallery_hint">Long-press your Home Screen or Lock Screen, tap Edit → Add Widget, and choose Siraj. Tap any placed widget to pick its face and palette.</string>
     <string name="ios_open_adhan">Open Adhan</string>
     <string name="ios_dismiss_adhan">Dismiss</string>
-    <string name="ios_milestone_quran_desc">The 604-page Mushaf, recitation, Listen Hub, Khatma, and video export arrive in the next update.</string>
-    <string name="ios_milestone_qibla_desc">The live compass and Qibla finder arrive in the daily tools update.</string>
-    <string name="ios_milestone_azkar_desc">Hisn al-Muslim adhkar, Tasbih, Hadith, 99 Names, Quran Radio, Fasting, and Zakat arrive in the daily tools update.</string>
+    <string name="tab_coming_soon_quran">The 604-page Mushaf, recitation, Listen Hub, Khatma, and video export arrive in the next update.</string>
+    <string name="tab_coming_soon_qibla">The live compass and Qibla finder arrive in the daily tools update.</string>
+    <string name="tab_coming_soon_azkar">Hisn al-Muslim adhkar, Tasbih, Hadith, 99 Names, Quran Radio, Fasting, and Zakat arrive in the daily tools update.</string>
     <string name="ios_widget_category_prayer">Prayer Times</string>
     <string name="ios_widget_category_clock">Prayer Clock</string>
     <string name="ios_widget_category_hijri">Hijri &amp; Moon</string>
     <string name="ios_lockscreen_widget_title">Next Prayer</string>
     <string name="ios_lockscreen_widget_desc">Always-on offline countdown to the next prayer.</string>
+    <string name="appearance_icon_card_desc">Updates your Home Screen icon and the emblem across Siraj.</string>
 </resources>
