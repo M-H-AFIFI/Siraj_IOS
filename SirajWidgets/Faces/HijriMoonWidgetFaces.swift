@@ -106,7 +106,7 @@ private struct HijriMoonWidgetBody: View {
 
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(dayDigits)
-                    .font(.system(size: 36, weight: .black, design: .rounded))
+                    .font(.system(size: 38, weight: .black, design: .rounded))
                     .foregroundStyle(style.accent)
                     .widgetAccentable()
                 VStack(alignment: .leading, spacing: 1) {
@@ -132,22 +132,36 @@ private struct HijriMoonWidgetBody: View {
 
     private var monthCalligraphyFace: some View {
         let snap = entry.snapshot
+        let civil = snap.place.today(at: snap.date)
         let monthAr = HijriFormatter.monthName(snap.hijri.month, lang: "ar")
         let fullHijri = HijriFormatter.format(snap.hijri, lang: snap.language, numeralSystem: snap.settings.numeralSystem)
+        let gregLine = HijriFormatter.formatGregorianCompact(civil, lang: snap.language, numeralSystem: snap.settings.numeralSystem)
 
-        return VStack(spacing: 8) {
+        return VStack(spacing: 6) {
             Text(monthAr)
-                .font(.system(size: 30, weight: .bold, design: .serif))
+                .font(.custom("Amiri-Regular", size: 34))
                 .foregroundStyle(style.accent)
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
                 .widgetAccentable()
 
+            Image("widget_date_rule")
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 9)
+                .foregroundStyle(style.accent.opacity(0.55))
+
             Text(fullHijri)
-                .font(.system(size: 12, weight: .semibold))
+                .font(.system(size: 12.5, weight: .bold))
                 .foregroundStyle(style.primaryText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
+
+            Text(gregLine)
+                .font(.system(size: 10.5, weight: .medium))
+                .foregroundStyle(style.secondaryText)
+                .lineLimit(1)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -161,9 +175,18 @@ private struct HijriMoonWidgetBody: View {
 
         return VStack(spacing: 6) {
             Text(weekdayAr)
-                .font(.system(size: 32, weight: .bold, design: .serif))
+                .font(.custom("Amiri-Regular", size: 34))
                 .foregroundStyle(style.accent)
+                .minimumScaleFactor(0.65)
+                .lineLimit(1)
                 .widgetAccentable()
+
+            Image("widget_date_rule")
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 9)
+                .foregroundStyle(style.accent.opacity(0.55))
 
             Text(hijriLine)
                 .font(.system(size: 12, weight: .bold))
@@ -171,7 +194,7 @@ private struct HijriMoonWidgetBody: View {
                 .lineLimit(1)
 
             Text(gregLine)
-                .font(.system(size: 11))
+                .font(.system(size: 10.5, weight: .medium))
                 .foregroundStyle(style.secondaryText)
                 .lineLimit(1)
         }
@@ -187,7 +210,7 @@ private struct HijriMoonWidgetBody: View {
 
         return VStack(spacing: 8) {
             WidgetMoonCanvas(phase: moon, litColor: style.accent)
-                .frame(width: 56, height: 56)
+                .frame(width: 58, height: 58)
                 .widgetAccentable()
 
             Text(WidgetDataLoader.t(moon.name.stringKey, lang: snap.language))
@@ -224,7 +247,7 @@ private struct HijriMoonWidgetBody: View {
 
             HStack(alignment: .firstTextBaseline, spacing: 5) {
                 Text(daysText)
-                    .font(.system(size: 32, weight: .black, design: .rounded))
+                    .font(.system(size: 34, weight: .black, design: .rounded))
                     .foregroundStyle(style.accent)
                     .widgetAccentable()
                 Text(WidgetDataLoader.t("widget_preview_count_unit", lang: snap.language))
@@ -247,18 +270,41 @@ struct WidgetMoonCanvas: View {
             let rect = CGRect(x: center.x - r, y: center.y - r, width: r * 2, height: r * 2)
 
             ctx.fill(Path(ellipseIn: rect), with: .color(litColor.opacity(0.18)))
-            let offset = (1.0 - phase.illumination) * 1.45 * Double(r)
-            let dx = phase.waxing ? -offset : offset
-
-            ctx.drawLayer { layer in
-                layer.clip(to: Path(ellipseIn: rect))
-                layer.fill(Path(ellipseIn: rect), with: .color(litColor))
-                if phase.illumination < 0.94 {
-                    let shadow = CGRect(x: center.x - r + dx, y: center.y - r, width: r * 2, height: r * 2)
-                    layer.blendMode = .destinationOut
-                    layer.fill(Path(ellipseIn: shadow), with: .color(.black))
-                }
-            }
+            let lit = widgetMoonLimbPath(center: center, radius: r, phaseFraction: phase.phaseFraction)
+            ctx.fill(lit, with: .color(litColor))
         }
+    }
+
+    private func widgetMoonLimbPath(center: CGPoint, radius: CGFloat, phaseFraction: Double) -> Path {
+        var path = Path()
+        if phaseFraction >= 0.47 && phaseFraction <= 0.53 {
+            path.addEllipse(in: CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2))
+            return path
+        }
+        if phaseFraction < 0.02 || phaseFraction > 0.98 { return path }
+
+        let k = cos(phaseFraction * 2.0 * .pi)
+        let isWaxing = phaseFraction <= 0.5
+        let m: CGFloat = 0.55228475
+        let cx = center.x
+        let cy = center.y
+        let limbX: CGFloat = isWaxing ? radius : -radius
+        let rx = CGFloat(k) * limbX
+
+        path.move(to: CGPoint(x: cx, y: cy - radius))
+        path.addCurve(to: CGPoint(x: cx + limbX, y: cy), control1: CGPoint(x: cx + limbX * m, y: cy - radius), control2: CGPoint(x: cx + limbX, y: cy - radius * m))
+        path.addCurve(to: CGPoint(x: cx, y: cy + radius), control1: CGPoint(x: cx + limbX, y: cy + radius * m), control2: CGPoint(x: cx + limbX * m, y: cy + radius))
+
+        let isCrescent = (phaseFraction >= 0.02 && phaseFraction <= 0.22) || (phaseFraction >= 0.78 && phaseFraction <= 0.98)
+        if isCrescent && k > 0.05 {
+            let innerRx = limbX * CGFloat(min(0.85, max(0.18, k * 0.90)))
+            path.addCurve(to: CGPoint(x: cx + innerRx, y: cy), control1: CGPoint(x: cx + innerRx * 0.22, y: cy + radius * 0.68), control2: CGPoint(x: cx + innerRx, y: cy + radius * 0.38))
+            path.addCurve(to: CGPoint(x: cx, y: cy - radius), control1: CGPoint(x: cx + innerRx, y: cy - radius * 0.38), control2: CGPoint(x: cx + innerRx * 0.22, y: cy - radius * 0.68))
+        } else {
+            path.addCurve(to: CGPoint(x: cx + rx, y: cy), control1: CGPoint(x: cx + rx * m, y: cy + radius), control2: CGPoint(x: cx + rx, y: cy + radius * m))
+            path.addCurve(to: CGPoint(x: cx, y: cy - radius), control1: CGPoint(x: cx + rx, y: cy - radius * m), control2: CGPoint(x: cx + rx * m, y: cy - radius))
+        }
+        path.closeSubpath()
+        return path
     }
 }

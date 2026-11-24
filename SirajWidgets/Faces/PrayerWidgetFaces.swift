@@ -99,6 +99,17 @@ private struct PrayerWidgetBody: View {
         return entry.date...end
     }
 
+    private func sunIconName(for type: PrayerType) -> String {
+        switch type {
+        case .fajr: return "widget_sun_fajr"
+        case .sunrise: return "widget_sun_sunrise"
+        case .dhuhr: return "widget_sun_dhuhr"
+        case .asr: return "widget_sun_asr"
+        case .maghrib: return "widget_sun_maghrib"
+        case .isha: return "widget_sun_isha"
+        }
+    }
+
     private var nextFace: some View {
         let snap = entry.snapshot
         let name = WidgetDataLoader.t(snap.nextPrayer.type.stringKey, lang: snap.language)
@@ -119,20 +130,32 @@ private struct PrayerWidgetBody: View {
 
             Spacer(minLength: 2)
 
-            Text(name)
-                .font(.system(size: family == .systemSmall ? 22 : 26, weight: .heavy))
-                .foregroundStyle(style.primaryText)
-                .widgetAccentable()
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(name)
+                    .font(.system(size: family == .systemSmall ? 22 : 26, weight: .heavy))
+                    .foregroundStyle(style.primaryText)
+                    .widgetAccentable()
+                if family != .systemSmall {
+                    Text(clock)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(style.accent)
+                }
+            }
 
-            Text(clock)
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(style.accent)
+            if family == .systemSmall {
+                Text(clock)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(style.accent)
+            }
 
             Spacer(minLength: 2)
 
             HStack(spacing: 6) {
-                Image(systemName: "timer")
-                    .font(.system(size: 12, weight: .semibold))
+                Image("widget_timer")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 13, height: 13)
                     .foregroundStyle(style.accent)
                 Text(timerInterval: safeTimerRange, countsDown: true)
                     .font(.system(size: 17, weight: .bold, design: .rounded).monospacedDigit())
@@ -167,12 +190,20 @@ private struct PrayerWidgetBody: View {
             HStack(spacing: 4) {
                 ForEach(prayers) { p in
                     let isNext = p.isNext
-                    VStack(spacing: 5) {
+                    VStack(spacing: 4) {
+                        Image(sunIconName(for: p.type))
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14, height: 14)
+                            .foregroundStyle(isNext ? style.accent : style.secondaryText.opacity(0.75))
+
                         Text(WidgetDataLoader.t(p.type.stringKey, lang: snap.language))
                             .font(.system(size: 10, weight: isNext ? .bold : .medium))
                             .foregroundStyle(isNext ? style.accent : style.secondaryText)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
+
                         Text(WidgetDataLoader.formatClock(p.time, snapshot: snap))
                             .font(.system(size: 11, weight: isNext ? .heavy : .semibold))
                             .foregroundStyle(isNext ? style.primaryText : style.primaryText.opacity(0.85))
@@ -180,7 +211,7 @@ private struct PrayerWidgetBody: View {
                             .minimumScaleFactor(0.65)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, 7)
                     .background(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
                             .fill(isNext ? style.subtleFill : .clear)
@@ -207,10 +238,13 @@ private struct PrayerWidgetBody: View {
             }
 
             ForEach(entries) { p in
-                HStack {
-                    Circle()
-                        .fill(p.isNext ? style.accent : style.secondaryText.opacity(0.35))
-                        .frame(width: 6, height: 6)
+                HStack(spacing: 7) {
+                    Image(sunIconName(for: p.type))
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 13, height: 13)
+                        .foregroundStyle(p.isNext ? style.accent : style.secondaryText.opacity(0.65))
                     Text(WidgetDataLoader.t(p.type.stringKey, lang: snap.language))
                         .font(.system(size: 12.5, weight: p.isNext ? .bold : .medium))
                         .foregroundStyle(p.isNext ? style.accent : style.primaryText)
@@ -228,15 +262,17 @@ private struct PrayerWidgetBody: View {
         let snap = entry.snapshot
         let clock = WidgetDataLoader.formatClock(snap.nextPrayer.time, snapshot: snap)
 
-        return VStack(spacing: 6) {
+        return VStack(spacing: 5) {
             Text(WidgetDataLoader.t("next_prayer", lang: snap.language))
                 .font(.system(size: 10.5, weight: .bold))
                 .foregroundStyle(style.secondaryText)
                 .textCase(.uppercase)
 
             Text(PrayerArabicCalligraphy.label(for: snap.nextPrayer.type))
-                .font(.system(size: 32, weight: .bold, design: .serif))
+                .font(.custom("Amiri-Regular", size: 36))
                 .foregroundStyle(style.accent)
+                .minimumScaleFactor(0.65)
+                .lineLimit(1)
                 .widgetAccentable()
 
             Text(clock)
@@ -244,7 +280,7 @@ private struct PrayerWidgetBody: View {
                 .foregroundStyle(style.primaryText)
 
             Text(timerInterval: safeTimerRange, countsDown: true)
-                .font(.system(size: 14, weight: .semibold, design: .rounded).monospacedDigit())
+                .font(.system(size: 13.5, weight: .semibold, design: .rounded).monospacedDigit())
                 .foregroundStyle(style.secondaryText)
                 .multilineTextAlignment(.center)
         }

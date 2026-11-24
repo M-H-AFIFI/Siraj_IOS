@@ -150,6 +150,7 @@ struct SirajRootBackdrop: View {
                 LiveThemeBackdrop(
                     themeId: theme.settings.liveTheme,
                     intensity: theme.settings.liveBackgroundIntensity,
+                    isTimeSyncEnabled: theme.settings.isWeatherBackgroundEnabled,
                     activePrayer: activePrayer
                 )
                 .ignoresSafeArea()

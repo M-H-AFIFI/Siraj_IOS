@@ -111,9 +111,16 @@ struct AdhanVoicePickerView: View {
         return HStack(spacing: 12) {
             Button(action: onSelect) {
                 HStack(spacing: 12) {
-                    Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 21))
-                        .foregroundStyle(selected ? theme.primary : theme.outline)
+                    ZStack(alignment: .bottomTrailing) {
+                        AdhanVoiceAvatar(voice: voice, size: 40)
+                        if selected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundStyle(theme.primary)
+                                .background(Circle().fill(theme.surface))
+                                .offset(x: 3, y: 3)
+                        }
+                    }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(voice.localizedTitle(language: theme.language))

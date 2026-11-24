@@ -52,20 +52,30 @@ struct SirajSegmentedPills<Option: Identifiable & Hashable>: View {
 struct SirajSettingsSection<Content: View>: View {
     @Environment(\.sirajTheme) private var theme
     let title: String
+    var icon: String? = nil
     let content: Content
 
-    init(title: String, @ViewBuilder content: () -> Content) {
+    init(title: String, icon: String? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.icon = icon
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(title)
-                .font(theme.scaledFont(size: 12, weight: .bold))
-                .foregroundStyle(theme.primary)
-                .textCase(.uppercase)
-                .padding(.horizontal, 6)
+            HStack(spacing: 6) {
+                if let icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(theme.primary)
+                }
+                Text(title)
+                    .font(theme.scaledFont(size: 12, weight: .black))
+                    .foregroundStyle(theme.primary)
+                    .textCase(.uppercase)
+                    .tracking(0.8)
+            }
+            .padding(.horizontal, 6)
 
             VStack(spacing: 0) {
                 content
@@ -393,10 +403,14 @@ struct MihrabTimePickerSheet: View {
 struct SirajAppIconBadge: View {
     let icon: SirajAppIconDefinition
     var size: CGFloat = 56
+    var cornerRadius: CGFloat? = nil
+    var showAmbientGlow: Bool = false
 
     var body: some View {
+        let radius = cornerRadius ?? (size * 0.225)
+        let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
         ZStack {
-            RoundedRectangle(cornerRadius: size * 0.225, style: .continuous)
+            shape
                 .fill(
                     RadialGradient(
                         colors: [Color(argbHex: icon.centerColor), Color(argbHex: icon.midColor), Color(argbHex: icon.edgeColor)],
@@ -409,8 +423,52 @@ struct SirajAppIconBadge: View {
         }
         .frame(width: size, height: size)
         .overlay {
-            RoundedRectangle(cornerRadius: size * 0.225, style: .continuous)
-                .strokeBorder(Color.white.opacity(icon.isLightGround ? 0.35 : 0.16), lineWidth: 0.8)
+            shape.strokeBorder(Color.white.opacity(icon.isLightGround ? 0.35 : 0.16), lineWidth: 0.8)
         }
+        .shadow(
+            color: showAmbientGlow ? Color(argbHex: icon.centerColor).opacity(0.40) : .clear,
+            radius: showAmbientGlow ? 12 : 0,
+            x: 0,
+            y: showAmbientGlow ? 4 : 0
+        )
+    }
+}
+
+struct AdhanVoiceAvatar: View {
+    @Environment(\.sirajTheme) private var theme
+    let voice: AdhanVoice
+    var size: CGFloat = 40
+
+    private static let tints: [UInt32] = [
+        0xFF1E7E6C, 0xFF2B6CB0, 0xFF8B5E34, 0xFF6B46C1,
+        0xFF9B2C2C, 0xFF2F855A, 0xFFB7791F, 0xFF2C7A7B
+    ]
+
+    var body: some View {
+        let name = voice.localizedTitle(language: theme.language)
+        let words = name.split(separator: " ").filter { !$0.isEmpty }
+        let initials: String = {
+            if words.count >= 2 {
+                return "\(words[0].prefix(1))\(words[1].prefix(1))".uppercased()
+            }
+            return String(name.prefix(2)).uppercased()
+        }()
+        let hash = abs(voice.id.unicodeScalars.reduce(0) { $0 &* 31 &+ Int($1.value) })
+        let bg = Color(argbHex: Self.tints[hash % Self.tints.count])
+
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [bg, bg.opacity(0.76)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            Text(initials)
+                .font(.system(size: size * 0.36, weight: .bold))
+                .foregroundStyle(.white)
+        }
+        .frame(width: size, height: size)
     }
 }

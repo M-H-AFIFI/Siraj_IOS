@@ -29,6 +29,7 @@ targets:
           - "Info.plist"
       - path: SirajApp/Resources/Data
       - path: SirajApp/Resources/WidgetAssets.xcassets
+      - path: SirajApp/Resources/Fonts/quran_amiri.ttf
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.siiraj.app.widgets

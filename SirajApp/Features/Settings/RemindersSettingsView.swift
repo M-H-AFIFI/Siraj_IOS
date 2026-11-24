@@ -81,13 +81,11 @@ struct RemindersSettingsView: View {
 
                         Divider().padding(.leading, 16)
 
-                        SirajSettingsRow(
-                            icon: "speaker.wave.2.fill",
+                        voicePreviewRow(
                             title: theme.t("reminders_selected_sound"),
-                            value: activeVoice.localizedTitle(language: theme.language)
-                        ) {
-                            showVoicePicker = true
-                        }
+                            voice: activeVoice,
+                            onTapRow: { showVoicePicker = true }
+                        )
 
                         Divider().padding(.leading, 16)
 
@@ -103,13 +101,11 @@ struct RemindersSettingsView: View {
 
                         if appState.settings.fajrAdhanEnabled {
                             Divider().padding(.leading, 16)
-                            SirajSettingsRow(
-                                icon: "music.note",
+                            voicePreviewRow(
                                 title: theme.t("fajr_adhan_change"),
-                                value: activeFajr.localizedTitle(language: theme.language)
-                            ) {
-                                showFajrPicker = true
-                            }
+                                voice: activeFajr,
+                                onTapRow: { showFajrPicker = true }
+                            )
                         }
 
                         Divider().padding(.leading, 16)
@@ -413,6 +409,55 @@ struct RemindersSettingsView: View {
             let status = await scheduler.authorizationStatus()
             notificationsDenied = (status == .denied)
         }
+        .onDisappear {
+            if !audioEngine.isPlayingFullAdhan {
+                audioEngine.stop()
+            }
+        }
+    }
+
+    private func voicePreviewRow(title: String, voice: AdhanVoice, onTapRow: @escaping () -> Void) -> some View {
+        let playing = audioEngine.playingVoiceId == voice.id && !audioEngine.isPlayingFullAdhan
+        let downloaded = audioEngine.isDownloaded(voice)
+        return HStack(spacing: 12) {
+            Button(action: onTapRow) {
+                HStack(spacing: 12) {
+                    AdhanVoiceAvatar(voice: voice, size: 38)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(title)
+                            .font(theme.scaledFont(size: 15, weight: .bold))
+                            .foregroundStyle(theme.onSurface)
+                        Text(voice.localizedTitle(language: theme.language))
+                            .font(theme.scaledFont(size: 12.5, weight: .bold))
+                            .foregroundStyle(theme.primary)
+                            .lineLimit(1)
+                        if downloaded {
+                            Text(theme.t("adhan_voice_offline"))
+                                .font(theme.scaledFont(size: 11, weight: .medium))
+                                .foregroundStyle(theme.onSurfaceVariant)
+                        }
+                    }
+                    Spacer(minLength: 4)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                audioEngine.playPreview(voiceId: voice.id, volume: appState.settings.adhanVolume)
+            } label: {
+                Image(systemName: playing ? "pause.circle.fill" : "play.circle.fill")
+                    .font(.system(size: 30))
+                    .foregroundStyle(playing ? theme.gold : theme.primary)
+            }
+            .buttonStyle(.plain)
+
+            Image(systemName: theme.isRTL ? "chevron.left" : "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(theme.outline)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 
     private var notificationPermissionBanner: some View {

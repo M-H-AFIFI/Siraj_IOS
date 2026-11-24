@@ -18,10 +18,11 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             progressHeader
                 .padding(.horizontal, 20)
-                .padding(.top, 12)
+                .padding(.top, 10)
+                .padding(.bottom, 6)
 
             TabView(selection: $stepIndex) {
-                OnboardingWelcomeStep()
+                OnboardingWelcomeStep(appState: appState)
                     .tag(0)
                 OnboardingLanguageStep(appState: appState)
                     .tag(1)
@@ -50,49 +51,73 @@ struct OnboardingView: View {
     }
 
     private var progressHeader: some View {
-        HStack(spacing: 6) {
-            ForEach(0..<totalSteps, id: \.self) { idx in
-                Capsule()
-                    .fill(idx <= stepIndex ? theme.primary : theme.outlineVariant.opacity(0.5))
-                    .frame(height: 4)
+        VStack(spacing: 10) {
+            HStack {
+                if stepIndex > 0 {
+                    Button {
+                        onStopPreview?()
+                        stepIndex -= 1
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: theme.isRTL ? "chevron.right" : "chevron.left")
+                                .font(.system(size: 13, weight: .bold))
+                            Text(theme.t("back"))
+                                .font(theme.scaledFont(size: 13.5, weight: .semibold))
+                        }
+                        .foregroundStyle(theme.primary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Capsule().fill(theme.primary.opacity(0.10)))
+                    }
+                    .buttonStyle(.plain)
+                } else {
+                    Color.clear.frame(width: 68, height: 30)
+                }
+
+                Spacer()
+
+                Text(
+                    theme.tf(
+                        "onboarding_polish_step_of",
+                        theme.digits("\(stepIndex + 1)"),
+                        theme.digits("\(totalSteps)")
+                    )
+                )
+                .font(theme.scaledFont(size: 12.5, weight: .bold))
+                .foregroundStyle(theme.onSurfaceVariant)
+
+                Spacer()
+
+                Color.clear.frame(width: 68, height: 30)
+            }
+
+            HStack(spacing: 6) {
+                ForEach(0..<totalSteps, id: \.self) { idx in
+                    Capsule()
+                        .fill(idx <= stepIndex ? theme.primary : theme.outlineVariant.opacity(0.5))
+                        .frame(height: 4)
+                }
             }
         }
     }
 
     private var bottomBar: some View {
-        HStack(spacing: 12) {
-            if stepIndex > 0 {
-                Button {
-                    onStopPreview?()
-                    stepIndex -= 1
-                } label: {
-                    Text(theme.t("back"))
-                        .font(theme.scaledFont(size: 15, weight: .semibold))
-                        .foregroundStyle(theme.onSurface)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 14)
-                        .background(Capsule().fill(theme.surfaceVariant))
-                }
-                .buttonStyle(.plain)
+        Button {
+            onStopPreview?()
+            if stepIndex < totalSteps - 1 {
+                stepIndex += 1
+            } else {
+                appState.completeOnboarding()
             }
-
-            Button {
-                onStopPreview?()
-                if stepIndex < totalSteps - 1 {
-                    stepIndex += 1
-                } else {
-                    appState.completeOnboarding()
-                }
-            } label: {
-                Text(stepIndex == totalSteps - 1 ? theme.t("onboarding_get_started") : theme.t("next"))
-                    .font(theme.scaledFont(size: 16, weight: .bold))
-                    .foregroundStyle(theme.onPrimary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15)
-                    .background(Capsule().fill(theme.primary))
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier(stepIndex == totalSteps - 1 ? "onboarding_finish" : "onboarding_next")
+        } label: {
+            Text(stepIndex == totalSteps - 1 ? theme.t("onboarding_get_started") : theme.t("next"))
+                .font(theme.scaledFont(size: 16, weight: .bold))
+                .foregroundStyle(theme.onPrimary)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 52)
+                .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(theme.primary))
         }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(stepIndex == totalSteps - 1 ? "onboarding_finish" : "onboarding_next")
     }
 }

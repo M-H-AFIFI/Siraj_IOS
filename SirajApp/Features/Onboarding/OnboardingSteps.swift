@@ -3,11 +3,13 @@ import SirajCore
 
 struct OnboardingWelcomeStep: View {
     @Environment(\.sirajTheme) private var theme
+    let appState: AppState
 
     var body: some View {
+        let activeIcon = SirajAppIconCatalog.definition(for: appState.settings.selectedAppIcon)
         ScrollView {
             VStack(spacing: 22) {
-                Spacer(minLength: 28)
+                Spacer(minLength: 24)
 
                 ZStack {
                     Circle()
@@ -19,30 +21,35 @@ struct OnboardingWelcomeStep: View {
                                 endRadius: 96
                             )
                         )
-                        .frame(width: 180, height: 180)
-                    SirajEmblemMark(height: 112, tint: theme.gold)
+                        .frame(width: 176, height: 176)
+                    SirajAppIconBadge(icon: activeIcon, size: 96, cornerRadius: 24, showAmbientGlow: true)
                 }
 
-                VStack(spacing: 10) {
+                VStack(spacing: 8) {
                     Text(theme.t("app_name"))
-                        .font(theme.scaledFont(size: 32, weight: .bold))
+                        .font(theme.scaledFont(size: 30, weight: .black))
                         .foregroundStyle(theme.onBackground)
 
+                    Text("وَسِرَاجًا مُّنِيرًا")
+                        .font(theme.amiriFont(size: 20))
+                        .foregroundStyle(theme.primary)
+
                     Text(theme.t("onb_easy_lang_desc"))
-                        .font(theme.scaledFont(size: 16))
+                        .font(theme.scaledFont(size: 15))
                         .foregroundStyle(theme.onSurfaceVariant)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 12)
+                        .padding(.top, 2)
                 }
 
-                VStack(spacing: 12) {
+                VStack(spacing: 10) {
                     featurePill(icon: "sun.horizon.fill", title: theme.t("nav_prayer"))
                     featurePill(icon: "bell.badge.fill", title: theme.t("settings_reminders"))
                     featurePill(icon: "paintpalette.fill", title: theme.t("settings_appearance_header"))
                 }
-                .padding(.top, 8)
+                .padding(.top, 6)
             }
-            .padding(24)
+            .padding(22)
         }
     }
 
@@ -339,11 +346,19 @@ struct OnboardingAlertsStep: View {
                             Button {
                                 appState.updateSettings { $0.azanSound = voice.id }
                             } label: {
-                                HStack {
-                                    Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                                        .foregroundStyle(selected ? theme.primary : theme.outline)
+                                HStack(spacing: 12) {
+                                    ZStack(alignment: .bottomTrailing) {
+                                        AdhanVoiceAvatar(voice: voice, size: 38)
+                                        if selected {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .font(.system(size: 15))
+                                                .foregroundStyle(theme.primary)
+                                                .background(Circle().fill(theme.surface))
+                                                .offset(x: 3, y: 3)
+                                        }
+                                    }
                                     Text(voice.localizedTitle(language: theme.language))
-                                        .font(theme.scaledFont(size: 14, weight: .semibold))
+                                        .font(theme.scaledFont(size: 14, weight: selected ? .bold : .semibold))
                                         .foregroundStyle(theme.onSurface)
                                         .lineLimit(2)
                                     Spacer()
@@ -356,7 +371,7 @@ struct OnboardingAlertsStep: View {
                                     onPreviewVoice(voice.id)
                                 } label: {
                                     Image(systemName: "play.circle.fill")
-                                        .font(.system(size: 24))
+                                        .font(.system(size: 26))
                                         .foregroundStyle(theme.primary)
                                 }
                                 .buttonStyle(.plain)
@@ -364,6 +379,12 @@ struct OnboardingAlertsStep: View {
                         }
                         .padding(14)
                         .sirajCardSurface(cornerRadius: 16)
+                        .overlay {
+                            if selected {
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .strokeBorder(theme.primary, lineWidth: 1.6)
+                            }
+                        }
                     }
                 }
             }
@@ -424,6 +445,29 @@ struct OnboardingAppearanceStep: View {
                     }
                 }
                 .padding(16)
+                .sirajCardSurface(cornerRadius: 20)
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(theme.t("looks_background_title"))
+                        .font(theme.scaledFont(size: 14, weight: .bold))
+                        .foregroundStyle(theme.onSurface)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 14)
+
+                    LiveScenePicker(
+                        selectedSceneId: appState.settings.isLiveBackgroundEnabled ? appState.settings.liveTheme : nil
+                    ) { chosen in
+                        appState.updateSettings { snap in
+                            if let chosen {
+                                snap.isLiveBackgroundEnabled = true
+                                snap.liveTheme = chosen
+                            } else {
+                                snap.isLiveBackgroundEnabled = false
+                            }
+                        }
+                    }
+                    .padding(.bottom, 12)
+                }
                 .sirajCardSurface(cornerRadius: 20)
 
                 VStack(spacing: 0) {

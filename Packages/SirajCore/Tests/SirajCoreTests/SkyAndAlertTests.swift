@@ -137,4 +137,14 @@ final class SkyAndAlertTests: XCTestCase {
         )
         XCTAssertEqual(fajrNotCached, "Adhan-Makkah.caf")
     }
+
+    func testAdhanSkyAtmosphereMotesAndSettingsSkySyncDefault() throws {
+        XCTAssertGreaterThan(AdhanSkySpec.atmosphere(for: .asr).moteStrength, 0.7)
+        XCTAssertEqual(AdhanSkySpec.atmosphere(for: .isha).moteStrength, 0.0)
+
+        let legacyJSON = Data(#"{"language":"ar","themePalette":"Gold"}"#.utf8)
+        let decoded = try JSONDecoder().decode(SettingsSnapshot.self, from: legacyJSON)
+        XCTAssertFalse(decoded.isWeatherBackgroundEnabled)
+        XCTAssertEqual(decoded.language, "ar")
+    }
 }

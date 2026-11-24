@@ -21,19 +21,28 @@ struct SettingsHubView: View {
     @State private var path = NavigationPath()
 
     var body: some View {
-        let cityName = appState.activePlace.displayName(language: theme.language) ?? appState.activePlace.timeZoneId
+        let cityName = appState.activePlace.displayName(language: theme.language)
         let activeVoice = AdhanVoiceResolver.findVoice(appState.settings.azanSound).localizedTitle(language: theme.language)
+        let digitsSample = DigitFormatter.shouldUseArabicDigits(
+            numeralSystem: appState.settings.numeralSystem,
+            lang: theme.language
+        ) ? "١٢٣" : "123"
+        let versionString = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
 
         NavigationStack(path: $path) {
             ScrollView {
-                VStack(spacing: 20) {
-                    headerCard(cityName: cityName)
+                VStack(spacing: 24) {
+                    settingsHeader(
+                        cityName: cityName,
+                        languageName: languageNativeName(appState.settings.language),
+                        version: versionString
+                    )
 
-                    SirajSettingsSection(title: theme.t("settings_section_prayer")) {
+                    SirajSettingsSection(title: theme.t("settings_section_prayer"), icon: "clock.fill") {
                         SirajSettingsRow(
                             icon: "location.fill",
-                            title: theme.t("settings_location"),
-                            value: cityName
+                            title: theme.t("settings_location_and_prayer_times"),
+                            value: cityName ?? theme.t("settings_not_set")
                         ) {
                             path.append(SettingsRoute.location)
                         }
@@ -55,45 +64,51 @@ struct SettingsHubView: View {
                         }
                     }
 
-                    appearanceQuickCard
+                    appearanceHeroCardSection
 
-                    SirajSettingsSection(title: theme.t("widget_settings_title")) {
-                        SirajSettingsRow(
-                            icon: "square.grid.2x2.fill",
-                            title: theme.t("widget_gallery_browse"),
-                            subtitle: theme.t("ios_lockscreen_widget_desc")
-                        ) {
-                            path.append(SettingsRoute.widgets)
-                        }
-                    }
-
-                    SirajSettingsSection(title: theme.t("settings_section_language")) {
+                    SirajSettingsSection(title: theme.t("settings_section_language"), icon: "globe") {
                         SirajSettingsRow(
                             icon: "globe",
-                            title: theme.t("settings_section_language"),
-                            value: languageNativeName(appState.settings.language)
+                            title: theme.t("settings_language"),
+                            value: "\(languageNativeName(appState.settings.language)) | \(digitsSample)"
                         ) {
                             path.append(SettingsRoute.language)
                         }
                     }
 
-                    SirajSettingsSection(title: theme.t("settings_support_header")) {
+                    SirajSettingsSection(title: theme.t("settings_support_header"), icon: "info.circle.fill") {
                         SirajSettingsRow(
                             icon: "info.circle.fill",
-                            title: theme.t("settings_about_siraj")
+                            title: theme.t("settings_about_siraj"),
+                            value: "v\(versionString)"
                         ) {
                             path.append(SettingsRoute.about)
                         }
                     }
+
+                    Text("« وَدَاعِيًا إِلَى اللَّهِ بِإِذْنِهِ وَسِرَاجًا مُّنِيرًا »")
+                        .font(theme.amiriFont(size: 14.5))
+                        .foregroundStyle(theme.outline)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 4)
+                        .padding(.bottom, 20)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 108)
+                .padding(.horizontal, 18)
+                .padding(.top, 10)
+                .padding(.bottom, 104)
             }
             .scrollIndicators(.hidden)
+            .scrollCollapseTracker(
+                enabled: appState.settings.isNavShrinkEnabled && !appState.settings.isNavAlwaysCompact,
+                isCollapsed: Binding(
+                    get: { appState.isTabBarCollapsed },
+                    set: { appState.isTabBarCollapsed = $0 }
+                )
+            )
             .background(Color.clear)
             .navigationTitle(theme.t("settings_title"))
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: SettingsRoute.self) { route in
                 switch route {
                 case .location:
@@ -141,96 +156,346 @@ struct SettingsHubView: View {
         }
     }
 
-    private func headerCard(cityName: String) -> some View {
-        HStack(spacing: 10) {
-            quickPill(icon: "location.fill", label: cityName) {
-                path.append(SettingsRoute.location)
+    // MARK: - Branded Header Card
+
+    private func settingsHeader(cityName: String?, languageName: String, version: String) -> some View {
+        let iconDef = SirajAppIconCatalog.definition(for: appState.settings.selectedAppIcon)
+        let headerShape = RoundedRectangle(cornerRadius: 28, style: .continuous)
+        let modeIcon: String = {
+            switch appState.settings.themeMode {
+            case .light: return "sun.max.fill"
+            case .dark: return "moon.fill"
+            case .system: return "circle.lefthalf.filled"
             }
-            quickPill(icon: "globe", label: languageNativeName(appState.settings.language)) {
-                path.append(SettingsRoute.language)
+        }()
+        let modeLabel: String = {
+            switch appState.settings.themeMode {
+            case .light: return theme.t("settings_light")
+            case .dark: return theme.t("settings_dark")
+            case .system: return theme.t("settings_system_default")
             }
-            quickPill(icon: "paintpalette.fill", label: theme.t("settings_appearance_header")) {
-                path.append(SettingsRoute.appearance)
+        }()
+
+        return VStack(spacing: 16) {
+            HStack(spacing: 14) {
+                SirajAppIconBadge(icon: iconDef, size: 56, cornerRadius: 16, showAmbientGlow: true)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(theme.t("app_name"))
+                        .font(theme.scaledFont(size: 22, weight: .black))
+                        .foregroundStyle(theme.onSurface)
+                    Text("وَسِرَاجًا مُّنِيرًا")
+                        .font(theme.amiriFont(size: 16))
+                        .foregroundStyle(theme.primary)
+                }
+
+                Spacer()
+
+                Text("v\(version)")
+                    .font(theme.scaledFont(size: 12, weight: .bold))
+                    .foregroundStyle(theme.primary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(theme.primary.opacity(0.12)))
+            }
+
+            HStack(spacing: 8) {
+                quickSettingChip(
+                    icon: "globe",
+                    value: languageName,
+                    label: theme.t("settings_language")
+                ) {
+                    path.append(SettingsRoute.language)
+                }
+
+                quickSettingChip(
+                    icon: modeIcon,
+                    value: modeLabel,
+                    label: theme.t("settings_appearance_header")
+                ) {
+                    path.append(SettingsRoute.appearance)
+                }
+
+                quickSettingChip(
+                    icon: "location.fill",
+                    value: cityName ?? theme.t("settings_not_set"),
+                    label: theme.t("settings_location")
+                ) {
+                    path.append(SettingsRoute.location)
+                }
             }
         }
+        .padding(18)
+        .background {
+            if !theme.isGlass {
+                headerShape.fill(
+                    LinearGradient(
+                        colors: [
+                            theme.primaryContainer.opacity(theme.isDark ? 0.55 : 0.85),
+                            theme.surface
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+            }
+        }
+        .sirajCardSurface(cornerRadius: 28, isElevated: true)
     }
 
-    private func quickPill(icon: String, label: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
+    private func quickSettingChip(icon: String, value: String, label: String, action: @escaping () -> Void) -> some View {
+        let chipShape = RoundedRectangle(cornerRadius: 18, style: .continuous)
+        return Button(action: action) {
+            VStack(spacing: 5) {
                 Image(systemName: icon)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 19, weight: .semibold))
                     .foregroundStyle(theme.primary)
-                Text(label)
-                    .font(theme.scaledFont(size: 12.5, weight: .semibold))
+                Text(value)
+                    .font(theme.scaledFont(size: 13, weight: .black))
                     .foregroundStyle(theme.onSurface)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                Text(label)
+                    .font(theme.scaledFont(size: 10.5, weight: .medium))
+                    .foregroundStyle(theme.outline)
+                    .lineLimit(1)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 10)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.horizontal, 8)
             .padding(.vertical, 10)
-            .sirajCardSurface(cornerRadius: 16)
+            .background(chipShape.fill(theme.isGlass ? theme.surface.opacity(theme.isDark ? 0.24 : 0.48) : theme.surface))
+            .overlay(chipShape.strokeBorder(theme.outlineVariant.opacity(0.5), lineWidth: 1))
         }
         .buttonStyle(.plain)
     }
 
-    private var appearanceQuickCard: some View {
-        let modeBinding = Binding<ThemeMode>(
-            get: { appState.settings.themeMode },
-            set: { val in appState.updateSettings { $0.themeMode = val } }
-        )
+    // MARK: - Appearance Hero Card + Widgets Entry
 
-        return SirajSettingsSection(title: theme.t("settings_appearance_header")) {
-            VStack(spacing: 14) {
-                SirajSegmentedPills(options: ThemeMode.allCases, selection: modeBinding) { mode in
-                    switch mode {
-                    case .system: return theme.t("live_theme_mode_system")
-                    case .light: return theme.t("live_theme_mode_light")
-                    case .dark: return theme.t("live_theme_mode_dark")
-                    }
-                }
-                .padding(.horizontal, 14)
-                .padding(.top, 14)
+    private var appearanceHeroCardSection: some View {
+        let activeIcon = SirajAppIconCatalog.definition(for: appState.settings.selectedAppIcon)
+        let activePalette = SirajPalettes.canonicalId(appState.settings.themePalette)
+        let activeScene = LiveThemeCatalog.definition(for: appState.settings.liveTheme)
+        let paletteSpec = SirajColorSchemeSpec.resolve(palette: activePalette, isDark: theme.isDark, isBlack: theme.isBlack)
+        let bannerShape = RoundedRectangle(cornerRadius: 20, style: .continuous)
+        let lensShape = RoundedRectangle(cornerRadius: 15, style: .continuous)
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        ForEach(SirajPalettes.all) { palette in
-                            let selected = SirajPalettes.canonicalId(appState.settings.themePalette) == palette.id
-                            let roles = theme.isDark ? palette.dark : palette.light
-                            Button {
-                                appState.updateSettings { $0.themePalette = palette.id }
-                            } label: {
-                                Circle()
-                                    .fill(Color(argbHex: roles.primary))
-                                    .frame(width: 34, height: 34)
-                                    .overlay {
-                                        if selected {
-                                            Image(systemName: "checkmark")
-                                                .font(.system(size: 13, weight: .bold))
-                                                .foregroundStyle(Color(argbHex: roles.onPrimary))
-                                        }
-                                    }
-                                    .overlay {
-                                        Circle().strokeBorder(selected ? theme.onSurface : theme.outlineVariant, lineWidth: selected ? 2 : 1)
-                                    }
-                            }
-                            .buttonStyle(.plain)
+        let modeIcon: String = {
+            if theme.isDark && appState.settings.isAmoled { return "moon.stars.fill" }
+            switch appState.settings.themeMode {
+            case .light: return "sun.max.fill"
+            case .dark: return "moon.fill"
+            case .system: return "circle.lefthalf.filled"
+            }
+        }()
+        let modeLabel: String = {
+            if theme.isDark && appState.settings.isAmoled { return theme.t("appearance_black") }
+            switch appState.settings.themeMode {
+            case .light: return theme.t("settings_light")
+            case .dark: return theme.t("settings_dark")
+            case .system: return theme.t("settings_system_default")
+            }
+        }()
+        let backgroundLabel = appState.settings.isLiveBackgroundEnabled
+            ? theme.t(activeScene.titleKey)
+            : theme.t("looks_background_plain")
+        let textSizeLabel: String = {
+            let s = appState.settings.textScale
+            if s >= 1.22 { return theme.t("guide_text_size_largest") }
+            if s >= 1.08 { return theme.t("guide_text_size_large") }
+            return theme.t("guide_text_size_default")
+        }()
+
+        return VStack(spacing: 14) {
+            Button {
+                path.append(SettingsRoute.appearance)
+            } label: {
+                VStack(spacing: 14) {
+                    // Live miniature visual stage banner
+                    ZStack {
+                        LinearGradient(
+                            colors: [
+                                Color(argb: paletteSpec.primary).opacity(theme.isDark ? 0.34 : 0.22),
+                                Color(argb: paletteSpec.secondary).opacity(theme.isDark ? 0.22 : 0.14),
+                                Color(argbHex: theme.isDark ? 0xFF121822 : 0xFFF6F8FC)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+
+                        if appState.settings.isLiveBackgroundEnabled {
+                            LiveSceneArtwork(
+                                themeId: activeScene.id,
+                                intensity: appState.settings.liveBackgroundIntensity,
+                                isTimeSyncEnabled: appState.settings.isWeatherBackgroundEnabled,
+                                animate: true,
+                                fps: 20.0,
+                                speedScale: 0.85
+                            )
+                            let stageColors = LiveSceneDrawColors.resolve(
+                                scheme: theme.scheme,
+                                isTimeSyncEnabled: appState.settings.isWeatherBackgroundEnabled
+                            )
+                            LinearGradient(
+                                colors: [
+                                    stageColors.veil.color(alpha: theme.isDark ? 0.24 : 0.16),
+                                    stageColors.veil.color(alpha: theme.isDark ? 0.36 : 0.24)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         }
+
+                        HStack(spacing: 12) {
+                            SirajAppIconBadge(icon: activeIcon, size: 50, cornerRadius: 14, showAmbientGlow: true)
+
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack(spacing: 5) {
+                                    Image(systemName: "clock.fill")
+                                        .font(.system(size: 11, weight: .bold))
+                                        .foregroundStyle(theme.primary)
+                                    Text(theme.t("appearance_preview_badge"))
+                                        .font(theme.scaledFont(size: 11, weight: .bold))
+                                        .foregroundStyle(theme.primary)
+                                        .lineLimit(1)
+                                }
+                                Capsule()
+                                    .fill(theme.onSurface.opacity(0.42))
+                                    .frame(width: 92, height: 6)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 9)
+                            .background {
+                                if appState.settings.isGlassUi {
+                                    lensShape.fill(.ultraThinMaterial)
+                                        .overlay(lensShape.fill(theme.primary.opacity(0.10)))
+                                } else {
+                                    lensShape.fill(theme.surface.opacity(theme.isDark ? 0.88 : 0.92))
+                                }
+                            }
+                            .overlay(
+                                lensShape.strokeBorder(
+                                    appState.settings.isGlassUi
+                                        ? Color.white.opacity(theme.isDark ? 0.26 : 0.65)
+                                        : theme.outlineVariant.opacity(0.35),
+                                    lineWidth: 1
+                                )
+                            )
+
+                            Spacer(minLength: 4)
+
+                            if appState.settings.isGlassUi {
+                                Text(theme.t("appearance_glass_badge"))
+                                    .font(theme.scaledFont(size: 10.5, weight: .bold))
+                                    .foregroundStyle(theme.primary)
+                                    .padding(.horizontal, 9)
+                                    .padding(.vertical, 4)
+                                    .background(Capsule().fill(theme.surface.opacity(theme.isDark ? 0.62 : 0.82)))
+                                    .overlay(Capsule().strokeBorder(Color.white.opacity(theme.isDark ? 0.26 : 0.65), lineWidth: 1))
+                            }
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 12)
                     }
-                    .padding(.horizontal, 14)
+                    .frame(height: 126)
+                    .clipShape(bannerShape)
+                    .overlay(
+                        bannerShape.strokeBorder(Color.white.opacity(theme.isDark ? 0.18 : 0.62), lineWidth: 1)
+                    )
+
+                    // Title + Customize pill
+                    HStack(spacing: 12) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(theme.primary)
+                            .frame(width: 36, height: 36)
+                            .background(Circle().fill(theme.primary.opacity(0.12)))
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(theme.t("settings_appearance_header"))
+                                .font(theme.scaledFont(size: 16, weight: .black))
+                                .foregroundStyle(theme.onSurface)
+                            Text(theme.t("settings_appearance_card_subtitle"))
+                                .font(theme.scaledFont(size: 12))
+                                .foregroundStyle(theme.onSurfaceVariant)
+                                .lineLimit(2)
+                        }
+
+                        Spacer(minLength: 6)
+
+                        HStack(spacing: 3) {
+                            Text(theme.t("settings_appearance_open_action"))
+                                .font(theme.scaledFont(size: 12, weight: .bold))
+                            Image(systemName: theme.isRTL ? "chevron.left" : "chevron.right")
+                                .font(.system(size: 11, weight: .bold))
+                        }
+                        .foregroundStyle(theme.primary)
+                        .padding(.leading, 12)
+                        .padding(.trailing, 8)
+                        .padding(.vertical, 7)
+                        .background(Capsule().fill(theme.primary.opacity(theme.isDark ? 0.20 : 0.12)))
+                        .overlay(Capsule().strokeBorder(theme.primary.opacity(0.32), lineWidth: 1))
+                    }
+                    .padding(.horizontal, 4)
+
+                    // Active look summary chips
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            summaryChip(label: theme.t(AppearanceSettingsView.paletteTitleKey(activePalette))) {
+                                Circle()
+                                    .fill(Color(argb: paletteSpec.primary))
+                                    .frame(width: 14, height: 14)
+                                    .overlay(Circle().strokeBorder(theme.outlineVariant.opacity(0.5), lineWidth: 0.75))
+                            }
+                            summaryChip(label: modeLabel) {
+                                Image(systemName: modeIcon)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(theme.primary)
+                            }
+                            summaryChip(label: backgroundLabel) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(theme.primary)
+                            }
+                            summaryChip(label: textSizeLabel) {
+                                Image(systemName: "textformat.size")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(theme.primary)
+                            }
+                        }
+                        .padding(.horizontal, 2)
+                    }
                 }
+                .padding(14)
+                .sirajCardSurface(cornerRadius: 28, isElevated: true)
+            }
+            .buttonStyle(.plain)
 
-                Divider().padding(.leading, 16)
-
+            // Home Screen Widgets entry directly beneath Appearance
+            VStack(spacing: 0) {
                 SirajSettingsRow(
-                    icon: "sparkles",
-                    title: theme.t("settings_appearance_open_action"),
-                    subtitle: theme.t("settings_appearance_card_subtitle")
+                    icon: "square.grid.2x2.fill",
+                    title: theme.t("widget_settings_title"),
+                    subtitle: theme.t("widget_gallery_browse")
                 ) {
-                    path.append(SettingsRoute.appearance)
+                    path.append(SettingsRoute.widgets)
                 }
             }
+            .sirajCardSurface(cornerRadius: 22)
         }
+    }
+
+    private func summaryChip<Leading: View>(label: String, @ViewBuilder leading: () -> Leading) -> some View {
+        HStack(spacing: 6) {
+            leading()
+            Text(label)
+                .font(theme.scaledFont(size: 12, weight: .semibold))
+                .foregroundStyle(theme.onSurface)
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Capsule().fill(theme.isGlass ? theme.surface.opacity(theme.isDark ? 0.26 : 0.50) : theme.surfaceContainerHigh.opacity(0.65)))
+        .overlay(Capsule().strokeBorder(theme.outlineVariant.opacity(0.4), lineWidth: 1))
     }
 
     private func languageNativeName(_ code: String) -> String {

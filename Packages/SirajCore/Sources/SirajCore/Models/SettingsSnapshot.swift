@@ -78,6 +78,7 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
     public var isGlassPerformanceMode: Bool
     public var liveTheme: String
     public var isLiveBackgroundEnabled: Bool
+    public var isWeatherBackgroundEnabled: Bool
     public var liveBackgroundIntensity: LiveBackgroundIntensity
     public var isLivePaletteSync: Bool
     public var selectedAppIcon: String
@@ -135,6 +136,7 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
         isGlassPerformanceMode: Bool = false,
         liveTheme: String = "DesertDunes",
         isLiveBackgroundEnabled: Bool = false,
+        isWeatherBackgroundEnabled: Bool = false,
         liveBackgroundIntensity: LiveBackgroundIntensity = .balanced,
         isLivePaletteSync: Bool = false,
         selectedAppIcon: String = "Classic",
@@ -191,6 +193,7 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
         self.isGlassPerformanceMode = isGlassPerformanceMode
         self.liveTheme = liveTheme
         self.isLiveBackgroundEnabled = isLiveBackgroundEnabled
+        self.isWeatherBackgroundEnabled = isWeatherBackgroundEnabled
         self.liveBackgroundIntensity = liveBackgroundIntensity
         self.isLivePaletteSync = isLivePaletteSync
         self.selectedAppIcon = selectedAppIcon
@@ -248,6 +251,7 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
             isGlassPerformanceMode: try c.decodeIfPresent(Bool.self, forKey: .isGlassPerformanceMode) ?? def.isGlassPerformanceMode,
             liveTheme: try c.decodeIfPresent(String.self, forKey: .liveTheme) ?? def.liveTheme,
             isLiveBackgroundEnabled: try c.decodeIfPresent(Bool.self, forKey: .isLiveBackgroundEnabled) ?? def.isLiveBackgroundEnabled,
+            isWeatherBackgroundEnabled: try c.decodeIfPresent(Bool.self, forKey: .isWeatherBackgroundEnabled) ?? def.isWeatherBackgroundEnabled,
             liveBackgroundIntensity: try c.decodeIfPresent(LiveBackgroundIntensity.self, forKey: .liveBackgroundIntensity) ?? def.liveBackgroundIntensity,
             isLivePaletteSync: try c.decodeIfPresent(Bool.self, forKey: .isLivePaletteSync) ?? def.isLivePaletteSync,
             selectedAppIcon: try c.decodeIfPresent(String.self, forKey: .selectedAppIcon) ?? def.selectedAppIcon,
