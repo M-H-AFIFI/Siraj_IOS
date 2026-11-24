@@ -510,18 +510,15 @@ struct LiveThemeBackdrop: View {
             isTimeSyncEnabled: isTimeSyncEnabled
         )
         let adj = intensity.veilAdjustment
-        let topAlpha: Double
-        let midAlpha: Double
-        let botAlpha: Double
-        if theme.isGlass {
-            topAlpha = min(0.42, max(0.04, (theme.isDark ? 0.20 : 0.14) + adj))
-            midAlpha = min(0.26, max(0.00, (theme.isDark ? 0.06 : 0.05) + adj * 0.6))
-            botAlpha = min(0.46, max(0.06, (theme.isDark ? 0.24 : 0.16) + adj))
-        } else {
-            topAlpha = min(0.52, max(0.08, (theme.isDark ? 0.30 : 0.24) + adj))
-            midAlpha = min(0.38, max(0.03, (theme.isDark ? 0.16 : 0.14) + adj))
-            botAlpha = min(0.54, max(0.10, (theme.isDark ? 0.32 : 0.24) + adj))
-        }
+        let topAlpha = theme.isGlass
+            ? min(0.42, max(0.04, (theme.isDark ? 0.20 : 0.14) + adj))
+            : min(0.52, max(0.08, (theme.isDark ? 0.30 : 0.24) + adj))
+        let midAlpha = theme.isGlass
+            ? min(0.26, max(0.00, (theme.isDark ? 0.06 : 0.05) + adj * 0.6))
+            : min(0.38, max(0.03, (theme.isDark ? 0.16 : 0.14) + adj))
+        let botAlpha = theme.isGlass
+            ? min(0.46, max(0.06, (theme.isDark ? 0.24 : 0.16) + adj))
+            : min(0.54, max(0.10, (theme.isDark ? 0.32 : 0.24) + adj))
         let upperMidAlpha = min(1.0, max(0.0, topAlpha * 0.44 + midAlpha * 0.56))
         let lowerMidAlpha = min(1.0, max(0.0, midAlpha * 0.52 + botAlpha * 0.48))
 
