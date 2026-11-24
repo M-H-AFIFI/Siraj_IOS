@@ -24,6 +24,19 @@ final class SkyAndAlertTests: XCTestCase {
         }
     }
 
+    func testSkyPaletteTintsCoolSkyAndPreservesWarmHorizon() {
+        let roseAccent = ArgbColor.hex(0xFFC2185B)
+        let nightTinted = SkyPalette.tint(SkyPalettes.ishaNightfall, accent: roseAccent)
+        XCTAssertNotEqual(nightTinted.sky[0], SkyPalettes.ishaNightfall.sky[0])
+
+        let sunsetTinted = SkyPalette.tint(SkyPalettes.sunsetTwilight, accent: roseAccent)
+        // Warm orange horizon stop should remain untouched by palette tinting
+        XCTAssertEqual(sunsetTinted.sky.last, SkyPalettes.sunsetTwilight.sky.last)
+
+        let grayAccent = ArgbColor.hex(0xFF888888)
+        XCTAssertEqual(SkyPalette.tint(SkyPalettes.ishaNightfall, accent: grayAccent), SkyPalettes.ishaNightfall)
+    }
+
     func testAlertPlannerCapsAt64PrioritizesSoonestAndDropsStaleOver2Minutes() throws {
         let cairo = Place.cairoDefault
         let date = CivilDate(year: 2026, month: 5, day: 15)

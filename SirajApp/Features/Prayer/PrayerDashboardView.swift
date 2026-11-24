@@ -5,31 +5,34 @@ enum PrayerRoute: Hashable {
     case detail
     case location
     case calculation
-    case reminders
-    case widgets
 }
 
 struct PrayerDashboardView: View {
     @Environment(\.sirajTheme) private var theme
     let appState: AppState
     let locationService: LocationService
-    let onOpenReminders: () -> Void
-    let onOpenWidgets: () -> Void
+    let onOpenQuran: () -> Void
+    let onOpenTasbih: () -> Void
+    let onOpenListen: () -> Void
+    let onOpenDuas: () -> Void
 
     @State private var path = NavigationPath()
     @State private var showHijriSheet = false
 
     var body: some View {
-        let dayIndex = appState.activePlace.today(at: appState.currentTime).dayNumber
+        let todayCivil = appState.activePlace.today(at: appState.currentTime)
+        let dayIndex = todayCivil.dayNumber
         let verse = DailyQuotesCatalog.verseForDayIndex(dayIndex)
         let hadith = DailyQuotesCatalog.hadithForDayIndex(dayIndex)
 
         NavigationStack(path: $path) {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: 0) {
                     MihrabLocationHeader(place: appState.activePlace) {
                         path.append(PrayerRoute.location)
                     }
+
+                    Spacer().frame(height: 24)
 
                     AnimatedSkyCard(
                         appState: appState,
@@ -37,9 +40,16 @@ struct PrayerDashboardView: View {
                         onTapCard: { path.append(PrayerRoute.detail) }
                     )
 
-                    if let soon = appState.upcomingOccasions.first, soon.daysUntil <= 30 {
-                        IslamicEventsBanner(occasion: soon)
-                    }
+                    Spacer().frame(height: 24)
+
+                    MihrabQuickActions(
+                        onOpenQuran: onOpenQuran,
+                        onOpenTasbih: onOpenTasbih,
+                        onOpenListen: onOpenListen,
+                        onOpenDuas: onOpenDuas
+                    )
+
+                    Spacer().frame(height: 24)
 
                     MihrabPrayerTable(
                         day: appState.prayerDay,
@@ -49,33 +59,47 @@ struct PrayerDashboardView: View {
                         path.append(PrayerRoute.detail)
                     }
 
-                    MihrabQuickActions(
-                        onCalculation: { path.append(PrayerRoute.calculation) },
-                        onReminders: onOpenReminders,
-                        onWidgets: onOpenWidgets,
-                        onLocation: { path.append(PrayerRoute.location) }
-                    )
+                    if let todayOccasion = TodayIslamicOccasion.forHijri(
+                        month: appState.hijriDate.month,
+                        day: appState.hijriDate.day,
+                        language: theme.language,
+                        digits: { theme.digits($0) }
+                    ) {
+                        IslamicEventsBanner(occasion: todayOccasion) {
+                            showHijriSheet = true
+                        }
+                        .padding(.top, 20)
+                    }
 
-                    DailyAyahCard(verse: verse)
+                    DailyAyahCard(verse: verse, onTapCard: onOpenQuran)
+                        .padding(.top, 20)
 
-                    DailyInspirationCard(hadith: hadith)
+                    DailyInspirationCard(hadith: hadith, onOpenCollection: onOpenDuas)
+                        .padding(.top, 20)
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 20)
                 .padding(.top, 12)
-                .padding(.bottom, 108)
+                .padding(.bottom, 118)
             }
             .scrollIndicators(.hidden)
+            .modifier(ScrollCollapseTracker { delta in
+                if delta > 0 {
+                    appState.isTabBarCollapsed = true
+                } else {
+                    appState.isTabBarCollapsed = false
+                }
+            })
             .background(Color.clear)
             .navigationDestination(for: PrayerRoute.self) { route in
                 switch route {
                 case .detail:
-                    PrayerTimesDetailView(appState: appState)
+                    PrayerTimesDetailView(appState: appState, onTapLocation: {
+                        path.append(PrayerRoute.location)
+                    })
                 case .location:
                     LocationSettingsView(appState: appState, locationService: locationService)
                 case .calculation:
                     PrayerCalculationSettingsView(appState: appState)
-                case .reminders, .widgets:
-                    EmptyView()
                 }
             }
             .sheet(isPresented: $showHijriSheet) {

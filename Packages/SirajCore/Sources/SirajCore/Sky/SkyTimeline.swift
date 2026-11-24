@@ -416,3 +416,98 @@ public enum SkyPalettes {
     public static let midnight = deepNight
     public static let lastThird = tahajjudVigil
 }
+
+/// Shifts cool sky tones toward the active palette accent while leaving warm dawn, sunset, and sun tones intact.
+public enum SkyPalette {
+    private static let skyAmount = 0.50
+    private static let cardAmount = 0.55
+    private static let arcAmount = 0.30
+
+    public static func tint(_ sky: SkyColors, accent: ArgbColor) -> SkyColors {
+        guard accent.a > 0 else { return sky }
+        let accentHsl = Hsl.of(accent)
+        if accentHsl.s < 0.12 { return sky }
+        return SkyColors(
+            sky: sky.sky.map { towards($0, accent: accentHsl, amount: skyAmount) },
+            arc: sky.arc.map { towards($0, accent: accentHsl, amount: arcAmount) },
+            orbGlow: sky.orbGlow,
+            orbCore: sky.orbCore,
+            cardBorderTop: towards(sky.cardBorderTop, accent: accentHsl, amount: cardAmount),
+            cardBorderBottom: towards(sky.cardBorderBottom, accent: accentHsl, amount: cardAmount),
+            footerBg: towards(sky.footerBg, accent: accentHsl, amount: cardAmount),
+            cardBg: towards(sky.cardBg, accent: accentHsl, amount: cardAmount),
+            showCrescent: sky.showCrescent,
+            isWarmGlow: sky.isWarmGlow,
+            cloudLight: sky.cloudLight,
+            cloudDark: towards(sky.cloudDark, accent: accentHsl, amount: skyAmount * 0.5),
+            cloudAlpha: sky.cloudAlpha,
+            starAlpha: sky.starAlpha,
+            rayAlpha: sky.rayAlpha
+        )
+    }
+
+    private static func towards(_ color: ArgbColor, accent: Hsl, amount: Double) -> ArgbColor {
+        let hsl = Hsl.of(color)
+        let dark = 1.0 - hsl.l
+        let weight = amount * coolness(hsl) * (0.15 + 0.85 * dark * dark)
+        if weight <= 0.001 { return color }
+        let target = Hsl(
+            h: accent.h,
+            s: min(accent.s, max(hsl.s, 0.35)),
+            l: hsl.l
+        ).toArgb(alpha: color.alpha)
+        return ArgbColor.lerp(color, target, min(1.0, max(0.0, weight)))
+    }
+
+    private static func coolness(_ hsl: Hsl) -> Double {
+        if hsl.s < 0.10 { return 1.0 }
+        var d = abs(hsl.h - 230.0)
+        if d > 180.0 { d = 360.0 - d }
+        if d <= 60.0 { return 1.0 }
+        if d >= 120.0 { return 0.0 }
+        return 1.0 - (d - 60.0) / 60.0
+    }
+
+    private struct Hsl {
+        let h: Double
+        let s: Double
+        let l: Double
+
+        static func of(_ c: ArgbColor) -> Hsl {
+            let r = c.red, g = c.green, b = c.blue
+            let maxC = max(r, max(g, b))
+            let minC = min(r, min(g, b))
+            let l = (maxC + minC) / 2.0
+            let delta = maxC - minC
+            if delta < 1e-5 { return Hsl(h: 0, s: 0, l: l) }
+            let s = delta / (1.0 - abs(2.0 * l - 1.0))
+            let rawH: Double
+            if maxC == r {
+                rawH = 60.0 * ((g - b) / delta).truncatingRemainder(dividingBy: 6.0)
+            } else if maxC == g {
+                rawH = 60.0 * (((b - r) / delta) + 2.0)
+            } else {
+                rawH = 60.0 * (((r - g) / delta) + 4.0)
+            }
+            return Hsl(h: rawH < 0 ? rawH + 360.0 : rawH, s: min(1.0, max(0.0, s)), l: l)
+        }
+
+        func toArgb(alpha: Double) -> ArgbColor {
+            let c = (1.0 - abs(2.0 * l - 1.0)) * s
+            let hp = (h / 60.0).truncatingRemainder(dividingBy: 6.0)
+            let x = c * (1.0 - abs(hp.truncatingRemainder(dividingBy: 2.0) - 1.0))
+            let r1, g1, b1: Double
+            if hp < 1 { (r1, g1, b1) = (c, x, 0) }
+            else if hp < 2 { (r1, g1, b1) = (x, c, 0) }
+            else if hp < 3 { (r1, g1, b1) = (0, c, x) }
+            else if hp < 4 { (r1, g1, b1) = (0, x, c) }
+            else if hp < 5 { (r1, g1, b1) = (x, 0, c) }
+            else { (r1, g1, b1) = (c, 0, x) }
+            let m = l - c / 2.0
+            func byte(_ v: Double) -> UInt8 {
+                UInt8(min(255, max(0, Int((min(1.0, max(0.0, v)) * 255.0).rounded()))))
+            }
+            return ArgbColor(a: byte(alpha), r: byte(r1 + m), g: byte(g1 + m), b: byte(b1 + m))
+        }
+    }
+}

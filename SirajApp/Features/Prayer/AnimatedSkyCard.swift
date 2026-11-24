@@ -9,39 +9,65 @@ struct AnimatedSkyCard: View {
     let onTapHijri: () -> Void
     let onTapCard: () -> Void
 
+    private static let countdownSlot = "{countdown}"
+    private static let hijriGold = Color(argbHex: 0xFFE5B558)
+    private static let moonlitText = ArgbColor.hex(0xFFC8D6FF)
+
     var body: some View {
         let isPinned = appState.pinnedSkyTime != nil
         let paused = isPinned || !theme.motionEnabled || scenePhase != .active
 
-        TimelineView(.animation(minimumInterval: isPinned ? 60 : (1.0 / 6.0), paused: paused)) { timeline in
+        TimelineView(.animation(minimumInterval: isPinned ? 60 : (1.0 / 12.0), paused: paused)) { timeline in
             let now = appState.pinnedSkyTime ?? timeline.date
             let day = PrayerCalculator.today(place: appState.activePlace, settings: appState.settings.calculationSettings, now: now)
             let state = PrayerState.at(day: day, now: now)
             let skyMoment = SkyTimeline.at(now, prayers: day.entries)
-            let arc = SolarArc.at(now, prayers: day.entries, next: day.next)
+            let skyColors = SkyPalette.tint(skyMoment.colors, accent: theme.scheme.primary)
+            let displayed = state?.prayer ?? day.next ?? day[.fajr]
+            let arc = SolarArc.at(now, prayers: day.entries, next: displayed)
             let moon = MoonPhase.at(now)
             let animT = isPinned ? 4.2 : timeline.date.timeIntervalSinceReferenceDate
 
-            cardBody(now: now, day: day, state: state, sky: skyMoment, arc: arc, moon: moon, t: animT)
+            cardBody(
+                now: now,
+                displayed: displayed,
+                state: state,
+                skyColors: skyColors,
+                twilight: skyMoment.twilight,
+                arc: arc,
+                moon: moon,
+                t: animT
+            )
         }
     }
 
     private func cardBody(
         now: Date,
-        day: PrayerDay,
+        displayed: PrayerTimeEntry,
         state: PrayerState?,
-        sky: SkyMoment,
+        skyColors: SkyColors,
+        twilight: SkyTwilight,
         arc: SolarArc,
         moon: MoonPhaseInfo,
         t: Double
     ) -> some View {
-        let shape = RoundedRectangle(cornerRadius: 28, style: .continuous)
-        let displayed = state?.prayer ?? day.next ?? day[.fajr]
-        let countdownText = formattedCountdown(state: state)
-        let civilToday = appState.activePlace.today(at: now)
-        let currentHijri = appState.hijriCalendar.toHijri(civilToday)
-        let hijriText = HijriFormatter.format(currentHijri, lang: theme.language, numeralSystem: theme.settings.numeralSystem)
-        let gregorianText = HijriFormatter.formatGregorian(civilToday, lang: theme.language, numeralSystem: theme.settings.numeralSystem)
+        let shape = RoundedRectangle(cornerRadius: 32, style: .continuous)
+        let isDuringAzan: Bool = { if case .azanCalled = state { return true }; return false }()
+        let isWaitingForIqama: Bool = { if case .waitingForIqama = state { return true }; return false }()
+        let isInPrayer: Bool = { if case .inPrayer = state { return true }; return false }()
+        let isMaghrib = displayed.type == .maghrib
+        let diffMinutes = Int(displayed.time.timeIntervalSince(now) / 60.0)
+        let isUrgent = !isDuringAzan && !isWaitingForIqama && !isInPrayer && (1...15).contains(diffMinutes)
+        let isSoon = !isDuringAzan && !isWaitingForIqama && !isInPrayer && (16...60).contains(diffMinutes)
+
+        let prayerName: String = {
+            if isDuringAzan && isMaghrib { return theme.t("maghrib_prayer_now") }
+            if displayed.type == .dhuhr && appState.activePlace.today(at: displayed.time).weekdaySundayZero == 5 {
+                return theme.t("prayer_jummah")
+            }
+            return theme.t(displayed.type.stringKey)
+        }()
+
         let prayerClock = TimeFormatter.formatTime(
             displayed.time,
             timeZone: appState.activePlace.timeZone,
@@ -50,343 +76,340 @@ struct AnimatedSkyCard: View {
             lang: theme.language
         )
 
-        return ZStack(alignment: .topTrailing) {
+        let countdownNumber = formattedCountdownNumber(state: state)
+        let countdownTemplate: String? = {
+            if isDuringAzan || isInPrayer { return nil }
+            if isWaitingForIqama { return theme.tf("until_iqama_format", Self.countdownSlot) }
+            return theme.tf("dashboard_countdown_format", Self.countdownSlot)
+        }()
+
+        let textLight = arc.isDaytime
+            ? ArgbColor.lerp(skyColors.orbCore, skyColors.orbGlow, 0.55)
+            : Self.moonlitText
+        let nameGradient = LinearGradient(
+            colors: [.white, Color(argb: ArgbColor.lerp(.hex(0xFFFFFFFF), textLight, 0.32))],
+            startPoint: .top, endPoint: .bottom
+        )
+        let timeGradient = LinearGradient(
+            stops: [
+                .init(color: .white, location: 0.0),
+                .init(color: .white, location: 0.45),
+                .init(color: Color(argb: ArgbColor.lerp(.hex(0xFFFFFFFF), textLight, 0.55)), location: 1.0)
+            ],
+            startPoint: .top, endPoint: .bottom
+        )
+
+        let civilToday = appState.activePlace.today(at: now)
+        let currentHijri = appState.hijriCalendar.toHijri(civilToday)
+        let hijriText = HijriFormatter.format(currentHijri, lang: theme.language, numeralSystem: theme.settings.numeralSystem)
+        let gregorianText = HijriFormatter.formatGregorian(civilToday, lang: theme.language, numeralSystem: theme.settings.numeralSystem)
+        let badgeAngle = arc.isDaytime
+            ? (theme.motionEnabled ? t * 6.0 : 0.0)
+            : (theme.motionEnabled ? 9.0 * sin(t * (2.0 * .pi / 7.0)) : 0.0)
+
+        return ZStack(alignment: .bottom) {
             Button(action: onTapCard) {
-                ZStack {
-                    Canvas { ctx, size in
-                        drawSkyLayers(ctx: &ctx, size: size, sky: sky, arc: arc, moon: moon, t: t)
+                ZStack(alignment: .top) {
+                    CelestialArcCanvas(
+                        colors: skyColors,
+                        twilight: twilight,
+                        arc: arc,
+                        moon: moon,
+                        timeSeconds: t,
+                        motionEnabled: theme.motionEnabled,
+                        cornerRadius: 32
+                    )
+
+                    // Anchored to visual top-right in every language regardless of RTL layout mirroring.
+                    HStack {
+                        Spacer()
+                        HStack(spacing: 6) {
+                            Text(theme.t(arc.phaseKey))
+                                .font(.system(size: min(11.5 * theme.textScale, 14), weight: .bold))
+                                .foregroundStyle(Color.white.opacity(0.95))
+                                .lineLimit(1)
+                            Image(systemName: arc.isDaytime ? "sun.max.fill" : "moon.fill")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(Color(argb: skyColors.orbGlow))
+                                .rotationEffect(.degrees(badgeAngle))
+                        }
+                        .environment(\.layoutDirection, theme.isRTL ? .rightToLeft : .leftToRight)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.black.opacity(0.35)))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [Color.white.opacity(0.32), Color(argb: skyColors.cardBorderTop).opacity(0.40), .clear],
+                                        startPoint: .top, endPoint: .bottom
+                                    ),
+                                    lineWidth: 0.8
+                                )
+                        }
                     }
+                    .environment(\.layoutDirection, .leftToRight)
+                    .padding(.horizontal, 18)
+                    .padding(.top, 14)
 
-                    VStack(spacing: 12) {
-                        HStack(spacing: 8) {
-                            HStack(spacing: 5) {
-                                Image(systemName: arc.isDaytime ? "sun.max.fill" : "moon.stars.fill")
-                                    .font(.system(size: 11, weight: .semibold))
-                                Text(theme.t(arc.phaseKey))
-                                    .font(.system(size: 11 * theme.textScale, weight: .semibold))
-                                    .lineLimit(1)
-                            }
-                            .foregroundStyle(Color.white.opacity(0.92))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(Capsule().fill(Color.black.opacity(0.24)))
+                    // Center hero stack
+                    VStack(spacing: 2) {
+                        stateBadge(
+                            isDuringAzan: isDuringAzan,
+                            isMaghrib: isMaghrib,
+                            isWaitingForIqama: isWaitingForIqama,
+                            isInPrayer: isInPrayer
+                        )
 
-                            Spacer(minLength: 6)
-                        }
+                        HeroText(
+                            text: prayerName,
+                            font: .system(size: 26 * theme.textScale, weight: .black),
+                            gradient: nameGradient
+                        )
+                        .padding(.top, 2)
 
-                        Spacer(minLength: 36)
+                        HeroText(
+                            text: prayerClock,
+                            font: .system(size: 34 * theme.textScale, weight: .black, design: .rounded),
+                            gradient: timeGradient
+                        )
+                        .padding(.top, 2)
 
-                        VStack(spacing: 4) {
-                            Text(statusLabel(state: state, prayer: displayed))
-                                .font(.system(size: 12 * theme.textScale, weight: .semibold))
-                                .foregroundStyle(Color.white.opacity(0.84))
-                                .textCase(.uppercase)
-
-                            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                                Text(prayerDisplayName(displayed, place: appState.activePlace))
-                                    .font(.system(size: 26 * theme.textScale, weight: .heavy))
-                                    .foregroundStyle(.white)
-                                Text(prayerClock)
-                                    .font(.system(size: 16 * theme.textScale, weight: .semibold))
-                                    .foregroundStyle(Color(argb: sky.colors.orbGlow))
-                            }
-
-                            RollingCountdownText(text: countdownText, fontSize: 38 * theme.textScale, color: .white)
-                                .shadow(color: Color.black.opacity(0.35), radius: 8, x: 0, y: 2)
-
-                            if case .waitingForIqama(_, _, _, let progress) = state {
-                                GeometryReader { g in
-                                    ZStack(alignment: .leading) {
-                                        Capsule().fill(Color.white.opacity(0.22))
-                                        Capsule()
-                                            .fill(Color(argb: sky.colors.orbGlow))
-                                            .frame(width: g.size.width * CGFloat(progress))
-                                    }
-                                }
-                                .frame(height: 5)
-                                .padding(.horizontal, 28)
-                                .padding(.top, 4)
-                            }
-                        }
-
-                        Spacer(minLength: 6)
-
-                        HStack {
-                            Text(gregorianText)
-                                .font(.system(size: 11.5 * theme.textScale, weight: .medium))
-                                .foregroundStyle(Color.white.opacity(0.78))
-                            Spacer()
-                            Image(systemName: theme.isRTL ? "chevron.left" : "chevron.right")
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(Color.white.opacity(0.65))
-                        }
-                        .padding(.top, 4)
+                        countdownPill(
+                            isDuringAzan: isDuringAzan,
+                            isWaitingForIqama: isWaitingForIqama,
+                            isInPrayer: isInPrayer,
+                            isUrgent: isUrgent,
+                            isSoon: isSoon,
+                            skyColors: skyColors,
+                            countdownTemplate: countdownTemplate,
+                            countdownNumber: countdownNumber,
+                            t: t
+                        )
+                        .padding(.top, 6)
                     }
-                    .padding(18)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 48)
                 }
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("prayer_sky_card")
 
-            Button(action: onTapHijri) {
-                HStack(spacing: 5) {
-                    Image(systemName: "calendar")
-                        .font(.system(size: 11, weight: .semibold))
-                    Text(hijriText)
-                        .font(.system(size: 11 * theme.textScale, weight: .bold))
-                        .lineLimit(1)
-                }
-                .foregroundStyle(Color(argb: sky.colors.orbCore))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(Capsule().fill(Color.black.opacity(0.28)))
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 18)
-            .padding(.trailing, 18)
+            calendarCapsule(gregorianText: gregorianText, hijriText: hijriText, moonPhase: moon.phaseFraction)
+                .padding(.bottom, 12)
         }
-        .frame(minHeight: 272)
+        .frame(maxWidth: .infinity)
+        .frame(height: 380)
+        .background(Color(argb: skyColors.cardBg))
         .clipShape(shape)
         .overlay {
             shape.strokeBorder(
                 LinearGradient(
-                    colors: [Color(argb: sky.colors.cardBorderTop), Color(argb: sky.colors.cardBorderBottom)],
-                    startPoint: .top,
-                    endPoint: .bottom
+                    colors: [Color(argb: skyColors.cardBorderTop), Color(argb: skyColors.cardBorderBottom)],
+                    startPoint: .top, endPoint: .bottom
                 ),
-                lineWidth: 1.2
+                lineWidth: 1.0
             )
         }
-        .shadow(color: Color.black.opacity(theme.isDark ? 0.42 : 0.18), radius: 18, x: 0, y: 9)
     }
 
-    private func prayerDisplayName(_ entry: PrayerTimeEntry, place: Place) -> String {
-        if entry.type == .dhuhr && place.today(at: entry.time).weekdaySundayZero == 5 {
-            return theme.t("prayer_jummah")
-        }
-        return theme.t(entry.type.stringKey)
-    }
-
-    private func statusLabel(state: PrayerState?, prayer: PrayerTimeEntry) -> String {
-        switch state {
-        case .azanCalled:
-            return theme.t("azan_time_now")
-        case .waitingForIqama:
-            return theme.t("widget_iqama_in")
-        case .inPrayer:
-            return theme.t("in_prayer")
-        default:
+    private func stateBadge(isDuringAzan: Bool, isMaghrib: Bool, isWaitingForIqama: Bool, isInPrayer: Bool) -> some View {
+        let label: String = {
+            if isDuringAzan && isMaghrib { return theme.t("azan_maghrib_now") }
+            if isDuringAzan { return theme.t("adhan_badge") }
+            if isWaitingForIqama { return theme.t("iqama") }
+            if isInPrayer { return theme.t("in_prayer") }
             return theme.t("next_prayer")
+        }()
+        let bg: Color = {
+            if isDuringAzan { return Color(argbHex: 0xFFFF9800).opacity(0.25) }
+            if isWaitingForIqama { return Color(argbHex: 0xFFFFD54F).opacity(0.20) }
+            if isInPrayer { return Color(argbHex: 0xFF4CAF50).opacity(0.22) }
+            return .clear
+        }()
+        let fg: Color = {
+            if isDuringAzan { return Color(argbHex: 0xFFFFB74D) }
+            if isWaitingForIqama { return Color(argbHex: 0xFFFFE082) }
+            if isInPrayer { return Color(argbHex: 0xFF81C784) }
+            return Color.white.opacity(0.85)
+        }()
+
+        return Text(label)
+            .font(.system(size: 11 * theme.textScale, weight: .bold))
+            .tracking(theme.isRTL ? 0 : 0.5)
+            .foregroundStyle(fg)
+            .shadow(color: Color.black.opacity(0.55), radius: 6, x: 0, y: 2)
+            .lineLimit(1)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 2)
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(bg))
+    }
+
+    private func countdownPill(
+        isDuringAzan: Bool,
+        isWaitingForIqama: Bool,
+        isInPrayer: Bool,
+        isUrgent: Bool,
+        isSoon: Bool,
+        skyColors: SkyColors,
+        countdownTemplate: String?,
+        countdownNumber: String,
+        t: Double
+    ) -> some View {
+        let pillAccent: Color = {
+            if isDuringAzan { return Color(argbHex: 0xFFFF9800) }
+            if isWaitingForIqama { return Color(argbHex: 0xFFE5B558) }
+            if isInPrayer { return Color(argbHex: 0xFF81C784) }
+            if isUrgent { return Color(argbHex: 0xFFFF7043) }
+            if isSoon { return Color(argbHex: 0xFFFFB74D) }
+            return Color(argb: skyColors.cardBorderTop)
+        }()
+        let pillBg: Color = {
+            if isDuringAzan { return Color(argbHex: 0xFFE65100).opacity(0.38) }
+            if isWaitingForIqama { return Color(argbHex: 0xFF3E2723).opacity(0.42) }
+            if isInPrayer { return Color(argbHex: 0xFF1B5E20).opacity(0.38) }
+            if isUrgent { return Color(argbHex: 0xFFB71C1C).opacity(0.32) }
+            if isSoon { return Color(argbHex: 0xFF422006).opacity(0.35) }
+            return Color.black.opacity(0.38)
+        }()
+        let iconTint: Color = {
+            if isDuringAzan { return Color(argbHex: 0xFFFFB74D) }
+            if isWaitingForIqama { return Color(argbHex: 0xFFFFD54F) }
+            if isInPrayer { return Color(argbHex: 0xFF81C784) }
+            if isUrgent { return Color(argbHex: 0xFFFF7043) }
+            if isSoon { return Color(argbHex: 0xFFFFD54F) }
+            return Self.hijriGold
+        }()
+
+        let pulsing = isDuringAzan || isWaitingForIqama || isUrgent
+        let pulseAlpha = theme.motionEnabled ? (0.35 + 0.50 * (0.5 + 0.5 * sin(t * 2.6))) : 0.85
+        let borderWidth: CGFloat = (isDuringAzan || isUrgent) ? 1.5 : ((isWaitingForIqama || isInPrayer) ? 1.2 : 1.0)
+        let accentAlpha: Double = isInPrayer ? 0.85 : (isSoon ? 0.70 : 0.60)
+
+        return HStack(spacing: 6) {
+            Image(systemName: isDuringAzan ? "bell.badge.fill" : "timer")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(iconTint)
+
+            if let template = countdownTemplate {
+                let parts = template.components(separatedBy: Self.countdownSlot)
+                let before = (parts.first ?? "").trimmingCharacters(in: .whitespaces)
+                let after = (parts.count > 1 ? parts[1] : "").trimmingCharacters(in: .whitespaces)
+                HStack(spacing: 4) {
+                    if !before.isEmpty {
+                        Text(before)
+                            .font(.system(size: 12.5 * theme.textScale, weight: .black))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                    }
+                    RollingCountdownText(
+                        text: countdownNumber,
+                        fontSize: 12.5 * theme.textScale,
+                        weight: .black,
+                        color: .white
+                    )
+                    if !after.isEmpty {
+                        Text(after)
+                            .font(.system(size: 12.5 * theme.textScale, weight: .black))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                    }
+                }
+            } else {
+                Text(isDuringAzan ? theme.t("azan_time_now") : theme.t("prayer_in_progress"))
+                    .font(.system(size: 12.5 * theme.textScale, weight: .black))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 7)
+        .background(Capsule().fill(pillBg))
+        .overlay {
+            if pulsing {
+                Capsule().strokeBorder(pillAccent.opacity(pulseAlpha), lineWidth: borderWidth)
+            } else {
+                Capsule().strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.32),
+                            pillAccent.opacity(min(0.55, accentAlpha * 0.75)),
+                            pillAccent.opacity(min(0.20, accentAlpha * 0.25))
+                        ],
+                        startPoint: .top, endPoint: .bottom
+                    ),
+                    lineWidth: borderWidth
+                )
+            }
         }
     }
 
-    private func formattedCountdown(state: PrayerState?) -> String {
+    private func calendarCapsule(gregorianText: String, hijriText: String, moonPhase: Double) -> some View {
+        Button {
+            if theme.settings.isHapticEnabled {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            }
+            onTapHijri()
+        } label: {
+            VStack(spacing: 3) {
+                if !gregorianText.isEmpty {
+                    Text(gregorianText)
+                        .font(.system(size: 11 * theme.textScale, weight: .semibold))
+                        .tracking(theme.isRTL ? 0 : 0.3)
+                        .foregroundStyle(Color.white.opacity(0.88))
+                        .shadow(color: Color.black.opacity(0.85), radius: 3, x: 0, y: 1)
+                        .lineLimit(1)
+                }
+
+                if !hijriText.isEmpty {
+                    let pillShape = RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    HStack(spacing: 6) {
+                        MoonPhaseGlyph(phaseFraction: moonPhase, color: Self.hijriGold)
+                            .frame(width: 13, height: 13)
+                        Text(hijriText)
+                            .font(.system(size: 12 * theme.textScale, weight: .bold))
+                            .foregroundStyle(Self.hijriGold)
+                            .shadow(color: Color.black.opacity(0.60), radius: 2, x: 0, y: 1)
+                            .lineLimit(1)
+                    }
+                    .padding(.leading, 10)
+                    .padding(.trailing, 12)
+                    .padding(.vertical, 4)
+                    .background {
+                        ZStack {
+                            pillShape.fill(Color(argbHex: 0xFF070B14).opacity(0.40))
+                            pillShape.fill(
+                                LinearGradient(
+                                    colors: [Self.hijriGold.opacity(0.12), Self.hijriGold.opacity(0.06)],
+                                    startPoint: .leading, endPoint: .trailing
+                                )
+                            )
+                        }
+                    }
+                    .overlay {
+                        pillShape.strokeBorder(
+                            LinearGradient(
+                                colors: [Self.hijriGold.opacity(0.33), Self.hijriGold.opacity(0.18)],
+                                startPoint: .top, endPoint: .bottom
+                            ),
+                            lineWidth: 1.0
+                        )
+                    }
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(theme.t("dashboard_open_calendar"))
+    }
+
+    private func formattedCountdownNumber(state: PrayerState?) -> String {
         switch state {
         case .upcomingAzan(_, let rem):
             return TimeFormatter.formatCountdown(seconds: rem, withHours: true, numeralSystem: theme.settings.numeralSystem, lang: theme.language)
-        case .azanCalled(_, let since, _):
-            return TimeFormatter.formatCountdown(seconds: since, withHours: false, numeralSystem: theme.settings.numeralSystem, lang: theme.language)
         case .waitingForIqama(_, _, let until, _):
             return TimeFormatter.formatCountdown(seconds: until, withHours: false, numeralSystem: theme.settings.numeralSystem, lang: theme.language)
-        case .inPrayer(_, let since):
-            return TimeFormatter.formatCountdown(seconds: since, withHours: false, numeralSystem: theme.settings.numeralSystem, lang: theme.language)
-        case nil:
+        default:
             return TimeFormatter.formatCountdown(seconds: 0, withHours: true, numeralSystem: theme.settings.numeralSystem, lang: theme.language)
         }
-    }
-
-    private func drawSkyLayers(
-        ctx: inout GraphicsContext,
-        size: CGSize,
-        sky: SkyMoment,
-        arc: SolarArc,
-        moon: MoonPhaseInfo,
-        t: Double
-    ) {
-        let w = size.width
-        let h = size.height
-        let colors = sky.colors
-
-        let skyGrad = Gradient(colors: colors.sky.map { Color(argb: $0) })
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(skyGrad, startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
-
-        let horizonBloom = max(sky.twilight.sunriseGlow, max(sky.twilight.sunsetGlow, max(sky.twilight.shafaq, sky.twilight.trueDawn * 0.7)))
-        if horizonBloom > 0.02 {
-            let bloomCenter = CGPoint(x: w * 0.5, y: h * 0.86)
-            ctx.fill(
-                Path(ellipseIn: CGRect(x: -w * 0.15, y: h * 0.45, width: w * 1.3, height: h * 0.8)),
-                with: .radialGradient(
-                    Gradient(colors: [Color(argb: colors.orbGlow).opacity(0.36 * horizonBloom), .clear]),
-                    center: bloomCenter, startRadius: 8, endRadius: w * 0.65
-                )
-            )
-        }
-
-        if colors.starAlpha > 0.02 {
-            for i in 0..<46 {
-                let sx = frac(sin(Double(i) * 19.19) * 43758.5453) * w
-                let sy = frac(sin(Double(i) * 73.13) * 19341.123) * h * 0.62
-                let twinkle = 0.45 + 0.55 * (0.5 + 0.5 * sin(t * (1.3 + Double(i % 4) * 0.4) + Double(i)))
-                let r = 0.75 + Double(i % 3) * 0.55
-                ctx.fill(
-                    Path(ellipseIn: CGRect(x: sx - r, y: sy - r, width: r * 2, height: r * 2)),
-                    with: .color(Color.white.opacity(colors.starAlpha * twinkle * 0.9))
-                )
-            }
-            let cycle = t.truncatingRemainder(dividingBy: 9.0)
-            if cycle < 0.85 {
-                let p = cycle / 0.85
-                let start = CGPoint(x: w * (0.18 + 0.42 * p), y: h * (0.12 + 0.18 * p))
-                let tail = CGPoint(x: start.x - 32, y: start.y - 14)
-                var meteor = Path()
-                meteor.move(to: tail)
-                meteor.addLine(to: start)
-                ctx.stroke(meteor, with: .color(Color.white.opacity(colors.starAlpha * (1.0 - p) * 0.85)),
-                           style: StrokeStyle(lineWidth: 1.5, lineCap: .round))
-            }
-        }
-
-        if colors.cloudAlpha > 0.04 {
-            let drift = (t * 4.0).truncatingRemainder(dividingBy: w + 120)
-            for idx in 0..<3 {
-                let cx = ((Double(idx) * w * 0.42 + drift).truncatingRemainder(dividingBy: w + 120)) - 60
-                let cy = h * (0.24 + Double(idx) * 0.11)
-                let cw = 72.0 + Double(idx) * 18.0
-                let ch = 20.0 + Double(idx) * 4.0
-                let cloudRect = CGRect(x: cx - cw / 2, y: cy - ch / 2, width: cw, height: ch)
-                ctx.fill(
-                    Path(roundedRect: cloudRect, cornerRadius: ch / 2),
-                    with: .linearGradient(
-                        Gradient(colors: [Color(argb: colors.cloudLight).opacity(colors.cloudAlpha * 0.38),
-                                          Color(argb: colors.cloudDark).opacity(colors.cloudAlpha * 0.25)]),
-                        startPoint: CGPoint(x: cx, y: cy - ch / 2),
-                        endPoint: CGPoint(x: cx, y: cy + ch / 2)
-                    )
-                )
-            }
-        }
-
-        let arcLeft = CGPoint(x: w * 0.08, y: h * 0.72)
-        let arcRight = CGPoint(x: w * 0.92, y: h * 0.72)
-        let arcCtrl = CGPoint(x: w * 0.50, y: h * 0.14)
-
-        func quadPoint(_ u: Double) -> CGPoint {
-            let mu = 1.0 - u
-            let x = mu * mu * arcLeft.x + 2 * mu * u * arcCtrl.x + u * u * arcRight.x
-            let y = mu * mu * arcLeft.y + 2 * mu * u * arcCtrl.y + u * u * arcRight.y
-            return CGPoint(x: x, y: y)
-        }
-
-        var arcPath = Path()
-        arcPath.move(to: arcLeft)
-        arcPath.addQuadCurve(to: arcRight, control: arcCtrl)
-        let arcGrad = Gradient(colors: colors.arc.map { Color(argb: $0) })
-        ctx.stroke(
-            arcPath,
-            with: .linearGradient(arcGrad, startPoint: arcLeft, endPoint: arcRight),
-            style: StrokeStyle(lineWidth: 2.0, lineCap: .round, dash: [4, 5])
-        )
-
-        for m in arc.milestones {
-            let pt = quadPoint(m.progress)
-            let r: CGFloat = m.isNext ? 4.8 : 2.8
-            if m.isNext {
-                let breathe = 1.0 + 0.22 * sin(t * 2.4)
-                let gr = r * 2.4 * breathe
-                ctx.fill(Path(ellipseIn: CGRect(x: pt.x - gr, y: pt.y - gr, width: gr * 2, height: gr * 2)),
-                         with: .color(Color(argb: colors.orbGlow).opacity(0.32)))
-            }
-            ctx.fill(Path(ellipseIn: CGRect(x: pt.x - r, y: pt.y - r, width: r * 2, height: r * 2)),
-                     with: .color(m.isNext ? Color(argb: colors.orbCore) : Color.white.opacity(m.isPast ? 0.35 : 0.72)))
-        }
-
-        let orb = quadPoint(arc.progress)
-        let glowR: CGFloat = 28 + CGFloat(3.5 * sin(t * 1.8))
-        ctx.fill(
-            Path(ellipseIn: CGRect(x: orb.x - glowR, y: orb.y - glowR, width: glowR * 2, height: glowR * 2)),
-            with: .radialGradient(
-                Gradient(colors: [Color(argb: colors.orbGlow).opacity(0.68), Color(argb: colors.orbGlow).opacity(0.16), .clear]),
-                center: orb, startRadius: 4, endRadius: glowR
-            )
-        )
-
-        if colors.rayAlpha > 0.05 && !colors.showCrescent {
-            for ray in 0..<8 {
-                let angle = Double(ray) * (.pi / 4.0) + t * 0.12
-                let inner = CGPoint(x: orb.x + cos(angle) * 13, y: orb.y + sin(angle) * 13)
-                let outer = CGPoint(x: orb.x + cos(angle) * 23, y: orb.y + sin(angle) * 23)
-                var rp = Path()
-                rp.move(to: inner)
-                rp.addLine(to: outer)
-                ctx.stroke(rp, with: .color(Color(argb: colors.orbGlow).opacity(colors.rayAlpha * 0.55)),
-                           style: StrokeStyle(lineWidth: 1.5, lineCap: .round))
-            }
-        }
-
-        let coreR: CGFloat = 10.5
-        if colors.showCrescent {
-            drawMoonDisc(ctx: &ctx, center: orb, radius: coreR, phase: moon, litColor: Color(argb: colors.orbCore))
-        } else {
-            ctx.fill(Path(ellipseIn: CGRect(x: orb.x - coreR, y: orb.y - coreR, width: coreR * 2, height: coreR * 2)),
-                     with: .color(Color(argb: colors.orbCore)))
-        }
-
-        drawMosqueSkyline(ctx: &ctx, size: size, footerColor: Color(argb: colors.footerBg), isNight: colors.starAlpha > 0.25)
-    }
-
-    private func drawMoonDisc(ctx: inout GraphicsContext, center: CGPoint, radius: CGFloat, phase: MoonPhaseInfo, litColor: Color) {
-        let rect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-        ctx.fill(Path(ellipseIn: rect), with: .color(litColor.opacity(0.18)))
-        // Approximate crescent/gibbous terminator by punching out an offset disc inside a clipped layer.
-        let offsetFactor = (1.0 - phase.illumination) * 1.45 * Double(radius)
-        let dx = phase.waxing ? -offsetFactor : offsetFactor
-        ctx.drawLayer { layer in
-            layer.clip(to: Path(ellipseIn: rect))
-            layer.fill(Path(ellipseIn: rect), with: .color(litColor))
-            if phase.illumination < 0.94 {
-                let shadowRect = CGRect(x: center.x - radius + dx, y: center.y - radius, width: radius * 2, height: radius * 2)
-                layer.blendMode = .destinationOut
-                layer.fill(Path(ellipseIn: shadowRect), with: .color(.black))
-            }
-        }
-    }
-
-    private func drawMosqueSkyline(ctx: inout GraphicsContext, size: CGSize, footerColor: Color, isNight: Bool) {
-        let w = size.width, h = size.height
-        let baseY = h * 0.85
-        var p = Path()
-        p.move(to: CGPoint(x: 0, y: h))
-        p.addLine(to: CGPoint(x: 0, y: baseY + 6))
-        p.addLine(to: CGPoint(x: w * 0.14, y: baseY + 6))
-        p.addLine(to: CGPoint(x: w * 0.14, y: baseY - 22))
-        p.addLine(to: CGPoint(x: w * 0.155, y: baseY - 32))
-        p.addLine(to: CGPoint(x: w * 0.17, y: baseY - 22))
-        p.addLine(to: CGPoint(x: w * 0.17, y: baseY + 4))
-        p.addLine(to: CGPoint(x: w * 0.38, y: baseY + 4))
-        p.addQuadCurve(to: CGPoint(x: w * 0.50, y: baseY - 26), control: CGPoint(x: w * 0.41, y: baseY - 20))
-        p.addQuadCurve(to: CGPoint(x: w * 0.62, y: baseY + 4), control: CGPoint(x: w * 0.59, y: baseY - 20))
-        p.addLine(to: CGPoint(x: w * 0.83, y: baseY + 4))
-        p.addLine(to: CGPoint(x: w * 0.83, y: baseY - 22))
-        p.addLine(to: CGPoint(x: w * 0.845, y: baseY - 32))
-        p.addLine(to: CGPoint(x: w * 0.86, y: baseY - 22))
-        p.addLine(to: CGPoint(x: w * 0.86, y: baseY + 6))
-        p.addLine(to: CGPoint(x: w, y: baseY + 6))
-        p.addLine(to: CGPoint(x: w, y: h))
-        p.closeSubpath()
-
-        ctx.fill(p, with: .color(footerColor.opacity(0.68)))
-
-        if isNight {
-            let lampColor = Color(argbHex: 0xFFFFD54F).opacity(0.72)
-            for lx in [w * 0.155, w * 0.46, w * 0.50, w * 0.54, w * 0.845] {
-                ctx.fill(Path(ellipseIn: CGRect(x: lx - 1.8, y: baseY + 10, width: 3.6, height: 3.6)), with: .color(lampColor))
-            }
-        }
-    }
-
-    private func frac(_ x: Double) -> Double {
-        let r = x - floor(x)
-        return r < 0 ? r + 1.0 : r
     }
 }

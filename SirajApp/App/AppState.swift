@@ -11,6 +11,7 @@ final class AppState {
     var settings: SettingsSnapshot
     var onboardingComplete: Bool
     var selectedTab: SirajTab = .prayer
+    var isTabBarCollapsed: Bool = false
     var pinnedSkyTime: Date?
     var activeAdhanAlert: PrayerType?
     var isAdhanAlertTest = false

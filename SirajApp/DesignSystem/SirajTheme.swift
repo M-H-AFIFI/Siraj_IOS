@@ -79,6 +79,18 @@ struct SirajResolvedTheme: Sendable {
         .custom("Amiri-Regular", size: size * textScale)
     }
 
+    func quranMadinahFont(size: CGFloat) -> Font {
+        .custom("DigitalKhattOldMadinaRegular", size: size * textScale)
+    }
+
+    func quranIndopakFont(size: CGFloat) -> Font {
+        .custom("DigitalKhattIndoPakRegular", size: size * textScale)
+    }
+
+    func quranShamarlyFont(size: CGFloat) -> Font {
+        .custom("AmiriQuran-Regular", size: size * textScale)
+    }
+
     static let placeholder = SirajResolvedTheme(
         scheme: SirajColorSchemeSpec.resolve(palette: "Emerald", isDark: false, isBlack: false),
         settings: SettingsSnapshot(),

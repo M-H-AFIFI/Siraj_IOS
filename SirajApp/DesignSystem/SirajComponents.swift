@@ -160,15 +160,187 @@ struct RollingCountdownText: View {
     @Environment(\.sirajTheme) private var theme
     let text: String
     var fontSize: CGFloat = 34
+    var weight: Font.Weight = .bold
     var color: Color = .white
+    var gradient: LinearGradient? = nil
+    var hasShadow: Bool = false
+    var countingUp: Bool = false
 
     var body: some View {
+        Group {
+            if let gradient {
+                ZStack {
+                    if hasShadow {
+                        digitText
+                            .foregroundStyle(.white)
+                            .shadow(color: Color.black.opacity(0.55), radius: 6, x: 0, y: 2)
+                    }
+                    digitText
+                        .foregroundStyle(gradient)
+                }
+            } else {
+                digitText
+                    .foregroundStyle(color)
+                    .shadow(color: hasShadow ? Color.black.opacity(0.55) : .clear, radius: hasShadow ? 6 : 0, x: 0, y: hasShadow ? 2 : 0)
+            }
+        }
+        .environment(\.layoutDirection, .leftToRight)
+    }
+
+    private var digitText: some View {
         Text(text)
-            .font(.system(size: fontSize, weight: .bold, design: .rounded).monospacedDigit())
-            .foregroundStyle(color)
-            .contentTransition(theme.motionEnabled ? .numericText(countsDown: true) : .identity)
-            .animation(theme.motionEnabled ? .easeInOut(duration: 0.22) : nil, value: text)
-            .environment(\.layoutDirection, .leftToRight)
+            .font(.system(size: fontSize, weight: weight, design: .rounded).monospacedDigit())
+            .lineLimit(1)
+            .contentTransition(theme.motionEnabled ? .numericText(countsDown: !countingUp) : .identity)
+            .animation(theme.motionEnabled ? .easeInOut(duration: 0.24) : nil, value: text)
+    }
+}
+
+struct HeroText: View {
+    let text: String
+    let font: Font
+    let gradient: LinearGradient
+
+    var body: some View {
+        // Two layers so the shadow stays dark over bright daytime skies instead of taking the gradient tint.
+        ZStack {
+            Text(text)
+                .font(font)
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .shadow(color: Color.black.opacity(0.55), radius: 6, x: 0, y: 2)
+            Text(text)
+                .font(font)
+                .foregroundStyle(gradient)
+                .lineLimit(1)
+                .accessibilityHidden(true)
+        }
+    }
+}
+
+struct IslamicOccasionBadge: View {
+    @Environment(\.sirajTheme) private var theme
+    let occasionId: String
+    var size: CGFloat = 48
+    var highlighted: Bool = false
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: size * 0.32, style: .continuous)
+        ZStack {
+            shape
+                .fill(
+                    highlighted
+                        ? LinearGradient(colors: [theme.primary, theme.primary.opacity(0.82)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [theme.primary.opacity(0.14), theme.gold.opacity(0.20)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
+            Image(Self.iconName(for: occasionId))
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: size * 0.54, height: size * 0.54)
+                .foregroundStyle(highlighted ? theme.onPrimary : theme.primary)
+        }
+        .frame(width: size, height: size)
+        .overlay {
+            if !highlighted {
+                shape.strokeBorder(theme.gold.opacity(0.35), lineWidth: 1)
+            }
+        }
+    }
+
+    static func iconName(for id: String) -> String {
+        switch id {
+        case "islamic_new_year": return "ic_occasion_islamic_new_year"
+        case "ashura": return "ic_occasion_ashura"
+        case "isra_miraj": return "ic_occasion_isra_miraj"
+        case "mid_shaban": return "ic_occasion_mid_shaban"
+        case "ramadan", "ramadan_start": return "ic_occasion_ramadan"
+        case "last_ten_ramadan": return "ic_occasion_laylat_qadr"
+        case "eid_al_fitr": return "ic_occasion_eid_al_fitr"
+        case "day_of_arafah": return "ic_occasion_day_of_arafah"
+        case "eid_al_adha": return "ic_occasion_eid_al_adha"
+        default: return "ic_occasion_default"
+        }
+    }
+}
+
+/// Builds the astronomical lit lunar limb path for a phase fraction in 0...1 (0 new, 0.5 full).
+func moonLimbPath(center: CGPoint, radius: CGFloat, phaseFraction: Double) -> Path {
+    var path = Path()
+    let k = cos(phaseFraction * 2.0 * .pi)
+    let isWaxing = phaseFraction >= 0.0 && phaseFraction <= 0.5
+
+    if phaseFraction >= 0.47 && phaseFraction <= 0.53 {
+        path.addEllipse(in: CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2))
+        return path
+    }
+    if phaseFraction < 0.02 || phaseFraction > 0.98 {
+        return path
+    }
+
+    let m: CGFloat = 0.55228475
+    let cx = center.x
+    let cy = center.y
+    let limbX: CGFloat = isWaxing ? radius : -radius
+    let rx = CGFloat(k) * limbX
+
+    path.move(to: CGPoint(x: cx, y: cy - radius))
+    path.addCurve(
+        to: CGPoint(x: cx + limbX, y: cy),
+        control1: CGPoint(x: cx + limbX * m, y: cy - radius),
+        control2: CGPoint(x: cx + limbX, y: cy - radius * m)
+    )
+    path.addCurve(
+        to: CGPoint(x: cx, y: cy + radius),
+        control1: CGPoint(x: cx + limbX, y: cy + radius * m),
+        control2: CGPoint(x: cx + limbX * m, y: cy + radius)
+    )
+
+    let isCrescent = (phaseFraction >= 0.02 && phaseFraction <= 0.22) || (phaseFraction >= 0.78 && phaseFraction <= 0.98)
+    if isCrescent && k > 0.05 {
+        let cuspTightness = CGFloat(min(0.85, max(0.18, k * 0.90)))
+        let innerRx = limbX * cuspTightness
+        path.addCurve(
+            to: CGPoint(x: cx + innerRx, y: cy),
+            control1: CGPoint(x: cx + innerRx * 0.22, y: cy + radius * 0.68),
+            control2: CGPoint(x: cx + innerRx, y: cy + radius * 0.38)
+        )
+        path.addCurve(
+            to: CGPoint(x: cx, y: cy - radius),
+            control1: CGPoint(x: cx + innerRx, y: cy - radius * 0.38),
+            control2: CGPoint(x: cx + innerRx * 0.22, y: cy - radius * 0.68)
+        )
+    } else {
+        path.addCurve(
+            to: CGPoint(x: cx + rx, y: cy),
+            control1: CGPoint(x: cx + rx * m, y: cy + radius),
+            control2: CGPoint(x: cx + rx, y: cy + radius * m)
+        )
+        path.addCurve(
+            to: CGPoint(x: cx, y: cy - radius),
+            control1: CGPoint(x: cx + rx, y: cy - radius * m),
+            control2: CGPoint(x: cx + rx * m, y: cy - radius)
+        )
+    }
+    path.closeSubpath()
+    return path
+}
+
+struct MoonPhaseGlyph: View {
+    let phaseFraction: Double
+    let color: Color
+
+    var body: some View {
+        Canvas { ctx, size in
+            let r = min(size.width, size.height) / 2.0 - 0.5
+            let center = CGPoint(x: size.width / 2.0, y: size.height / 2.0)
+            ctx.fill(
+                Path(ellipseIn: CGRect(x: center.x - r, y: center.y - r, width: r * 2, height: r * 2)),
+                with: .color(color.opacity(0.22))
+            )
+            let lit = moonLimbPath(center: center, radius: r, phaseFraction: phaseFraction)
+            ctx.fill(lit, with: .color(color))
+        }
     }
 }
 

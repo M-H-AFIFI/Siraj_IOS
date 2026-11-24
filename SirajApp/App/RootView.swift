@@ -33,14 +33,10 @@ struct RootView: View {
                         PrayerDashboardView(
                             appState: appState,
                             locationService: locationService,
-                            onOpenReminders: {
-                                appState.requestedRoute = "reminders"
-                                appState.selectedTab = .settings
-                            },
-                            onOpenWidgets: {
-                                appState.requestedRoute = "widgets"
-                                appState.selectedTab = .settings
-                            }
+                            onOpenQuran: { appState.selectedTab = .quran },
+                            onOpenTasbih: { appState.selectedTab = .azkar },
+                            onOpenListen: { appState.selectedTab = .quran },
+                            onOpenDuas: { appState.selectedTab = .azkar }
                         )
                     case .quran:
                         ComingSoonTabView(
@@ -71,7 +67,10 @@ struct RootView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                FloatingTabBar(selectedTab: $appState.selectedTab)
+                FloatingTabBar(selectedTab: $appState.selectedTab, isCollapsed: appState.isTabBarCollapsed)
+                    .onChange(of: appState.selectedTab) { _, _ in
+                        appState.isTabBarCollapsed = false
+                    }
             }
         }
         .fullScreenCover(item: $appState.activeAdhanAlert) { prayer in

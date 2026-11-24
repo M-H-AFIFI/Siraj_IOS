@@ -170,24 +170,41 @@ public enum HijriFormatter {
     private static var gregorianFormatters: [String: DateFormatter] = [:]
 
     public static func formatGregorian(_ date: CivilDate, lang: String, numeralSystem: String) -> String {
+        formatGregorianCached(date, lang: lang, numeralSystem: numeralSystem, compact: false)
+    }
+
+    public static func formatGregorianCompact(_ date: CivilDate, lang: String, numeralSystem: String) -> String {
+        formatGregorianCached(date, lang: lang, numeralSystem: numeralSystem, compact: true)
+    }
+
+    private static func formatGregorianCached(_ date: CivilDate, lang: String, numeralSystem: String, compact: Bool) -> String {
         let base = SirajLocalizer.baseLanguage(lang)
+        let cacheKey = "\(base)_\(compact ? "c" : "f")"
         let text: String = {
             gregorianLock.lock()
             defer { gregorianLock.unlock() }
             let df: DateFormatter
-            if let cached = gregorianFormatters[base] {
+            if let cached = gregorianFormatters[cacheKey] {
                 df = cached
             } else {
                 df = DateFormatter()
                 df.calendar = Calendar(identifier: .gregorian)
                 df.timeZone = TimeZone(secondsFromGMT: 0)
                 switch base {
-                case "ar": df.locale = Locale(identifier: "ar_EG"); df.dateFormat = "EEEE، d MMMM yyyy"
-                case "tr": df.locale = Locale(identifier: "tr_TR"); df.dateFormat = "EEEE, d MMMM yyyy"
-                case "ur": df.locale = Locale(identifier: "ur_PK"); df.dateFormat = "EEEE، d MMMM yyyy"
-                default: df.locale = Locale(identifier: "en_GB"); df.dateFormat = "EEEE, d MMMM yyyy"
+                case "ar":
+                    df.locale = Locale(identifier: "ar_EG")
+                    df.dateFormat = compact ? "d MMMM yyyy" : "EEEE، d MMMM yyyy"
+                case "tr":
+                    df.locale = Locale(identifier: "tr_TR")
+                    df.dateFormat = compact ? "d MMMM yyyy" : "EEEE, d MMMM yyyy"
+                case "ur":
+                    df.locale = Locale(identifier: "ur_PK")
+                    df.dateFormat = compact ? "d MMMM yyyy" : "EEEE، d MMMM yyyy"
+                default:
+                    df.locale = Locale(identifier: "en_US")
+                    df.dateFormat = compact ? "MMM d, yyyy" : "EEEE, MMMM d, yyyy"
                 }
-                gregorianFormatters[base] = df
+                gregorianFormatters[cacheKey] = df
             }
             return df.string(from: date.utcMidnight)
         }()

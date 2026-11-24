@@ -35,6 +35,11 @@ public struct MoonPhaseInfo: Sendable, Equatable {
         self.ageDays = ageDays
     }
 
+    public var phaseFraction: Double {
+        let frac = (ageDays / 29.530588853).truncatingRemainder(dividingBy: 1.0)
+        return frac < 0 ? frac + 1.0 : frac
+    }
+
     public var name: MoonPhaseName {
         if illumination < 0.03 { return .new }
         if illumination > 0.97 { return .full }

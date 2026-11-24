@@ -301,6 +301,18 @@ struct AppearanceSettingsView: View {
                     Divider().padding(.leading, 16)
 
                     SirajSettingsToggleRow(
+                        icon: "arrow.up.and.down.text.horizontal",
+                        title: theme.t("appearance_nav_shrink_title"),
+                        subtitle: theme.t("appearance_nav_shrink_desc"),
+                        isOn: Binding(
+                            get: { appState.settings.isNavShrinkEnabled },
+                            set: { v in appState.updateSettings { $0.isNavShrinkEnabled = v } }
+                        )
+                    )
+
+                    Divider().padding(.leading, 16)
+
+                    SirajSettingsToggleRow(
                         icon: "rectangle.compress.vertical",
                         title: theme.t("appearance_nav_always_small_title"),
                         subtitle: theme.t("appearance_nav_always_small_desc"),
