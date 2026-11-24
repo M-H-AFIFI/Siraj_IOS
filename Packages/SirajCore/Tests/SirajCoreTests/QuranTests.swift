@@ -176,7 +176,8 @@ final class QuranTests: XCTestCase {
         defer { deflateEnd(&stream) }
 
         var output = Data()
-        var buffer = [UInt8](repeating: 0, count: 16384)
+        let bufSize = 16384
+        var buffer = [UInt8](repeating: 0, count: bufSize)
         input.withUnsafeBytes { rawIn in
             stream.next_in = UnsafeMutablePointer(mutating: rawIn.bindMemory(to: Bytef.self).baseAddress)
             stream.avail_in = uInt(input.count)
@@ -184,10 +185,10 @@ final class QuranTests: XCTestCase {
             repeat {
                 buffer.withUnsafeMutableBytes { rawOut in
                     stream.next_out = rawOut.bindMemory(to: Bytef.self).baseAddress
-                    stream.avail_out = uInt(buffer.count)
+                    stream.avail_out = uInt(bufSize)
                     ret = deflate(&stream, Z_FINISH)
                 }
-                let produced = buffer.count - Int(stream.avail_out)
+                let produced = bufSize - Int(stream.avail_out)
                 if produced > 0 { output.append(contentsOf: buffer[0..<produced]) }
             } while ret == Z_OK
             XCTAssertEqual(ret, Z_STREAM_END)
