@@ -8,6 +8,7 @@ import SirajCore
 final class AppState {
     let store: UserDataStore
     let localizer: SirajLocalizer
+    let quranStore: QuranStore
     var settings: SettingsSnapshot
     var onboardingComplete: Bool
     var selectedTab: SirajTab = .prayer
@@ -15,6 +16,7 @@ final class AppState {
     var pinnedSkyTime: Date?
     var activeAdhanAlert: PrayerType?
     var isAdhanAlertTest = false
+    var activeReader: ReaderDestination?
     var requestedRoute: String?
     var prayerDay: PrayerDay
     var hijriDate: HijriDate
@@ -30,6 +32,7 @@ final class AppState {
 
         self.store = resolvedStore
         self.localizer = resolvedLoc
+        self.quranStore = QuranStore(userStore: resolvedStore)
 
         let loadedSettings = resolvedStore.loadSettings()
         self.settings = loadedSettings

@@ -12,6 +12,7 @@ struct PrayerDashboardView: View {
     let appState: AppState
     let locationService: LocationService
     let onOpenQuran: () -> Void
+    let onOpenReader: (ReaderDestination) -> Void
     let onOpenTasbih: () -> Void
     let onOpenListen: () -> Void
     let onOpenDuas: () -> Void
@@ -57,6 +58,36 @@ struct PrayerDashboardView: View {
                         now: appState.currentTime
                     ) {
                         path.append(PrayerRoute.detail)
+                    }
+
+                    if appState.settings.isLastBookmarkOnDashboard {
+                        let edition = MushafEdition.resolve(appState.settings.mushafEdition)
+                        ContinueReadingCard(
+                            position: appState.quranStore.readingPosition,
+                            bookmark: appState.quranStore.bookmarks.first,
+                            surahs: appState.quranStore.surahs,
+                            onContinue: {
+                                if let pos = appState.quranStore.readingPosition {
+                                    let page = appState.quranStore.pageForAyah(
+                                        surah: pos.surahNumber,
+                                        ayah: pos.ayahNumber,
+                                        edition: edition
+                                    )
+                                    onOpenReader(ReaderDestination(page: page, surahNumber: pos.surahNumber, ayahNumber: pos.ayahNumber))
+                                } else {
+                                    onOpenQuran()
+                                }
+                            },
+                            onOpenBookmark: { bm in
+                                let page = appState.quranStore.pageForAyah(
+                                    surah: bm.surahNumber,
+                                    ayah: bm.ayahNumber,
+                                    edition: edition
+                                )
+                                onOpenReader(ReaderDestination(page: page, surahNumber: bm.surahNumber, ayahNumber: bm.ayahNumber))
+                            }
+                        )
+                        .padding(.top, 20)
                     }
 
                     if let todayOccasion = TodayIslamicOccasion.forHijri(

@@ -34,15 +34,22 @@ struct RootView: View {
                             appState: appState,
                             locationService: locationService,
                             onOpenQuran: { appState.selectedTab = .quran },
+                            onOpenReader: { dest in
+                                if appState.quranStore.assetState.isReady {
+                                    appState.activeReader = dest
+                                } else {
+                                    appState.selectedTab = .quran
+                                }
+                            },
                             onOpenTasbih: { appState.selectedTab = .azkar },
                             onOpenListen: { appState.selectedTab = .quran },
                             onOpenDuas: { appState.selectedTab = .azkar }
                         )
                     case .quran:
-                        ComingSoonTabView(
-                            iconAsset: "ic_nav_quran",
-                            titleKey: "nav_quran",
-                            descriptionKey: "tab_coming_soon_quran"
+                        SurahListView(
+                            appState: appState,
+                            quranStore: appState.quranStore,
+                            onOpenReader: { appState.activeReader = $0 }
                         )
                     case .qibla:
                         ComingSoonTabView(
@@ -61,7 +68,14 @@ struct RootView: View {
                             appState: appState,
                             locationService: locationService,
                             audioEngine: audioEngine,
-                            scheduler: scheduler
+                            scheduler: scheduler,
+                            onOpenReader: { dest in
+                                if appState.quranStore.assetState.isReady {
+                                    appState.activeReader = dest
+                                } else {
+                                    appState.selectedTab = .quran
+                                }
+                            }
                         )
                     }
                 }
@@ -81,6 +95,13 @@ struct RootView: View {
                 onDismiss: {
                     appState.activeAdhanAlert = nil
                 }
+            )
+        }
+        .fullScreenCover(item: $appState.activeReader) { destination in
+            QuranReaderView(
+                appState: appState,
+                quranStore: appState.quranStore,
+                initialDestination: destination
             )
         }
     }

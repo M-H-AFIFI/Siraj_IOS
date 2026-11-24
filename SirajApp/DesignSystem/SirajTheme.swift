@@ -15,6 +15,16 @@ extension Color {
     init(argbHex: UInt32) {
         self.init(argb: ArgbColor.hex(argbHex))
     }
+
+    init(hex: UInt32) {
+        self.init(argbHex: hex)
+    }
+}
+
+extension ArgbColor {
+    var color: Color {
+        Color(argb: self)
+    }
 }
 
 struct SirajResolvedTheme: Sendable {
@@ -52,13 +62,22 @@ struct SirajResolvedTheme: Sendable {
     var surfaceContainer: Color { Color(argb: scheme.surfaceContainer) }
     var surfaceContainerHigh: Color { Color(argb: scheme.surfaceContainerHigh) }
     var gold: Color { Color(argb: scheme.gold) }
+    var error: Color { Color(argbHex: isDark ? 0xFFF2B8B5 : 0xFFB3261E) }
 
     func t(_ key: String) -> String {
         localizer.string(key, lang: settings.language)
     }
 
+    func t(_ key: String, _ args: Any...) -> String {
+        localizer.formatArray(key, lang: settings.language, args: args)
+    }
+
     func tf(_ key: String, _ args: Any...) -> String {
         localizer.formatArray(key, lang: settings.language, args: args)
+    }
+
+    func plural(_ key: String, count: Int, _ args: Any...) -> String {
+        localizer.pluralArray(key, count: count, lang: settings.language, args: args)
     }
 
     func digits(_ raw: String, isQuran: Bool = false) -> String {
@@ -75,8 +94,8 @@ struct SirajResolvedTheme: Sendable {
         .system(size: size * textScale, weight: weight, design: design)
     }
 
-    func amiriFont(size: CGFloat) -> Font {
-        .custom("Amiri-Regular", size: size * textScale)
+    func amiriFont(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .custom("Amiri-Regular", size: size * textScale).weight(weight)
     }
 
     func quranMadinahFont(size: CGFloat) -> Font {

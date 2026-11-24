@@ -117,6 +117,23 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
     public var isShowTransliteration: Bool
     public var isShowVirtues: Bool
 
+    // Quran & Mushaf reading preferences
+    public var mushafEdition: String
+    public var isQuranPageView: Bool
+    public var quranScrollDirection: String
+    public var quranLandscapeLayout: String
+    public var quranTheme: String
+    public var quranPaperColor: String
+    public var quranDarkStyle: String
+    public var quranFontSizeMultiplier: Double
+    public var selectedTafsirEdition: String
+    public var tafsirFontScale: Double
+    public var isLastBookmarkOnDashboard: Bool
+    public var quranAutoScroll: Bool
+    public var quranHighlightMode: String
+    public var isPlayerProgressBarEnabled: Bool
+    public var selectedReciterId: String
+
     public init(
         madhab: String = "Shafi",
         calculationMethod: String = "MuslimWorldLeague",
@@ -173,7 +190,22 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
         liveActivityEnabled: Bool = true,
         isShowTranslation: Bool = true,
         isShowTransliteration: Bool = true,
-        isShowVirtues: Bool = true
+        isShowVirtues: Bool = true,
+        mushafEdition: String = MushafEdition.madinah.rawValue,
+        isQuranPageView: Bool = true,
+        quranScrollDirection: String = "Horizontal",
+        quranLandscapeLayout: String = "Single",
+        quranTheme: String = "System",
+        quranPaperColor: String = "Yellowish",
+        quranDarkStyle: String = "Dark",
+        quranFontSizeMultiplier: Double = 1.0,
+        selectedTafsirEdition: String = TafsirBook.builtInId,
+        tafsirFontScale: Double = 1.0,
+        isLastBookmarkOnDashboard: Bool = true,
+        quranAutoScroll: Bool = true,
+        quranHighlightMode: String = "ayah",
+        isPlayerProgressBarEnabled: Bool = true,
+        selectedReciterId: String = "ar.alafasy"
     ) {
         self.madhab = madhab
         self.calculationMethod = CalculationMethods.canonicalId(calculationMethod)
@@ -225,6 +257,21 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
         self.isShowTranslation = isShowTranslation
         self.isShowTransliteration = isShowTransliteration
         self.isShowVirtues = isShowVirtues
+        self.mushafEdition = MushafEdition.resolve(mushafEdition).rawValue
+        self.isQuranPageView = isQuranPageView
+        self.quranScrollDirection = quranScrollDirection
+        self.quranLandscapeLayout = quranLandscapeLayout
+        self.quranTheme = quranTheme
+        self.quranPaperColor = quranPaperColor
+        self.quranDarkStyle = quranDarkStyle
+        self.quranFontSizeMultiplier = min(1.6, max(0.8, quranFontSizeMultiplier))
+        self.selectedTafsirEdition = selectedTafsirEdition
+        self.tafsirFontScale = min(1.6, max(0.8, tafsirFontScale))
+        self.isLastBookmarkOnDashboard = isLastBookmarkOnDashboard
+        self.quranAutoScroll = quranAutoScroll
+        self.quranHighlightMode = quranHighlightMode
+        self.isPlayerProgressBarEnabled = isPlayerProgressBarEnabled
+        self.selectedReciterId = selectedReciterId
     }
 
     public init(from decoder: Decoder) throws {
@@ -282,7 +329,22 @@ public struct SettingsSnapshot: Codable, Sendable, Equatable {
             liveActivityEnabled: try c.decodeIfPresent(Bool.self, forKey: .liveActivityEnabled) ?? def.liveActivityEnabled,
             isShowTranslation: try c.decodeIfPresent(Bool.self, forKey: .isShowTranslation) ?? def.isShowTranslation,
             isShowTransliteration: try c.decodeIfPresent(Bool.self, forKey: .isShowTransliteration) ?? def.isShowTransliteration,
-            isShowVirtues: try c.decodeIfPresent(Bool.self, forKey: .isShowVirtues) ?? def.isShowVirtues
+            isShowVirtues: try c.decodeIfPresent(Bool.self, forKey: .isShowVirtues) ?? def.isShowVirtues,
+            mushafEdition: try c.decodeIfPresent(String.self, forKey: .mushafEdition) ?? def.mushafEdition,
+            isQuranPageView: try c.decodeIfPresent(Bool.self, forKey: .isQuranPageView) ?? def.isQuranPageView,
+            quranScrollDirection: try c.decodeIfPresent(String.self, forKey: .quranScrollDirection) ?? def.quranScrollDirection,
+            quranLandscapeLayout: try c.decodeIfPresent(String.self, forKey: .quranLandscapeLayout) ?? def.quranLandscapeLayout,
+            quranTheme: try c.decodeIfPresent(String.self, forKey: .quranTheme) ?? def.quranTheme,
+            quranPaperColor: try c.decodeIfPresent(String.self, forKey: .quranPaperColor) ?? def.quranPaperColor,
+            quranDarkStyle: try c.decodeIfPresent(String.self, forKey: .quranDarkStyle) ?? def.quranDarkStyle,
+            quranFontSizeMultiplier: try c.decodeIfPresent(Double.self, forKey: .quranFontSizeMultiplier) ?? def.quranFontSizeMultiplier,
+            selectedTafsirEdition: try c.decodeIfPresent(String.self, forKey: .selectedTafsirEdition) ?? def.selectedTafsirEdition,
+            tafsirFontScale: try c.decodeIfPresent(Double.self, forKey: .tafsirFontScale) ?? def.tafsirFontScale,
+            isLastBookmarkOnDashboard: try c.decodeIfPresent(Bool.self, forKey: .isLastBookmarkOnDashboard) ?? def.isLastBookmarkOnDashboard,
+            quranAutoScroll: try c.decodeIfPresent(Bool.self, forKey: .quranAutoScroll) ?? def.quranAutoScroll,
+            quranHighlightMode: try c.decodeIfPresent(String.self, forKey: .quranHighlightMode) ?? def.quranHighlightMode,
+            isPlayerProgressBarEnabled: try c.decodeIfPresent(Bool.self, forKey: .isPlayerProgressBarEnabled) ?? def.isPlayerProgressBarEnabled,
+            selectedReciterId: try c.decodeIfPresent(String.self, forKey: .selectedReciterId) ?? def.selectedReciterId
         )
     }
 

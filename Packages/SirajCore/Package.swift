@@ -17,7 +17,11 @@ let package = Package(
     targets: [
         .target(
             name: "SirajCore",
-            path: "Sources/SirajCore"
+            path: "Sources/SirajCore",
+            linkerSettings: [
+                .linkedLibrary("sqlite3"),
+                .linkedLibrary("z")
+            ]
         ),
         .testTarget(
             name: "SirajCoreTests",

@@ -23,6 +23,9 @@ public final class UserDataStore: @unchecked Sendable {
     private let lock = NSLock()
     private let settingsURL: URL
     private let progressURL: URL
+    private let readingPositionURL: URL
+    private let bookmarksURL: URL
+    private let notesURL: URL
 
     public init(appGroupId: String? = UserDataStore.defaultAppGroupId, fallbackDirectory: URL? = nil) {
         let fm = FileManager.default
@@ -39,6 +42,9 @@ public final class UserDataStore: @unchecked Sendable {
         }
         self.settingsURL = directoryURL.appendingPathComponent("settings.json")
         self.progressURL = directoryURL.appendingPathComponent("progress.json")
+        self.readingPositionURL = directoryURL.appendingPathComponent("reading_position.json")
+        self.bookmarksURL = directoryURL.appendingPathComponent("quran_bookmarks.json")
+        self.notesURL = directoryURL.appendingPathComponent("quran_notes.json")
         try? fm.createDirectory(at: directoryURL, withIntermediateDirectories: true)
     }
 
@@ -88,6 +94,42 @@ public final class UserDataStore: @unchecked Sendable {
         var p = readJSON(UserProgressSnapshot.self, from: progressURL) ?? UserProgressSnapshot()
         p.tasbihCount = max(0, count)
         writeJSON(p, to: progressURL)
+    }
+
+    public func loadReadingPosition() -> ReadingPosition? {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON(ReadingPosition.self, from: readingPositionURL)
+    }
+
+    public func saveReadingPosition(_ position: ReadingPosition) {
+        lock.lock()
+        defer { lock.unlock() }
+        writeJSON(position, to: readingPositionURL)
+    }
+
+    public func loadBookmarks() -> [QuranBookmark] {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON([QuranBookmark].self, from: bookmarksURL) ?? []
+    }
+
+    public func saveBookmarks(_ bookmarks: [QuranBookmark]) {
+        lock.lock()
+        defer { lock.unlock() }
+        writeJSON(bookmarks, to: bookmarksURL)
+    }
+
+    public func loadNotes() -> [QuranNote] {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON([QuranNote].self, from: notesURL) ?? []
+    }
+
+    public func saveNotes(_ notes: [QuranNote]) {
+        lock.lock()
+        defer { lock.unlock() }
+        writeJSON(notes, to: notesURL)
     }
 
     private func readJSON<T: Decodable>(_ type: T.Type, from url: URL) -> T? {

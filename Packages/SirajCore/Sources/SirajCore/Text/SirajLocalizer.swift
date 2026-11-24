@@ -72,6 +72,10 @@ public final class SirajLocalizer: @unchecked Sendable {
     }
 
     public func plural(_ key: String, count: Int, lang: String, _ args: Any...) -> String {
+        pluralArray(key, count: count, lang: lang, args: args)
+    }
+
+    public func pluralArray(_ key: String, count: Int, lang: String, args: [Any]) -> String {
         let base = Self.baseLanguage(lang)
         let forms = plurals[base]?[key] ?? plurals["en"]?[key] ?? [:]
         let quantity = Self.pluralQuantity(count: count, lang: base)

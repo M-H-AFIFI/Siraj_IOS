@@ -5,6 +5,8 @@ enum SettingsRoute: Hashable {
     case location
     case calculation
     case reminders
+    case quranSettings
+    case bookmarks
     case appearance
     case language
     case widgets
@@ -17,6 +19,7 @@ struct SettingsHubView: View {
     let locationService: LocationService
     let audioEngine: AdhanAudioEngine
     let scheduler: AdhanNotificationScheduler
+    let onOpenReader: (ReaderDestination) -> Void
 
     @State private var path = NavigationPath()
 
@@ -65,6 +68,24 @@ struct SettingsHubView: View {
                     }
 
                     appearanceHeroCardSection
+
+                    SirajSettingsSection(title: theme.t("settings_section_quran"), icon: "book.closed.fill") {
+                        SirajSettingsRow(
+                            icon: "book.pages.fill",
+                            title: theme.t("settings_quran_mushaf"),
+                            subtitle: theme.t("settings_quran_mushaf_desc")
+                        ) {
+                            path.append(SettingsRoute.quranSettings)
+                        }
+                        Divider().padding(.leading, 16)
+                        SirajSettingsRow(
+                            icon: "bookmark.fill",
+                            title: theme.t("bookmarks_screen_title"),
+                            value: appState.quranStore.bookmarks.isEmpty ? nil : theme.digits(String(appState.quranStore.bookmarks.count))
+                        ) {
+                            path.append(SettingsRoute.bookmarks)
+                        }
+                    }
 
                     SirajSettingsSection(title: theme.t("settings_section_language"), icon: "globe") {
                         SirajSettingsRow(
@@ -122,6 +143,14 @@ struct SettingsHubView: View {
                         scheduler: scheduler,
                         onOpenWidgets: { path.append(SettingsRoute.widgets) }
                     )
+                case .quranSettings:
+                    QuranSettingsView(appState: appState, quranStore: appState.quranStore)
+                case .bookmarks:
+                    BookmarksView(appState: appState, quranStore: appState.quranStore) { surah, ayah in
+                        let ed = MushafEdition.resolve(appState.settings.mushafEdition)
+                        let page = appState.quranStore.pageForAyah(surah: surah, ayah: ayah, edition: ed)
+                        onOpenReader(ReaderDestination(page: page, surahNumber: surah, ayahNumber: ayah))
+                    }
                 case .appearance:
                     AppearanceSettingsView(appState: appState)
                 case .language:
@@ -148,6 +177,8 @@ struct SettingsHubView: View {
         switch route {
         case "appearance": path.append(SettingsRoute.appearance)
         case "reminders": path.append(SettingsRoute.reminders)
+        case "quran_settings": path.append(SettingsRoute.quranSettings)
+        case "bookmarks": path.append(SettingsRoute.bookmarks)
         case "widgets": path.append(SettingsRoute.widgets)
         case "location": path.append(SettingsRoute.location)
         case "language": path.append(SettingsRoute.language)
