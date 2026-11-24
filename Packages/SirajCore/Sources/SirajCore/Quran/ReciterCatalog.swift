@@ -460,8 +460,8 @@ public enum AmbientSound: String, CaseIterable, Codable, Sendable, Identifiable 
     }
 
     public var assetPath: String { "ambient/\(fileName)" }
-    public var cdnURL: String { SirajAssetURLs.cdn(assetPath) }
-    public var rawURL: String { SirajAssetURLs.raw(assetPath) }
+    public var cdnURL: String { SirajAssetURLs.cdn(assetPath).absoluteString }
+    public var rawURL: String { SirajAssetURLs.raw(assetPath).absoluteString }
     public var iconAssetName: String { "ic_ambient_\(rawValue)" }
     public var labelKey: String { "ambient_\(rawValue)" }
 }
@@ -505,8 +505,8 @@ public struct RareTrack: Codable, Sendable, Equatable, Hashable, Identifiable {
         let stem = remoteName.hasSuffix(".mp3") ? String(remoteName.dropLast(4)) : remoteName
         return "\(collectionId)/\(stem)"
     }
-    public var url: String { externalUrl ?? SirajAssetURLs.cdn(path) }
-    public var fallbackUrl: String { externalUrl ?? SirajAssetURLs.raw(path) }
+    public var url: String { externalUrl ?? SirajAssetURLs.cdn(path).absoluteString }
+    public var fallbackUrl: String { externalUrl ?? SirajAssetURLs.raw(path).absoluteString }
 }
 
 public struct RareCollection: Codable, Sendable, Equatable, Hashable, Identifiable {

@@ -154,7 +154,7 @@ public enum KhatmaPlanner {
     }
 
     public static func civilDate(fromEpochDay epochDay: Int64) -> CivilDate {
-        CivilDate.fromDayNumber(Int(epochDay))
+        CivilDate(dayNumber: Int(epochDay))
     }
 
     public static func pagesForDay(

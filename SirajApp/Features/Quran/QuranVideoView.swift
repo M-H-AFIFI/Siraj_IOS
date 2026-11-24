@@ -26,6 +26,7 @@ struct QuranVideoView: View {
     @State private var status: QuranVideoStatus = .idle
     @State private var exportTask: Task<Void, Never>?
     @State private var previewPlayer: AVPlayer?
+    @State private var exportedPlayer: AVPlayer?
     @State private var isPreviewingVoice = false
     @State private var showSurahPicker = false
     @State private var showReciterPicker = false
@@ -164,8 +165,8 @@ struct QuranVideoView: View {
         let previewHeight: CGFloat = activeShape == .story ? 320 : (activeShape == .square ? 260 : 200)
 
         return ZStack {
-            if case .ready(let url, _) = status {
-                VideoPlayer(player: AVPlayer(url: url))
+            if case .ready = status, let exportedPlayer {
+                VideoPlayer(player: exportedPlayer)
                     .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
             } else {
                 QuranVideoLivePreviewCanvas(
@@ -263,6 +264,8 @@ struct QuranVideoView: View {
             }
 
             Button(theme.t("quran_video_make_another")) {
+                exportedPlayer?.pause()
+                exportedPlayer = nil
                 status = .idle
             }
             .font(theme.scaledFont(size: 13.5, weight: .semibold))
@@ -646,6 +649,7 @@ struct QuranVideoView: View {
                     }
                 }
                 await MainActor.run {
+                    self.exportedPlayer = AVPlayer(url: outURL)
                     self.status = .ready(url: outURL, shape: curShape)
                 }
             } catch is CancellationError {

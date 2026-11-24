@@ -86,8 +86,8 @@ public enum VideoClip: String, CaseIterable, Codable, Sendable, Identifiable {
 
     public var fileName: String { "\(rawValue).mp4" }
     public var assetPath: String { "video/backgrounds/v1/\(fileName)" }
-    public var cdnURL: String { SirajAssetURLs.cdn(assetPath) }
-    public var rawURL: String { SirajAssetURLs.raw(assetPath) }
+    public var cdnURL: String { SirajAssetURLs.cdn(assetPath).absoluteString }
+    public var rawURL: String { SirajAssetURLs.raw(assetPath).absoluteString }
     public var previewImageAsset: String { "quran_video_bg_\(rawValue)" }
     public var labelKey: String { "quran_video_clip_\(rawValue)" }
 }
