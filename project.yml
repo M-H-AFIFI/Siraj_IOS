@@ -16,8 +16,6 @@ settings:
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
     APP_GROUP_ID: group.com.siiraj.app
-    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-    ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES
     GENERATE_INFOPLIST_FILE: NO
 
 targets:
@@ -54,6 +52,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.siiraj.app
         INFOPLIST_FILE: SirajApp/Info.plist
         CODE_SIGN_ENTITLEMENTS: SirajApp/Siraj.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES
         TARGETED_DEVICE_FAMILY: "1,2"
     dependencies:
       - package: SirajCore
@@ -74,6 +74,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.siiraj.app
         INFOPLIST_FILE: SirajApp/Info.plist
         CODE_SIGN_ENTITLEMENTS: SirajApp/SirajSideload.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES
         APP_GROUP_ID: ""
         TARGETED_DEVICE_FAMILY: "1,2"
     dependencies:
