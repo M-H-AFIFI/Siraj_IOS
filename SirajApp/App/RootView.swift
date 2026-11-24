@@ -72,6 +72,9 @@ struct RootView: View {
                             worshipStore: appState.worshipStore,
                             onOpenListenPlayer: {
                                 appState.showListenPlayer = true
+                            },
+                            onOpenRadioPlayer: {
+                                appState.showRadioPlayer = true
                             }
                         )
                     case .settings:
@@ -93,7 +96,13 @@ struct RootView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 VStack(spacing: 8) {
-                    if appState.audioStore.hasAnyMiniPlayer {
+                    if appState.radioStore.hasMiniPlayer && (appState.radioStore.isPlaying || appState.radioStore.isBuffering || !appState.audioStore.hasAnyMiniPlayer) {
+                        QuranRadioMiniPlayer(
+                            radioStore: appState.radioStore,
+                            onOpenPlayer: { appState.showRadioPlayer = true }
+                        )
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    } else if appState.audioStore.hasAnyMiniPlayer {
                         QuranMiniPlayer(
                             appState: appState,
                             audioStore: appState.audioStore,
@@ -121,6 +130,7 @@ struct RootView: View {
         .onChange(of: appState.activeAdhanAlert) { _, alert in
             if alert != nil {
                 appState.audioStore.pauseForAdhan()
+                appState.radioStore.pauseForOtherAudio()
             }
         }
         .fullScreenCover(item: $appState.activeAdhanAlert) { prayer in
@@ -144,6 +154,12 @@ struct RootView: View {
             ListenPlayerView(
                 appState: appState,
                 audioStore: appState.audioStore
+            )
+        }
+        .fullScreenCover(isPresented: $appState.showRadioPlayer) {
+            QuranRadioPlayerView(
+                appState: appState,
+                radioStore: appState.radioStore
             )
         }
     }

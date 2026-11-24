@@ -40,6 +40,19 @@ public final class UserDataStore: @unchecked Sendable {
     private let listeningSessionURL: URL
     private let azkarProgressURL: URL
     private let tasbihURL: URL
+    private let radioPrefsURL: URL
+    private let fastingPrefsURL: URL
+    private let guideProgressURL: URL
+
+    public struct GuideProgressRecord: Codable, Sendable, Equatable {
+        public var completedTopics: [String]
+        public var tipsEnabled: Bool
+
+        public init(completedTopics: [String] = [], tipsEnabled: Bool = true) {
+            self.completedTopics = completedTopics
+            self.tipsEnabled = tipsEnabled
+        }
+    }
 
     public struct AzkarDailyProgressRecord: Codable, Sendable, Equatable {
         public let dateISO: String
@@ -75,6 +88,9 @@ public final class UserDataStore: @unchecked Sendable {
         self.listeningSessionURL = directoryURL.appendingPathComponent("listening_session.json")
         self.azkarProgressURL = directoryURL.appendingPathComponent("azkar_progress.json")
         self.tasbihURL = directoryURL.appendingPathComponent("tasbih_state.json")
+        self.radioPrefsURL = directoryURL.appendingPathComponent("radio_prefs.json")
+        self.fastingPrefsURL = directoryURL.appendingPathComponent("fasting_prefs.json")
+        self.guideProgressURL = directoryURL.appendingPathComponent("guide_progress.json")
         try? fm.createDirectory(at: directoryURL, withIntermediateDirectories: true)
     }
 
@@ -241,6 +257,42 @@ public final class UserDataStore: @unchecked Sendable {
         var p = readJSON(UserProgressSnapshot.self, from: progressURL) ?? UserProgressSnapshot()
         p.tasbihCount = max(0, snapshot.todayTotal)
         writeJSON(p, to: progressURL)
+    }
+
+    public func loadRadioPrefs() -> QuranRadioPrefs {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON(QuranRadioPrefs.self, from: radioPrefsURL) ?? QuranRadioPrefs()
+    }
+
+    public func saveRadioPrefs(_ prefs: QuranRadioPrefs) {
+        lock.lock()
+        defer { lock.unlock() }
+        writeJSON(prefs, to: radioPrefsURL)
+    }
+
+    public func loadFastingPrefs() -> FastingPrefs {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON(FastingPrefs.self, from: fastingPrefsURL) ?? FastingPrefs()
+    }
+
+    public func saveFastingPrefs(_ prefs: FastingPrefs) {
+        lock.lock()
+        defer { lock.unlock() }
+        writeJSON(prefs, to: fastingPrefsURL)
+    }
+
+    public func loadGuideProgress() -> GuideProgressRecord {
+        lock.lock()
+        defer { lock.unlock() }
+        return readJSON(GuideProgressRecord.self, from: guideProgressURL) ?? GuideProgressRecord()
+    }
+
+    public func saveGuideProgress(_ record: GuideProgressRecord) {
+        lock.lock()
+        defer { lock.unlock() }
+        writeJSON(record, to: guideProgressURL)
     }
 
     private func readJSON<T: Decodable>(_ type: T.Type, from url: URL) -> T? {

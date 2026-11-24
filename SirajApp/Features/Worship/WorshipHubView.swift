@@ -8,6 +8,10 @@ enum WorshipRoute: Hashable {
     case hadith(String?)
     case names
     case listen
+    case radio
+    case calendar
+    case fasting
+    case zakat
 }
 
 struct WorshipHubView: View {
@@ -15,12 +19,11 @@ struct WorshipHubView: View {
     let appState: AppState
     let worshipStore: WorshipStore
     let onOpenListenPlayer: () -> Void
+    let onOpenRadioPlayer: () -> Void
 
     @State private var path = NavigationPath()
     @State private var searchQuery = ""
     @State private var selectedTab: AzkarFilterTab = .all
-    @State private var showHijriSheet = false
-    @State private var pendingToolTitle: String?
     @Namespace private var filterPillNamespace
 
     private var heroCategory: AzkarCategory {
@@ -159,6 +162,14 @@ struct WorshipHubView: View {
                     NamesOfAllahView(appState: appState, worshipStore: worshipStore)
                 case .listen:
                     ListenHubView(appState: appState, audioStore: appState.audioStore, onOpenPlayer: onOpenListenPlayer)
+                case .radio:
+                    QuranRadioView(appState: appState, radioStore: appState.radioStore, onOpenPlayer: onOpenRadioPlayer)
+                case .calendar:
+                    IslamicCalendarView(appState: appState)
+                case .fasting:
+                    FastingView(appState: appState, fastingStore: appState.fastingStore)
+                case .zakat:
+                    ZakatView(appState: appState)
                 }
             }
             .navigationDestination(for: ListenRoute.self) { route in
@@ -168,17 +179,6 @@ struct WorshipHubView: View {
                 case .rare(let collectionId):
                     ListenRareView(appState: appState, audioStore: appState.audioStore, collectionId: collectionId, onOpenPlayer: onOpenListenPlayer)
                 }
-            }
-            .sheet(isPresented: $showHijriSheet) {
-                HijriDateSheetView(appState: appState)
-            }
-            .alert(pendingToolTitle ?? "", isPresented: Binding(
-                get: { pendingToolTitle != nil },
-                set: { if !$0 { pendingToolTitle = nil } }
-            )) {
-                Button(theme.t("close"), role: .cancel) {}
-            } message: {
-                Text(theme.t("tab_coming_soon_azkar"))
             }
         }
         .onAppear {
@@ -351,13 +351,13 @@ struct WorshipHubView: View {
                     path.append(WorshipRoute.tasbih)
                 }
                 toolCard(icon: "ic_siraj_hijri_calendar", titleKey: "hub_calendar_title", descKey: "hub_calendar_desc") {
-                    showHijriSheet = true
+                    path.append(WorshipRoute.calendar)
                 }
                 toolCard(icon: "ic_siraj_fasting", titleKey: "hub_fasting_title", descKey: "hub_fasting_desc") {
-                    pendingToolTitle = theme.t("hub_fasting_title")
+                    path.append(WorshipRoute.fasting)
                 }
                 toolCard(icon: "ic_siraj_zakat_coin", titleKey: "hub_zakat_title", descKey: "hub_zakat_desc") {
-                    pendingToolTitle = theme.t("hub_zakat_title")
+                    path.append(WorshipRoute.zakat)
                 }
                 toolCard(icon: "ic_siraj_hadith", titleKey: "hub_hadith_title", descKey: "hub_hadith_desc") {
                     path.append(WorshipRoute.hadith(nil))
@@ -468,28 +468,39 @@ struct WorshipHubView: View {
     }
 
     private var radioFeaturedCard: some View {
+        let radio = appState.radioStore
         let soft = theme.primary.opacity(theme.isDark ? 0.16 : 0.10)
+        let active = radio.activeStation
+        let isPlaying = radio.isPlaying
+        let isBusy = radio.isBuffering || radio.isReconnecting
 
         return Button {
-            pendingToolTitle = theme.t("radio_live_title")
+            if appState.settings.isHapticEnabled {
+                UISelectionFeedbackGenerator().selectionChanged()
+            }
+            path.append(WorshipRoute.radio)
         } label: {
             HStack(spacing: 12) {
-                Image("radio_quran")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 54, height: 54)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .strokeBorder(Color.white.opacity(0.2), lineWidth: 0.5)
-                    )
+                if let active {
+                    QuranRadioArtwork(station: active, size: 54, cornerRadius: 16, showEqualizer: isPlaying)
+                } else {
+                    Image("radio_quran")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 54, height: 54)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.2), lineWidth: 0.5)
+                        )
+                }
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 5) {
                         Circle()
-                            .fill(theme.primary)
+                            .fill(isPlaying ? Color(argbHex: 0xFF22C55E) : theme.primary)
                             .frame(width: 6, height: 6)
-                        Text(theme.t("radio_live_badge"))
+                        Text(theme.t(isPlaying ? "radio_live_now" : "radio_live_badge"))
                             .font(theme.scaledFont(size: 11, weight: .semibold))
                             .foregroundStyle(theme.primary)
                         if !isLargeText {
@@ -504,7 +515,7 @@ struct WorshipHubView: View {
                     }
 
                     HStack(spacing: 6) {
-                        Text(theme.t("radio_live_title"))
+                        Text(active?.localizedName(language: theme.language) ?? theme.t("radio_live_title"))
                             .font(theme.scaledFont(size: 15, weight: .black))
                             .foregroundStyle(theme.onSurface)
                             .lineLimit(1)
@@ -521,25 +532,43 @@ struct WorshipHubView: View {
                         .background(RoundedRectangle(cornerRadius: 8).fill(theme.primary.opacity(0.12)))
                     }
 
-                    Text(theme.t("radio_tap_to_browse_channels"))
-                        .font(theme.scaledFont(size: 12))
-                        .foregroundStyle(theme.outline)
-                        .lineLimit(1)
+                    Text(
+                        active != nil
+                            ? (radio.nowPlaying ?? active!.localizedDescription(language: theme.language))
+                            : theme.t("radio_tap_to_browse_channels")
+                    )
+                    .font(theme.scaledFont(size: 12))
+                    .foregroundStyle(theme.outline)
+                    .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                ZStack {
-                    Circle()
-                        .fill(soft)
-                        .frame(width: 42, height: 42)
-                    Image(systemName: "radio")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(theme.primary)
+                Button {
+                    if let active {
+                        radio.togglePlayPause(active)
+                    } else if let last = radio.lastStation ?? QuranRadioStation.stations.first {
+                        radio.playStation(last)
+                    }
+                } label: {
+                    ZStack {
+                        Circle()
+                            .fill(isPlaying ? theme.primary : soft)
+                            .frame(width: 42, height: 42)
+                        if isBusy {
+                            ProgressView()
+                                .tint(isPlaying ? theme.onPrimary : theme.primary)
+                        } else {
+                            Image(systemName: active == nil ? "radio" : (isPlaying ? "pause.fill" : "play.fill"))
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(isPlaying ? theme.onPrimary : theme.primary)
+                        }
+                    }
                 }
+                .buttonStyle(.plain)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
-            .sirajCardSurface(cornerRadius: 22)
+            .sirajCardSurface(cornerRadius: 22, isElevated: isPlaying)
         }
         .buttonStyle(.plain)
     }

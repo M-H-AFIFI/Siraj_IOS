@@ -11,7 +11,14 @@ enum SettingsRoute: Hashable {
     case appearance
     case language
     case widgets
+    case guide
     case about
+}
+
+private struct GuideSheetSession: Identifiable {
+    let id = UUID()
+    let topic: GuideTopic
+    let isTour: Bool
 }
 
 struct SettingsHubView: View {
@@ -23,6 +30,7 @@ struct SettingsHubView: View {
     let onOpenReader: (ReaderDestination) -> Void
 
     @State private var path = NavigationPath()
+    @State private var activeGuideSession: GuideSheetSession?
 
     var body: some View {
         let cityName = appState.activePlace.displayName(language: theme.language)
@@ -108,6 +116,14 @@ struct SettingsHubView: View {
 
                     SirajSettingsSection(title: theme.t("settings_support_header"), icon: "info.circle.fill") {
                         SirajSettingsRow(
+                            icon: "book.and.wrench.fill",
+                            title: theme.t("settings_guide_title"),
+                            subtitle: theme.t("settings_guide_body")
+                        ) {
+                            path.append(SettingsRoute.guide)
+                        }
+                        Divider().padding(.leading, 16)
+                        SirajSettingsRow(
                             icon: "info.circle.fill",
                             title: theme.t("settings_about_siraj"),
                             value: "v\(versionString)"
@@ -168,8 +184,25 @@ struct SettingsHubView: View {
                     LanguageFormatSettingsView(appState: appState)
                 case .widgets:
                     WidgetGalleryView(appState: appState)
+                case .guide:
+                    InteractiveGuideView(
+                        appState: appState,
+                        guideStore: appState.guideStore
+                    ) { topic, isTour in
+                        activeGuideSession = GuideSheetSession(topic: topic, isTour: isTour)
+                    }
                 case .about:
                     AboutSirajView()
+                }
+            }
+            .fullScreenCover(item: $activeGuideSession) { session in
+                GuideTopicPagerView(
+                    appState: appState,
+                    guideStore: appState.guideStore,
+                    initialTopic: session.topic,
+                    isTourMode: session.isTour
+                ) { topic in
+                    appState.navigateForGuideTopic(topic)
                 }
             }
         }
@@ -191,6 +224,7 @@ struct SettingsHubView: View {
         case "quran_settings": path.append(SettingsRoute.quranSettings)
         case "bookmarks": path.append(SettingsRoute.bookmarks)
         case "widgets": path.append(SettingsRoute.widgets)
+        case "guide": path.append(SettingsRoute.guide)
         case "location": path.append(SettingsRoute.location)
         case "language": path.append(SettingsRoute.language)
         case "about": path.append(SettingsRoute.about)

@@ -12,6 +12,9 @@ final class AppState {
     let audioStore: QuranAudioStore
     let khatmaStore: KhatmaStore
     let worshipStore: WorshipStore
+    let radioStore: QuranRadioStore
+    let fastingStore: FastingStore
+    let guideStore: GuideStore
     var settings: SettingsSnapshot
     var onboardingComplete: Bool
     var selectedTab: SirajTab = .prayer
@@ -21,6 +24,7 @@ final class AppState {
     var isAdhanAlertTest = false
     var activeReader: ReaderDestination?
     var showListenPlayer = false
+    var showRadioPlayer = false
     var requestedRoute: String?
     var requestedQuranRoute: String?
     var requestedWorshipRoute: WorshipRoute?
@@ -42,6 +46,38 @@ final class AppState {
         self.audioStore = QuranAudioStore(userStore: resolvedStore)
         self.khatmaStore = KhatmaStore(userStore: resolvedStore)
         self.worshipStore = WorshipStore(userStore: resolvedStore)
+        self.radioStore = QuranRadioStore(userStore: resolvedStore)
+        self.fastingStore = FastingStore(userStore: resolvedStore)
+        self.guideStore = GuideStore(userStore: resolvedStore)
+
+        let radio = self.radioStore
+        let audio = self.audioStore
+        audio.onWillStartPlaying = { [weak radio] in
+            radio?.pauseForOtherAudio()
+        }
+        radio.onWillStartPlaying = { [weak audio] in
+            audio?.pauseForAdhan()
+        }
+        audio.remotePlayFallback = { [weak radio] in
+            guard let radio, radio.hasMiniPlayer, !radio.isPlaying else { return }
+            radio.toggleActivePlayPause()
+        }
+        audio.remotePauseFallback = { [weak radio] in
+            guard let radio, radio.hasMiniPlayer else { return }
+            radio.pause()
+        }
+        audio.remoteToggleFallback = { [weak radio] in
+            guard let radio, radio.hasMiniPlayer else { return }
+            radio.toggleActivePlayPause()
+        }
+        audio.remoteNextFallback = { [weak radio] in
+            guard let radio, radio.hasMiniPlayer else { return }
+            radio.skip(delta: 1)
+        }
+        audio.remotePrevFallback = { [weak radio] in
+            guard let radio, radio.hasMiniPlayer else { return }
+            radio.skip(delta: -1)
+        }
 
         let loadedSettings = resolvedStore.loadSettings()
         self.settings = loadedSettings
@@ -138,6 +174,60 @@ final class AppState {
         let civil = place.today(at: now)
         hijriDate = cal.toHijri(civil)
         upcomingOccasions = IslamicOccasions.upcoming(from: civil, calendar: cal)
+    }
+
+    func navigateForGuideTopic(_ topic: GuideTopic) {
+        switch topic {
+        case .reading, .search:
+            selectedTab = .quran
+        case .listening, .bookmarks, .tafsir:
+            if quranStore.assetState.isReady {
+                let page = quranStore.readingPosition.map {
+                    quranStore.pageForAyah(
+                        surah: $0.surahNumber,
+                        ayah: $0.ayahNumber,
+                        edition: MushafEdition.resolve(settings.mushafEdition)
+                    )
+                } ?? 1
+                activeReader = ReaderDestination(page: page, surahNumber: quranStore.readingPosition?.surahNumber, ayahNumber: quranStore.readingPosition?.ayahNumber)
+            } else {
+                selectedTab = .quran
+            }
+        case .mushaf, .downloads:
+            selectedTab = .settings
+            requestedRoute = "quran_settings"
+        case .library:
+            selectedTab = .quran
+            requestedQuranRoute = "listen"
+        case .khatma:
+            selectedTab = .quran
+            requestedQuranRoute = "khatma"
+        case .adhkar:
+            selectedTab = .azkar
+        case .hadith:
+            selectedTab = .azkar
+            requestedWorshipRoute = .hadith(nil)
+        case .radio:
+            selectedTab = .azkar
+            requestedWorshipRoute = .radio
+        case .prayer:
+            selectedTab = .settings
+            requestedRoute = "reminders"
+        case .qibla:
+            selectedTab = .qibla
+        case .tasbih:
+            selectedTab = .azkar
+            requestedWorshipRoute = .tasbih
+        case .calendar:
+            selectedTab = .azkar
+            requestedWorshipRoute = .calendar
+        case .widgets:
+            selectedTab = .settings
+            requestedRoute = "widgets"
+        case .appearance:
+            selectedTab = .settings
+            requestedRoute = "appearance"
+        }
     }
 
     func applyLaunchArguments(_ args: [String]) {

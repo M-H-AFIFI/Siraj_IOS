@@ -5,6 +5,7 @@ enum PrayerRoute: Hashable {
     case detail
     case location
     case calculation
+    case calendar
 }
 
 struct PrayerDashboardView: View {
@@ -98,7 +99,7 @@ struct PrayerDashboardView: View {
                         digits: { theme.digits($0) }
                     ) {
                         IslamicEventsBanner(occasion: todayOccasion) {
-                            showHijriSheet = true
+                            path.append(PrayerRoute.calendar)
                         }
                         .padding(.top, 20)
                     }
@@ -132,6 +133,8 @@ struct PrayerDashboardView: View {
                     LocationSettingsView(appState: appState, locationService: locationService)
                 case .calculation:
                     PrayerCalculationSettingsView(appState: appState)
+                case .calendar:
+                    IslamicCalendarView(appState: appState)
                 }
             }
             .sheet(isPresented: $showHijriSheet) {

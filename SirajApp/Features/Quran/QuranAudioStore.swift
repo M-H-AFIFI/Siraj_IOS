@@ -53,6 +53,12 @@ final class QuranAudioStore {
     var readerRepeatDone: Int = 0
     var readerIsOfflineSource = false
     var onReaderAyahChanged: ((Int, Int) -> Void)?
+    var onWillStartPlaying: (() -> Void)?
+    var remotePlayFallback: (() -> Void)?
+    var remotePauseFallback: (() -> Void)?
+    var remoteToggleFallback: (() -> Void)?
+    var remoteNextFallback: (() -> Void)?
+    var remotePrevFallback: (() -> Void)?
 
     // MARK: - Listening Library Playback
     var listeningQueue: [ListeningTrack] = []
@@ -206,6 +212,7 @@ final class QuranAudioStore {
             player?.pause()
             readerIsPlaying = false
         } else {
+            onWillStartPlaying?()
             configureAudioSession()
             player?.playImmediately(atRate: readerSpeed)
             readerIsPlaying = true
@@ -399,6 +406,7 @@ final class QuranAudioStore {
             listeningIsPlaying = false
             persistListeningSession()
         } else {
+            onWillStartPlaying?()
             configureAudioSession()
             player?.playImmediately(atRate: listeningSpeed)
             listeningIsPlaying = true
@@ -568,6 +576,7 @@ final class QuranAudioStore {
     }
 
     private func startAVPlayer(url: URL, rate: Float, initialSeekSec: Double = 0) {
+        onWillStartPlaying?()
         teardownAVPlayer()
         configureAudioSession()
 
@@ -731,10 +740,12 @@ final class QuranAudioStore {
         center.playCommand.addTarget { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                if self.activeModeIsListening {
+                if self.activeModeIsListening && self.hasActiveListening {
                     if !self.listeningIsPlaying { self.toggleListeningPlayPause() }
                 } else if self.readerActive {
                     if !self.readerIsPlaying { self.toggleReaderPlayPause() }
+                } else {
+                    self.remotePlayFallback?()
                 }
             }
             return .success
@@ -742,10 +753,12 @@ final class QuranAudioStore {
         center.pauseCommand.addTarget { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                if self.activeModeIsListening {
+                if self.activeModeIsListening && self.hasActiveListening {
                     if self.listeningIsPlaying { self.toggleListeningPlayPause() }
                 } else if self.readerActive {
                     if self.readerIsPlaying { self.toggleReaderPlayPause() }
+                } else {
+                    self.remotePauseFallback?()
                 }
             }
             return .success
@@ -753,10 +766,12 @@ final class QuranAudioStore {
         center.togglePlayPauseCommand.addTarget { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                if self.activeModeIsListening {
+                if self.activeModeIsListening && self.hasActiveListening {
                     self.toggleListeningPlayPause()
                 } else if self.readerActive {
                     self.toggleReaderPlayPause()
+                } else {
+                    self.remoteToggleFallback?()
                 }
             }
             return .success
@@ -764,10 +779,12 @@ final class QuranAudioStore {
         center.nextTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                if self.activeModeIsListening {
+                if self.activeModeIsListening && self.hasActiveListening {
                     self.nextListeningTrack()
                 } else if self.readerActive {
                     self.nextReaderAyah()
+                } else {
+                    self.remoteNextFallback?()
                 }
             }
             return .success
@@ -775,10 +792,12 @@ final class QuranAudioStore {
         center.previousTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                if self.activeModeIsListening {
+                if self.activeModeIsListening && self.hasActiveListening {
                     self.previousListeningTrack()
                 } else if self.readerActive {
                     self.previousReaderAyah()
+                } else {
+                    self.remotePrevFallback?()
                 }
             }
             return .success
