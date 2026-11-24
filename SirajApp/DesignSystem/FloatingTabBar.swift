@@ -246,3 +246,21 @@ struct ScrollCollapseTracker: ViewModifier {
         }
     }
 }
+
+extension View {
+    func scrollCollapseTracker(enabled: Bool, isCollapsed: Binding<Bool>) -> some View {
+        modifier(
+            ScrollCollapseTracker { delta in
+                guard enabled else {
+                    if isCollapsed.wrappedValue { isCollapsed.wrappedValue = false }
+                    return
+                }
+                if delta > 0 && !isCollapsed.wrappedValue {
+                    isCollapsed.wrappedValue = true
+                } else if delta < 0 && isCollapsed.wrappedValue {
+                    isCollapsed.wrappedValue = false
+                }
+            }
+        )
+    }
+}
