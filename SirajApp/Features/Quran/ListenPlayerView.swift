@@ -253,7 +253,7 @@ struct ListenPlayerView: View {
                         }
 
                         // Up next
-                        if let next = audioStore.nextListeningTrack {
+                        if let next = audioStore.upcomingListeningTrack {
                             Button {
                                 audioStore.nextListeningTrack()
                             } label: {

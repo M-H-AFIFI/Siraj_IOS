@@ -144,7 +144,7 @@ final class QuranAudioStore {
         return min(1, max(0, listeningPositionSec / listeningDurationSec))
     }
 
-    var nextListeningTrack: ListeningTrack? {
+    var upcomingListeningTrack: ListeningTrack? {
         guard !listeningQueue.isEmpty, listeningIndex >= 0 else { return nil }
         if listeningIndex + 1 < listeningQueue.count {
             return listeningQueue[listeningIndex + 1]
