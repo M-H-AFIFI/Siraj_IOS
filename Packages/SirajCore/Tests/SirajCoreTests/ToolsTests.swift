@@ -71,4 +71,40 @@ final class ToolsTests: XCTestCase {
         XCTAssertTrue(IslamicOccasions.isFastingForbidden(month: 10, day: 1))
         XCTAssertTrue(IslamicOccasions.isFastingForbidden(month: 12, day: 11))
     }
+
+    func testWidgetQuotesTasbihAndSurahNames() {
+        XCTAssertEqual(WidgetFace.allGalleryFaces.count, 21)
+        XCTAssertFalse(WidgetQuotesCatalog.hadiths.isEmpty)
+        XCTAssertFalse(WidgetQuotesCatalog.dhikrs.isEmpty)
+
+        let h0 = WidgetQuotesCatalog.hadith(forSlot: 0)
+        let h1 = WidgetQuotesCatalog.hadith(forSlot: 1)
+        XCTAssertNotEqual(h0.quote.ar, h1.quote.ar)
+        XCTAssertFalse(h0.source(language: "en", numeralSystem: "Western").isEmpty)
+
+        let morningDhikr = WidgetQuotesCatalog.dhikr(forSlot: 3, category: .morning)
+        XCTAssertTrue(morningDhikr.occasion.fits(category: .morning))
+
+        XCTAssertEqual(WidgetTasbihStep.of(count: 0).phraseIndex, 0)
+        XCTAssertEqual(WidgetTasbihStep.of(count: 33).inPhrase, 33)
+        XCTAssertEqual(WidgetTasbihStep.of(count: 34).phraseIndex, 1)
+        XCTAssertEqual(WidgetTasbihStep.of(count: 34).inPhrase, 1)
+        XCTAssertEqual(WidgetTasbihStep.of(count: 67).phraseIndex, 2)
+        XCTAssertEqual(WidgetTasbihStep.of(count: 67).ofPhrase, 34)
+        XCTAssertTrue(WidgetTasbihStep.of(count: 100).isDone)
+
+        let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("siraj_widget_test_\(UUID().uuidString)")
+        let store = UserDataStore(appGroupId: nil, fallbackDirectory: tmp)
+        XCTAssertEqual(store.loadWidgetTasbihCount(), 0)
+        XCTAssertEqual(store.tapWidgetTasbih(), 1)
+        XCTAssertEqual(store.tapWidgetTasbih(), 2)
+        store.resetWidgetTasbih()
+        XCTAssertEqual(store.loadWidgetTasbihCount(), 0)
+        try? FileManager.default.removeItem(at: tmp)
+
+        XCTAssertEqual(ShamarlyBanners.arabicName(forSurah: 1), "الفاتحة")
+        XCTAssertEqual(ShamarlyBanners.arabicName(forSurah: 3), "آل عمران")
+        XCTAssertEqual(ShamarlyBanners.arabicName(forSurah: 18), "الكهف")
+        XCTAssertEqual(ShamarlyBanners.arabicName(forSurah: 114), "الناس")
+    }
 }

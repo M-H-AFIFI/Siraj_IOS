@@ -1,5 +1,6 @@
 import AppIntents
 import Foundation
+import WidgetKit
 import SirajCore
 
 enum WidgetBackgroundOption: String, AppEnum {
@@ -169,4 +170,118 @@ struct HijriWidgetConfigurationIntent: WidgetConfigurationIntent {
 
     @Parameter(title: "Palette", default: .appDefault)
     var palette: WidgetPaletteOption
+}
+
+enum QuoteWidgetFaceOption: String, AppEnum {
+    case ayah = "AYAH"
+    case verseCard = "VERSE_CARD"
+    case hadith = "HADITH"
+    case dhikr = "DHIKR"
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Quote Face"
+    static var caseDisplayRepresentations: [QuoteWidgetFaceOption: DisplayRepresentation] = [
+        .ayah: "Quran Verse",
+        .verseCard: "Floral Verse Card",
+        .hadith: "Prophetic Hadith",
+        .dhikr: "Dhikr"
+    ]
+}
+
+enum QuoteRotationOption: String, AppEnum {
+    case prayer = "PRAYER"
+    case hour = "HOUR"
+    case day = "DAY"
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Updates"
+    static var caseDisplayRepresentations: [QuoteRotationOption: DisplayRepresentation] = [
+        .prayer: "Each prayer",
+        .hour: "Every hour",
+        .day: "Every day"
+    ]
+
+    var model: QuoteRotation {
+        QuoteRotation(rawValue: rawValue) ?? .prayer
+    }
+}
+
+struct QuoteWidgetConfigurationIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource = "Verse, Hadith & Dhikr"
+    static var description = IntentDescription("Show a rotating Quran verse, floral verse card, hadith, or dhikr.")
+
+    @Parameter(title: "Face", default: .verseCard)
+    var face: QuoteWidgetFaceOption
+
+    @Parameter(title: "Updates", default: .prayer)
+    var rotation: QuoteRotationOption
+
+    @Parameter(title: "Show meaning", default: true)
+    var showMeaning: Bool
+
+    @Parameter(title: "Background", default: .soft)
+    var background: WidgetBackgroundOption
+
+    @Parameter(title: "Palette", default: .appDefault)
+    var palette: WidgetPaletteOption
+}
+
+enum WorshipWidgetFaceOption: String, AppEnum {
+    case adhkar = "ADHKAR"
+    case fast = "FAST"
+    case read = "READ"
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Worship Face"
+    static var caseDisplayRepresentations: [WorshipWidgetFaceOption: DisplayRepresentation] = [
+        .adhkar: "Adhkar for now",
+        .fast: "Suhoor & Iftar",
+        .read: "Continue Reading"
+    ]
+}
+
+struct WorshipWidgetConfigurationIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource = "Worship & Reading"
+    static var description = IntentDescription("Adhkar for the current time, Suhoor & Iftar fasting timer, or Continue Reading.")
+
+    @Parameter(title: "Face", default: .adhkar)
+    var face: WorshipWidgetFaceOption
+
+    @Parameter(title: "Background", default: .soft)
+    var background: WidgetBackgroundOption
+
+    @Parameter(title: "Palette", default: .appDefault)
+    var palette: WidgetPaletteOption
+}
+
+struct TasbihWidgetConfigurationIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource = "Tasbih Counter"
+    static var description = IntentDescription("Interactive after-prayer tasbih counter right on your Home Screen.")
+
+    @Parameter(title: "Background", default: .soft)
+    var background: WidgetBackgroundOption
+
+    @Parameter(title: "Palette", default: .appDefault)
+    var palette: WidgetPaletteOption
+}
+
+struct TapWidgetTasbihIntent: AppIntent {
+    static var title: LocalizedStringResource = "Count Tasbih"
+    static var description = IntentDescription("Increment the Home Screen tasbih counter by one.")
+
+    func perform() async throws -> some IntentResult {
+        let appGroup = Bundle.main.object(forInfoDictionaryKey: "SirajAppGroupID") as? String
+        _ = UserDataStore(appGroupId: appGroup).tapWidgetTasbih()
+        WidgetCenter.shared.reloadTimelines(ofKind: "SirajTasbihWidget")
+        return .result()
+    }
+}
+
+struct ResetWidgetTasbihIntent: AppIntent {
+    static var title: LocalizedStringResource = "Reset Tasbih"
+    static var description = IntentDescription("Reset the Home Screen tasbih counter to zero.")
+
+    func perform() async throws -> some IntentResult {
+        let appGroup = Bundle.main.object(forInfoDictionaryKey: "SirajAppGroupID") as? String
+        UserDataStore(appGroupId: appGroup).resetWidgetTasbih()
+        WidgetCenter.shared.reloadTimelines(ofKind: "SirajTasbihWidget")
+        return .result()
+    }
 }

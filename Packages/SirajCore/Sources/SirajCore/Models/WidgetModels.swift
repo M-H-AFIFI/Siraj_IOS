@@ -45,6 +45,8 @@ public enum WidgetFace: String, CaseIterable, Codable, Sendable, Identifiable {
 
     public static let prayerFaces: [WidgetFace] = [.next, .today, .list, .spot, .ring, .dual, .day]
     public static let hijriMoonFaces: [WidgetFace] = [.hijri, .month, .date, .moon, .countdown]
+    public static let worshipQuoteFaces: [WidgetFace] = [.adhkar, .ayah, .verseCard, .hadith, .dhikr, .tasbih, .fast, .read]
+    public static let allGalleryFaces: [WidgetFace] = prayerFaces + [.clock] + hijriMoonFaces + worshipQuoteFaces
 }
 
 public enum WidgetBackgroundStyle: String, CaseIterable, Codable, Sendable, Identifiable {

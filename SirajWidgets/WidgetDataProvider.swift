@@ -2,6 +2,15 @@ import Foundation
 import WidgetKit
 import SirajCore
 
+struct FastWindowSnapshot {
+    let suhoorTime: Date
+    let iftarTime: Date
+    let targetDate: Date
+    let isIftarNext: Bool
+    let isTomorrowFast: Bool
+    let progress: Double
+}
+
 struct SirajWidgetSnapshot: TimelineEntry {
     let date: Date
     let settings: SettingsSnapshot
@@ -15,18 +24,27 @@ struct SirajWidgetSnapshot: TimelineEntry {
     let language: String
     let isRTL: Bool
     let progressToNext: Double
+    let currentPrayerIndex: Int
+    let fastWindow: FastWindowSnapshot
+    let readingPosition: ReadingPosition?
+    let widgetTasbihCount: Int
 }
 
 enum WidgetDataLoader {
     static let localizer = SirajLocalizer(bundle: .main, subdirectory: "Data")
 
-    static func loadSettings() -> SettingsSnapshot {
+    static func userStore() -> UserDataStore {
         let appGroup = Bundle.main.object(forInfoDictionaryKey: "SirajAppGroupID") as? String
-        return UserDataStore(appGroupId: appGroup).loadSettings()
+        return UserDataStore(appGroupId: appGroup)
+    }
+
+    static func loadSettings() -> SettingsSnapshot {
+        userStore().loadSettings()
     }
 
     static func snapshot(at date: Date, settings: SettingsSnapshot? = nil) -> SirajWidgetSnapshot {
-        let snap = settings ?? loadSettings()
+        let store = userStore()
+        let snap = settings ?? store.loadSettings()
         let place = snap.cachedLocation ?? .cairoDefault
         let day = PrayerCalculator.today(place: place, settings: snap.calculationSettings, now: date)
         let cal = SirajHijriCalendar.forSettings(
@@ -48,6 +66,9 @@ enum WidgetDataLoader {
             return min(1.0, max(0.0, date.timeIntervalSince(prev.time) / span))
         }()
 
+        let prayerIndex = day.entries.lastIndex(where: { $0.time <= date }) ?? 0
+        let fast = computeFastWindow(date: date, day: day, place: place, calc: snap.calculationSettings)
+
         return SirajWidgetSnapshot(
             date: date,
             settings: snap,
@@ -60,13 +81,17 @@ enum WidgetDataLoader {
             nextOccasion: occasion,
             language: snap.language,
             isRTL: localizer.isRTL(snap.language),
-            progressToNext: progress
+            progressToNext: progress,
+            currentPrayerIndex: prayerIndex,
+            fastWindow: fast,
+            readingPosition: store.loadReadingPosition(),
+            widgetTasbihCount: store.loadWidgetTasbihCount()
         )
     }
 
     // Schedules refreshes at each prayer transition plus 15-minute progress checkpoints so
     // Lock Screen gauges and Home Screen faces advance offline for a full 24 hours.
-    static func timelineDates(from now: Date, settings: SettingsSnapshot, include15MinTicks: Bool) -> [Date] {
+    static func timelineDates(from now: Date, settings: SettingsSnapshot, include15MinTicks: Bool, includeHourlyTicks: Bool = false) -> [Date] {
         let place = settings.cachedLocation ?? .cairoDefault
         let today = place.today(at: now)
         var dates = Set<Int64>()
@@ -94,6 +119,12 @@ enum WidgetDataLoader {
             while cursor < horizon {
                 dates.insert(Int64(cursor.timeIntervalSince1970))
                 cursor = cursor.addingTimeInterval(step)
+            }
+        } else if includeHourlyTicks {
+            let startHour = floor(now.timeIntervalSince1970 / 3600.0) * 3600.0
+            for h in 1...18 {
+                let ts = Int64(startHour) + Int64(h) * 3600 + 1
+                dates.insert(ts)
             }
         }
 
@@ -137,5 +168,58 @@ enum WidgetDataLoader {
         }
         let yesterday = PrayerCalculator.raw(place: place, date: day.date.addingDays(-1), settings: calc)
         return yesterday.last
+    }
+
+    private static func computeFastWindow(
+        date: Date,
+        day: PrayerDay,
+        place: Place,
+        calc: CalculationSettings
+    ) -> FastWindowSnapshot {
+        let todayFajr = day[.fajr].time
+        let todayMaghrib = day[.maghrib].time
+
+        if date < todayFajr {
+            // Before Fajr: night before today's fast, counting down to Suhoor end.
+            let yesterday = PrayerCalculator.raw(place: place, date: day.date.addingDays(-1), settings: calc)
+            let prevMaghrib = yesterday.first(where: { $0.type == .maghrib })?.time ?? todayFajr.addingTimeInterval(-10 * 3600)
+            let span = max(60, todayFajr.timeIntervalSince(prevMaghrib))
+            let prog = min(1.0, max(0.0, date.timeIntervalSince(prevMaghrib) / span))
+            return FastWindowSnapshot(
+                suhoorTime: todayFajr,
+                iftarTime: todayMaghrib,
+                targetDate: todayFajr,
+                isIftarNext: false,
+                isTomorrowFast: false,
+                progress: prog
+            )
+        } else if date < todayMaghrib {
+            // Between Fajr and Maghrib: actively fasting, counting down to Iftar.
+            let span = max(60, todayMaghrib.timeIntervalSince(todayFajr))
+            let prog = min(1.0, max(0.0, date.timeIntervalSince(todayFajr) / span))
+            return FastWindowSnapshot(
+                suhoorTime: todayFajr,
+                iftarTime: todayMaghrib,
+                targetDate: todayMaghrib,
+                isIftarNext: true,
+                isTomorrowFast: false,
+                progress: prog
+            )
+        } else {
+            // After Maghrib: show tomorrow's Suhoor and Iftar.
+            let tomorrowEntries = PrayerCalculator.raw(place: place, date: day.date.addingDays(1), settings: calc)
+            let nextFajr = tomorrowEntries.first(where: { $0.type == .fajr })?.time ?? todayFajr.addingTimeInterval(24 * 3600)
+            let nextMaghrib = tomorrowEntries.first(where: { $0.type == .maghrib })?.time ?? todayMaghrib.addingTimeInterval(24 * 3600)
+            let span = max(60, nextFajr.timeIntervalSince(todayMaghrib))
+            let prog = min(1.0, max(0.0, date.timeIntervalSince(todayMaghrib) / span))
+            return FastWindowSnapshot(
+                suhoorTime: nextFajr,
+                iftarTime: nextMaghrib,
+                targetDate: nextFajr,
+                isIftarNext: false,
+                isTomorrowFast: true,
+                progress: prog
+            )
+        }
     }
 }

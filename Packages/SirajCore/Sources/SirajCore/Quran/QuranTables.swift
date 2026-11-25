@@ -840,6 +840,17 @@ public enum ShamarlyBanners {
         guard number >= 1 && number <= all.count else { return nil }
         return all[number - 1]
     }
+
+    public static func arabicName(forSurah number: Int) -> String {
+        guard let banner = forSurah(number) else { return "" }
+        let raw = banner.first
+        guard let afterSurah = raw.range(of: "سورة ") else { return "" }
+        let rest = raw[afterSurah.upperBound...]
+        if let end = rest.range(of: " مكية") ?? rest.range(of: " مدنية") {
+            return String(rest[..<end.lowerBound])
+        }
+        return String(rest)
+    }
 }
 
 public enum ShamarlyMeasures {

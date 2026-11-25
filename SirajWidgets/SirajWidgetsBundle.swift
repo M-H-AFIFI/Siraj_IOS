@@ -8,6 +8,9 @@ struct SirajWidgetsBundle: WidgetBundle {
         SirajPrayerWidget()
         SirajClockWidget()
         SirajHijriMoonWidget()
+        SirajQuoteWidget()
+        SirajWorshipWidget()
+        SirajTasbihWidget()
         #if canImport(ActivityKit)
         PrayerCountdownLiveActivity()
         #endif

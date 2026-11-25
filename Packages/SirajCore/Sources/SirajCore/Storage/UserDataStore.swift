@@ -43,6 +43,7 @@ public final class UserDataStore: @unchecked Sendable {
     private let radioPrefsURL: URL
     private let fastingPrefsURL: URL
     private let guideProgressURL: URL
+    private let widgetTasbihURL: URL
 
     public struct GuideProgressRecord: Codable, Sendable, Equatable {
         public var completedTopics: [String]
@@ -91,6 +92,7 @@ public final class UserDataStore: @unchecked Sendable {
         self.radioPrefsURL = directoryURL.appendingPathComponent("radio_prefs.json")
         self.fastingPrefsURL = directoryURL.appendingPathComponent("fasting_prefs.json")
         self.guideProgressURL = directoryURL.appendingPathComponent("guide_progress.json")
+        self.widgetTasbihURL = directoryURL.appendingPathComponent("widget_tasbih.json")
         try? fm.createDirectory(at: directoryURL, withIntermediateDirectories: true)
     }
 
@@ -293,6 +295,29 @@ public final class UserDataStore: @unchecked Sendable {
         lock.lock()
         defer { lock.unlock() }
         writeJSON(record, to: guideProgressURL)
+    }
+
+    public func loadWidgetTasbihCount() -> Int {
+        lock.lock()
+        defer { lock.unlock() }
+        let raw = readJSON(Int.self, from: widgetTasbihURL) ?? 0
+        return max(0, min(WidgetTasbihStep.total, raw))
+    }
+
+    @discardableResult
+    public func tapWidgetTasbih() -> Int {
+        lock.lock()
+        defer { lock.unlock() }
+        let current = max(0, min(WidgetTasbihStep.total, readJSON(Int.self, from: widgetTasbihURL) ?? 0))
+        let next = current >= WidgetTasbihStep.total ? 0 : current + 1
+        writeJSON(next, to: widgetTasbihURL)
+        return next
+    }
+
+    public func resetWidgetTasbih() {
+        lock.lock()
+        defer { lock.unlock() }
+        writeJSON(0, to: widgetTasbihURL)
     }
 
     private func readJSON<T: Decodable>(_ type: T.Type, from url: URL) -> T? {

@@ -5,8 +5,7 @@ struct WidgetGalleryView: View {
     @Environment(\.sirajTheme) private var theme
     let appState: AppState
 
-    private let galleryFaces: [WidgetFace] =
-        WidgetFace.prayerFaces + [.clock] + WidgetFace.hijriMoonFaces
+    private let galleryFaces: [WidgetFace] = WidgetFace.allGalleryFaces
 
     @State private var currentPage: Int = 0
     @State private var bgStyle: WidgetBackgroundStyle = .soft
@@ -212,7 +211,7 @@ struct WidgetGalleryView: View {
                 .font(theme.scaledFont(size: 13.5, weight: .bold))
                 .foregroundStyle(theme.primary)
 
-                if face == .date {
+                if face == .date || face == .verseCard {
                     Text(theme.t("widget_gallery_new"))
                         .font(theme.scaledFont(size: 10.5, weight: .black))
                         .foregroundStyle(theme.onPrimary)
@@ -601,7 +600,7 @@ struct WidgetGalleryView: View {
                     .lineLimit(1)
             }
 
-        default:
+        case .countdown:
             let occ = appState.upcomingOccasions.first
             VStack(alignment: .leading, spacing: 6) {
                 Text(theme.t("widget_countdown_label")).font(.system(size: 10.5, weight: .bold)).foregroundStyle(sub).textCase(.uppercase)
@@ -609,6 +608,159 @@ struct WidgetGalleryView: View {
                 Text(theme.digits("\(occ?.daysUntil ?? 0)"))
                     .font(.system(size: 36, weight: .black, design: .rounded))
                     .foregroundStyle(accent)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+        case .adhkar:
+            let hour = Calendar.current.component(.hour, from: appState.currentTime)
+            let cat = AzkarCategory.suggested(forHour: hour)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(theme.t("widget_adhkar_label")).font(.system(size: 10.5, weight: .bold)).foregroundStyle(sub).textCase(.uppercase)
+                Text(cat.title(language: theme.language)).font(.system(size: 17, weight: .black)).foregroundStyle(fg)
+                Text(WidgetQuotesCatalog.dhikr(forSlot: 0, category: cat).quote.ar)
+                    .font(.custom("Amiri-Regular", size: 15))
+                    .foregroundStyle(sub)
+                    .lineLimit(2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+        case .ayah:
+            let verse = WidgetQuotesCatalog.verse(forSlot: 0)
+            VStack(spacing: 6) {
+                (Text("﴿ ").foregroundColor(accent) + Text(verse.textAr).foregroundColor(fg) + Text(" ﴾").foregroundColor(accent))
+                    .font(.custom("Amiri-Regular", size: 18))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                if !theme.language.hasPrefix("ar") {
+                    let meaning = theme.language.hasPrefix("tr") ? verse.meaningTr : (theme.language.hasPrefix("ur") ? verse.meaningUr : verse.meaningEn)
+                    Text(meaning).font(.system(size: 11)).foregroundStyle(sub).multilineTextAlignment(.center).lineLimit(2)
+                }
+                Text("\(theme.language.hasPrefix("ar") ? verse.surahNameAr : verse.surahNameEn) \(theme.digits("\(verse.surahNumber):\(verse.ayahNumber)"))")
+                    .font(.system(size: 10.5, weight: .bold)).foregroundStyle(accent)
+            }
+
+        case .verseCard:
+            let verse = WidgetQuotesCatalog.verse(forSlot: 1)
+            ZStack {
+                RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(accent.opacity(0.35), lineWidth: 1)
+                VStack {
+                    HStack {
+                        ZStack {
+                            Image("widget_floral_top_leaves").renderingMode(.template).resizable().scaledToFit().foregroundStyle(accent.opacity(0.45))
+                            Image("widget_floral_top_blooms").renderingMode(.template).resizable().scaledToFit().foregroundStyle(accent)
+                        }.frame(width: 40, height: 40)
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        ZStack {
+                            Image("widget_floral_bottom_leaves").renderingMode(.template).resizable().scaledToFit().foregroundStyle(accent.opacity(0.45))
+                            Image("widget_floral_bottom_blooms").renderingMode(.template).resizable().scaledToFit().foregroundStyle(accent)
+                        }.frame(width: 34, height: 34)
+                    }
+                }
+                VStack(spacing: 6) {
+                    (Text("﴿ ").foregroundColor(accent) + Text(verse.textAr).foregroundColor(fg) + Text(" ﴾").foregroundColor(accent))
+                        .font(.custom("Amiri-Regular", size: 17))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.horizontal, 16)
+                    Text("\(theme.language.hasPrefix("ar") ? verse.surahNameAr : verse.surahNameEn) \(theme.digits("\(verse.surahNumber):\(verse.ayahNumber)"))")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(isFilled ? fg : Color(argb: spec.onPrimary))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(isFilled ? accent.opacity(0.22) : accent))
+                }
+                .padding(.vertical, 12)
+            }
+            .frame(height: 120)
+
+        case .hadith:
+            let hadith = WidgetQuotesCatalog.hadith(forSlot: 0)
+            VStack(alignment: .leading, spacing: 5) {
+                Image("widget_quote_mark").renderingMode(.template).resizable().scaledToFit().frame(width: 13, height: 13).foregroundStyle(accent.opacity(0.5))
+                Text(hadith.quote.ar).font(.custom("Amiri-Regular", size: 16)).foregroundStyle(fg).lineLimit(2)
+                if !theme.language.hasPrefix("ar") {
+                    Text(hadith.quote.meaning(language: theme.language)).font(.system(size: 11)).foregroundStyle(sub).lineLimit(2)
+                }
+                Text(hadith.source(language: theme.language, numeralSystem: appState.settings.numeralSystem))
+                    .font(.system(size: 10.5, weight: .bold)).foregroundStyle(accent)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+        case .dhikr:
+            let dhikr = WidgetQuotesCatalog.dhikr(forSlot: 0, category: .morning)
+            VStack(alignment: .leading, spacing: 5) {
+                Image("widget_quote_mark").renderingMode(.template).resizable().scaledToFit().frame(width: 13, height: 13).foregroundStyle(accent.opacity(0.5))
+                Text(dhikr.quote.ar).font(.custom("Amiri-Regular", size: 16)).foregroundStyle(fg).lineLimit(2)
+                if !theme.language.hasPrefix("ar") {
+                    Text(dhikr.quote.meaning(language: theme.language)).font(.system(size: 11)).foregroundStyle(sub).lineLimit(2)
+                }
+                Text(dhikr.source(language: theme.language, numeralSystem: appState.settings.numeralSystem))
+                    .font(.system(size: 10.5, weight: .bold)).foregroundStyle(accent)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+        case .tasbih:
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle().stroke(accent.opacity(0.20), lineWidth: 7)
+                    Circle().trim(from: 0, to: 12.0 / 33.0).stroke(accent, style: StrokeStyle(lineWidth: 7, lineCap: .round)).rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(theme.digits("12")).font(.system(size: 22, weight: .black, design: .rounded)).foregroundStyle(fg)
+                        Text(theme.tf("widget_tasbih_of", theme.digits("33"))).font(.system(size: 9.5, weight: .semibold)).foregroundStyle(sub)
+                    }
+                }
+                .frame(width: 78, height: 78)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(theme.t("widget_tasbih_label")).font(.system(size: 10.5, weight: .bold)).foregroundStyle(sub).textCase(.uppercase)
+                    Text("سُبْحَانَ اللَّهِ").font(.custom("Amiri-Regular", size: 20)).foregroundStyle(fg)
+                    Text(theme.t("widget_tasbih_meaning_1")).font(.system(size: 11.5)).foregroundStyle(sub)
+                }
+                Spacer(minLength: 0)
+            }
+
+        case .fast:
+            let fajr = appState.prayerDay[.fajr].time
+            let maghrib = appState.prayerDay[.maghrib].time
+            VStack(alignment: .leading, spacing: 8) {
+                Text(theme.t("widget_fast_label")).font(.system(size: 10.5, weight: .bold)).foregroundStyle(sub).textCase(.uppercase)
+                HStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(theme.t("widget_fast_suhoor")).font(.system(size: 10, weight: .bold)).foregroundStyle(sub)
+                        Text(formatTime(fajr)).font(.system(size: 15, weight: .black)).foregroundStyle(fg)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(8)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(accent.opacity(0.14)))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(theme.t("widget_fast_iftar")).font(.system(size: 10, weight: .bold)).foregroundStyle(Color(argb: spec.onPrimary).opacity(0.85))
+                        Text(formatTime(maghrib)).font(.system(size: 15, weight: .black)).foregroundStyle(Color(argb: spec.onPrimary))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(8)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(accent))
+                }
+                ProgressView(value: 0.62).tint(accent)
+            }
+
+        case .read:
+            let pos = appState.quranStore.readingPosition
+            let sNum = pos?.surahNumber ?? 18
+            let ayah = pos?.ayahNumber ?? 10
+            let juz = pos?.juz ?? 15
+            VStack(alignment: .leading, spacing: 6) {
+                Text(theme.t("widget_read_label")).font(.system(size: 10.5, weight: .bold)).foregroundStyle(sub).textCase(.uppercase)
+                Text(ShamarlyBanners.arabicName(forSurah: sNum)).font(.custom("Amiri-Regular", size: 28)).foregroundStyle(accent)
+                Text(theme.tf("widget_read_detail", theme.digits("\(ayah)"), theme.digits("\(juz)")))
+                    .font(.system(size: 12, weight: .semibold)).foregroundStyle(fg)
+                ProgressView(value: Double(pos?.page ?? 293) / Double(max(1, pos?.pageCount ?? 604))).tint(accent)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -689,7 +841,14 @@ struct WidgetGalleryView: View {
         case .date: return "widget_face_date"
         case .moon: return "widget_face_moon"
         case .countdown: return "widget_face_countdown"
-        default: return "widget_face_next"
+        case .adhkar: return "widget_face_adhkar"
+        case .ayah: return "widget_face_ayah"
+        case .verseCard: return "widget_face_verse_card"
+        case .hadith: return "widget_face_hadith"
+        case .dhikr: return "widget_face_dhikr"
+        case .tasbih: return "widget_face_tasbih"
+        case .fast: return "widget_face_fast"
+        case .read: return "widget_face_read"
         }
     }
 
@@ -708,7 +867,14 @@ struct WidgetGalleryView: View {
         case .date: return theme.t("widget_date_name")
         case .moon: return theme.t("widget_moon_name")
         case .countdown: return theme.t("widget_countdown_name")
-        default: return face.rawValue
+        case .adhkar: return theme.t("widget_adhkar_name")
+        case .ayah: return theme.t("widget_ayah_name")
+        case .verseCard: return theme.t("widget_verse_card_name")
+        case .hadith: return theme.t("widget_hadith_name")
+        case .dhikr: return theme.t("widget_dhikr_name")
+        case .tasbih: return theme.t("widget_tasbih_name")
+        case .fast: return theme.t("widget_fast_name")
+        case .read: return theme.t("widget_read_name")
         }
     }
 
@@ -727,7 +893,14 @@ struct WidgetGalleryView: View {
         case .date: return theme.t("widget_date_description")
         case .moon: return theme.t("widget_moon_description")
         case .countdown: return theme.t("widget_countdown_description")
-        default: return ""
+        case .adhkar: return theme.t("widget_adhkar_description")
+        case .ayah: return theme.t("widget_ayah_description")
+        case .verseCard: return theme.t("widget_verse_card_description")
+        case .hadith: return theme.t("widget_hadith_description")
+        case .dhikr: return theme.t("widget_dhikr_description")
+        case .tasbih: return theme.t("widget_tasbih_description")
+        case .fast: return theme.t("widget_fast_description")
+        case .read: return theme.t("widget_read_description")
         }
     }
 
